@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1:3306
--- Generation Time: Dec 01, 2023 at 08:21 AM
+-- Generation Time: Dec 01, 2023 at 02:27 PM
 -- Server version: 8.2.0
 -- PHP Version: 8.2.13
 
@@ -18,7 +18,7 @@ SET time_zone = "+00:00";
 /*!40101 SET NAMES utf8mb4 */;
 
 --
--- Database: `ojt_webdev`
+-- Database: `ojt_portaldb`
 --
 
 -- --------------------------------------------------------
@@ -32,6 +32,7 @@ CREATE TABLE IF NOT EXISTS `company` (
   `companyID` int NOT NULL,
   `companyName` varchar(35) NOT NULL,
   `companyLocation` varchar(35) NOT NULL,
+  `companyDescription` text NOT NULL,
   PRIMARY KEY (`companyID`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
@@ -121,7 +122,8 @@ CREATE TABLE IF NOT EXISTS `ojt_records` (
   `teacherID` int NOT NULL,
   `companyID` int NOT NULL,
   `renderedHours` int NOT NULL,
-  `date` int NOT NULL,
+  `date` date NOT NULL,
+  `workDescription` text NOT NULL,
   PRIMARY KEY (`recordID`),
   KEY `studID` (`studID`),
   KEY `teacherID` (`teacherID`),

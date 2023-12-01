@@ -21,9 +21,7 @@ router.get('/dashboard', (req, res) => {
 router.post('/login', async (req, res) => {
   try {
       const { email, password } = req.body;
-
       // CURRENTLY GETTING UNDEFINED THATS WHY I CAN'T GET ANY RESULTS
-      
       // Fetch user from the database based on the provided email
       const query = 'SELECT * FROM users WHERE BINARY email = ?';
       const results = await connection.query(query, [email]);
@@ -31,7 +29,7 @@ router.post('/login', async (req, res) => {
       console.log(password);
       console.log(results);
       console.log("length", results.length);
-      if (results && results[0]) {
+      if (results.length > 0) {
           // User found, compare plain text password
           const storedPassword = results[0].password;
 

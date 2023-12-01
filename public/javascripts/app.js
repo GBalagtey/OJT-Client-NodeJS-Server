@@ -38,37 +38,3 @@ bullets.forEach((bullet) => {
   bullet.addEventListener("click", moveSlider);
 });
 
-
-// function handleLoginFormSubmit(event) {
-//   event.preventDefault();
-
-//   const idNumberInput = document.querySelector('.actual-form .input-wrap input[type="text"]');
-//   const passwordInput = document.querySelector('.actual-form .input-wrap input[type="password"]');
-
-//   const email = idNumberInput.value;
-//   const password = passwordInput.value;
-
-//   console.log("idNumberInput: ", email);
-//   fetch('/login', {
-//     method: 'POST',
-//     headers: {
-//       'Content-Type': 'application/json'
-//     },
-//     body: JSON.stringify({
-//       email: email,
-//       password: password
-//     })
-//   }).then(response => {
-//     if (response.status === 200) {
-//       response.json().then(userData => {
-//         if (userData) {
-//           console.log('Logged in as:', userData.firstName, userData.lastName);
-//         } else {
-//           alert('Invalid login credentials');
-//         }
-//       });
-//     } else {
-//       alert('Error during login');
-//     }
-//   });
-// }

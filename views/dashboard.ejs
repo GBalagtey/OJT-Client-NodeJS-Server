@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!-- <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
@@ -12,4 +12,160 @@
   <p>Dashboard.</p>
 
 </body>
+</html> -->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Dashboard</title>
+    <link rel="shortcut icon" href="./images/EduSynctask.png">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Sharp" rel="stylesheet">
+    <link rel="stylesheet" href="/stylesheets/style.css">
+</head>
+<body>
+    <header>
+        <div class="logo" title="EduSyncTask">
+            <img src="./img/EduSyncTask.png" alt="">
+            <h2>EduSyncTask</h2>
+        </div>
+        <div class="navbar">
+            <a href="index.html" class="active">
+                <span class="material-icons-sharp">home</span>
+                <h3>Home</h3>
+            </a>
+            <a href="history.html">
+                <span class="material-icons-sharp">today</span>
+                <h3>History</h3>
+            </a> 
+            <a href="password.html">
+                <span class="material-icons-sharp">password</span>
+                <h3>Change Password</h3>
+            </a>
+            <a href="#">
+                <span class="material-icons-sharp" onclick="">logout</span>
+                <h3>Logout</h3>
+            </a>
+        </div>
+        <div id="profile-btn">
+            <span class="material-icons-sharp">person</span>
+        </div>
+        <div class="theme-toggler">
+            <span class="material-icons-sharp active">light_mode</span>
+            <span class="material-icons-sharp">dark_mode</span>
+        </div>
+        
+    </header>
+    <div class="container">
+        <aside>
+            <div class="profile">
+                <div class="top">
+                    <div class="profile-photo">
+                        <img src="/images/profile-1.jpg" alt="">
+                    </div>
+                    <div class="info">
+                        <p>Hey, <b>Alex</b> </p>
+                        <small class="text-muted">12102030</small>
+                    </div>
+                </div>
+                <div class="about">
+                    <h5>Course</h5>
+                    <p>BTech. Computer Science & Engineering</p>
+                    <h5>DOB</h5>
+                    <p>29-Feb-2020</p>
+                    <h5>Contact</h5>
+                    <p>1234567890</p>
+                    <h5>Email</h5>
+                    <p>unknown@gmail.com</p>
+                    <h5>Address</h5>
+                    <p>Ghost town Road, New York, America</p>
+                </div>
+            </div>
+        </aside>
+
+        <main>
+            <h1>Progress</h1>
+            <div class="progress-bar">
+                <div class="progress" style="--progress-width: 86%;"></div>
+                <button id="modalBtn">Daily Report</button>
+            </div>
+
+            <!-- Progress Modal -->
+            <div id="myModal" class="modal">
+                <div class="modal-content">
+                    <span class="close">&times;</span>
+                    <h2>Add Work Details</h2>
+                    <form id="workForm">
+                        <label for="renderedHours">Rendered Hours:</label>
+                        <input type="text" id="renderedHours" name="renderedHours" required>
+                        <label for="description">Description:</label>
+                        <textarea id="description" name="description" rows="4" cols="30" required></textarea>
+                        <button type="submit">Submit</button>
+                    </form>
+                </div>
+            </div>
+            
+            <div class="timetable" id="timetable">
+                <div>
+                    <span id="prevDay">&lt;</span>
+                    <h2>Recent Records</h2>
+                    <span id="nextDay">&gt;</span>
+                </div>
+                <span class="closeBtn" onclick="timeTableAll()">X</span>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th>Total Hours</th>
+                            <th>Description</th>
+                        </tr>
+                    </thead>
+                    <tbody id="recordsTable">
+                        <!-- Records will be populated here -->
+                    </tbody>
+                </table>
+            </div>
+            
+
+        </main>
+
+        <div class="right">
+            <div class="announcements">
+                <h2>Requirments</h2>
+                <div class="updates">
+                    <div class="message">
+                        <p>Submit required files</p>
+                        <button onclick="openDocumentModal()">Submit Documents</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Requirments Modal -->
+        <div class="modal" id="documentModal">
+            <div class="modal-content">
+                <span class="close" onclick="closeDocumentModal()">&times;</span>
+                <h2>Select Required Documents</h2>
+                    <form id="documentForm">
+                    <!-- Example checkboxes -->
+                    <input type="checkbox" id="document1" name="document1" value="Document 1">
+                    <label for="document1">Document 1</label><br>
+                    <input type="checkbox" id="document2" name="document2" value="Document 2">
+                    <label for="document2">Document 2</label><br>
+                    <input type="checkbox" id="document3" name="document3" value="Document 3">
+                    <label for="document3">Document 3</label><br><br>
+                    <button type="submit">Submit</button>
+                    </form>
+            </div>
+        </div>
+
+    </div>
+
+    <script src="/javascripts/app.js"></script>
+    <script src="/javascripts/modal.js"></script>
+    <script src="/javascripts/historyTable.js"></script>
+</body>
 </html>
+

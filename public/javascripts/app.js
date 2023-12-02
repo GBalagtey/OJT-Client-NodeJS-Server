@@ -1,42 +1,52 @@
-const inputs = document.querySelectorAll(".input-field");
-const toggle_btn = document.querySelectorAll(".toggle");
-const main = document.querySelector("main");
-const bullets = document.querySelectorAll(".bullets span");
-const images = document.querySelectorAll(".image");
+const sideMenu = document.querySelector("aside");
+const profileBtn = document.querySelector("#profile-btn");
+const themeToggler = document.querySelector(".theme-toggler");
 
-inputs.forEach((inp) => {
-  inp.addEventListener("focus", () => {
-    inp.classList.add("active");
-  });
-  inp.addEventListener("blur", () => {
-    if (inp.value != "") return;
-    inp.classList.remove("active");
-  });
-});
-
-toggle_btn.forEach((btn) => {
-  btn.addEventListener("click", () => {
-    main.classList.toggle("sign-up-mode");
-  });
-});
-
-function moveSlider() {
-  let index = this.dataset.value;
-
-  let currentImage = document.querySelector(`.img-${index}`);
-  images.forEach((img) => img.classList.remove("show"));
-  currentImage.classList.add("show");
-
-  const textSlider = document.querySelector(".text-group");
-  textSlider.style.transform = `translateY(${-(index - 1) * 2.2}rem)`;
-
-  bullets.forEach((bull) => bull.classList.remove("active"));
-  this.classList.add("active");
+profileBtn.onclick = function() {
+    sideMenu.classList.toggle('active');
+}
+window.onscroll = () => {
+    sideMenu.classList.remove('active');
+    if(window.scrollY > 0){document.querySelector('header').classList.add('active');}
+    else{document.querySelector('header').classList.remove('active');}
 }
 
-bullets.forEach((bullet) => {
-  bullet.addEventListener("click", moveSlider);
+themeToggler.onclick = function() {
+    document.body.classList.toggle('dark-theme');
+    themeToggler.querySelector('span:nth-child(1)').classList.toggle('active')
+    themeToggler.querySelector('span:nth-child(2)').classList.toggle('active')
+}
+
+// Requirements modal
+
+// Function to open the modal
+function openDocumentModal() {
+    const modal = document.getElementById('documentModal');
+    modal.style.display = 'block';
+}
+
+// Function to close the modal
+function closeDocumentModal() {
+    const modal = document.getElementById('documentModal');
+    modal.style.display = 'none';
+}
+
+// Function to handle form submission
+document.getElementById('documentForm').addEventListener('submit', function (event) {
+    event.preventDefault();
+
+    // Collect selected documents
+    const selectedDocuments = [];
+    const checkboxes = document.querySelectorAll('input[type="checkbox"]');
+    checkboxes.forEach(checkbox => {
+        if (checkbox.checked) {
+            selectedDocuments.push(checkbox.value);
+        }
+    });
+
+    // Do something with the selected documents (e.g., submit them)
+    console.log('Selected Documents:', selectedDocuments);
+
+    // Close the modal after submission
+    closeDocumentModal();
 });
-
-
-

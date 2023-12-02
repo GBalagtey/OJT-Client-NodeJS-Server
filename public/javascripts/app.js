@@ -50,3 +50,15 @@ document.getElementById('documentForm').addEventListener('submit', function (eve
     // Close the modal after submission
     closeDocumentModal();
 });
+
+function validatePassword() {
+    var newPassword = document.getElementById("newpass").value;
+    var confirmPassword = document.getElementById("confirmpass").value;
+    var submitBtn = document.getElementById("submitBtn");
+
+    if (newPassword === confirmPassword) {
+        submitBtn.removeAttribute("disabled");
+    } else {
+        submitBtn.setAttribute("disabled", "true");
+    }
+}

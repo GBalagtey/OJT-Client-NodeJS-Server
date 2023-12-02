@@ -131,13 +131,70 @@ router.post('/login', async (req, res) => {
   }
 });
 
+// !!STILL DOESNT WORK
 router.post('/changePassword', async (req, res) => {
   try {
+    var email = req.session.email;
+    const currentPassword = req.body.currentpass;
+    const newPassword = req.body.newpass;
 
+    // Query to get the hashedPassword for the user with the specified email
+    const query = 'SELECT hashedPassword FROM users WHERE email = ?';
+    
+    connection.query(query, [email], async (error, results) => {
+      if (error) {
+        console.error('Error fetching hashedPassword:', error);
+        res.status(500).send('Internal Server Error');
+        return;
+      }
+
+      if (results.length > 0) {
+        const hashedPasswordFromDatabase = results[0].hashedPassword;
+
+        // Compare the entered current password with the hashed password from the database
+        const passwordMatch = await comparePassword(currentPassword, hashedPasswordFromDatabase);
+
+        if (passwordMatch) {
+          // If the passwords match, hash the new password
+          const hashedNewPassword = await hashPassword(newPassword);
+
+          // Update the user's hashed password in the database with the new hashed password
+          const updateQuery = 'UPDATE users SET hashedPassword = ? WHERE email = ?';
+          connection.query(updateQuery, [hashedNewPassword, email], (updateError, updateResults) => {
+            if (updateError) {
+              console.error('Error updating hashedPassword:', updateError);
+              res.status(500).send('Internal Server Error');
+            } else {
+              console.log('Password updated successfully');
+              res.redirect('/dashboard');
+            }
+          });
+        } else {
+          // Passwords do not match
+          console.log('Current password does not match');
+          res.send('Current password does not match');
+        }
+      } else {
+        console.log('User not found');
+        res.send('User not found');
+      }
+    });
   } catch (error) {
     console.error(error);
     res.status(500).send('Internal Server Error');
+  }
+});
+
+
+
+async function hashPassword(password) {
+  try {
+    const salt = await bcrypt.genSalt(saltRounds);
+    const hashedPassword = await bcrypt.hash(password, salt);
+    return hashedPassword;
+  } catch (error) {
+    throw error;
+  }
 }
-})
 
 module.exports = router;

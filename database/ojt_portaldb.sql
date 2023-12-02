@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1:3306
--- Generation Time: Dec 01, 2023 at 02:27 PM
+-- Generation Time: Dec 02, 2023 at 03:33 AM
 -- Server version: 8.2.0
 -- PHP Version: 8.2.13
 
@@ -36,6 +36,17 @@ CREATE TABLE IF NOT EXISTS `company` (
   PRIMARY KEY (`companyID`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
+--
+-- Dumping data for table `company`
+--
+
+INSERT INTO `company` (`companyID`, `companyName`, `companyLocation`, `companyDescription`) VALUES
+(1, 'ABC Corporation', 'Makati City', 'A leading technology company specializing in software development.'),
+(2, 'XYZ Solutions', 'Taguig City', 'Provides innovative solutions for businesses in various industries.'),
+(3, '123 Manufacturing', 'Quezon City', 'Specializes in manufacturing high-quality products for the local market.'),
+(4, 'Super Logistics', 'Pasig City', 'Offers logistics and supply chain management services.'),
+(5, 'Green Energy Solutions', 'Manila', 'A company committed to providing sustainable energy solutions.');
+
 -- --------------------------------------------------------
 
 --
@@ -46,11 +57,22 @@ DROP TABLE IF EXISTS `course`;
 CREATE TABLE IF NOT EXISTS `course` (
   `courseID` int NOT NULL,
   `courseCode` int NOT NULL,
-  `courseName` int NOT NULL,
+  `courseName` varchar(100) NOT NULL,
   `programID` int NOT NULL,
+  `courseNumber` varchar(50) NOT NULL,
   PRIMARY KEY (`courseID`),
   KEY `programID` (`programID`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+--
+-- Dumping data for table `course`
+--
+
+INSERT INTO `course` (`courseID`, `courseCode`, `courseName`, `programID`, `courseNumber`) VALUES
+(1, 9333, 'Practicum', 1, 'CS 331'),
+(2, 9335, 'Practicum', 1, 'CS 331'),
+(3, 9225, 'Practicum', 2, 'IT 331'),
+(4, 9222, 'Practicum', 2, 'IT 331');
 
 -- --------------------------------------------------------
 
@@ -61,9 +83,20 @@ CREATE TABLE IF NOT EXISTS `course` (
 DROP TABLE IF EXISTS `department`;
 CREATE TABLE IF NOT EXISTS `department` (
   `departmentID` int NOT NULL,
-  `departmentName` varchar(20) NOT NULL,
+  `departmentName` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
+  `departmentAcronym` varchar(20) NOT NULL,
   PRIMARY KEY (`departmentID`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+--
+-- Dumping data for table `department`
+--
+
+INSERT INTO `department` (`departmentID`, `departmentName`, `departmentAcronym`) VALUES
+(1, 'School of Accountancy, Management, Computer, and Information Studies', 'SAMCIS'),
+(2, 'School of Nursing, Allied Health and Biological Sciences', 'SONAHBS'),
+(3, 'School of Engineering and Architecture', 'SEA'),
+(4, 'School of Teacher Education and Liberal Arts', 'STELA');
 
 -- --------------------------------------------------------
 
@@ -78,18 +111,12 @@ CREATE TABLE IF NOT EXISTS `document` (
   PRIMARY KEY (`docID`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
--- --------------------------------------------------------
-
 --
--- Table structure for table `document_status`
+-- Dumping data for table `document`
 --
 
-DROP TABLE IF EXISTS `document_status`;
-CREATE TABLE IF NOT EXISTS `document_status` (
-  `statusID` int NOT NULL,
-  `statusDescription` varchar(20) NOT NULL,
-  PRIMARY KEY (`statusID`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+INSERT INTO `document` (`docID`, `docName`) VALUES
+(1, 'Medical Certificate');
 
 -- --------------------------------------------------------
 
@@ -102,12 +129,19 @@ CREATE TABLE IF NOT EXISTS `document_submission` (
   `submissionID` int NOT NULL,
   `studID` int NOT NULL,
   `documentID` int NOT NULL,
-  `statusID` int NOT NULL,
+  `hasBeenSubmitted` tinyint(1) NOT NULL,
   PRIMARY KEY (`submissionID`),
   KEY `studID` (`studID`),
-  KEY `documentID` (`documentID`),
-  KEY `statusID` (`statusID`)
+  KEY `documentID` (`documentID`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+--
+-- Dumping data for table `document_submission`
+--
+
+INSERT INTO `document_submission` (`submissionID`, `studID`, `documentID`, `hasBeenSubmitted`) VALUES
+(1, 1, 1, 1),
+(2, 2, 1, 1);
 
 -- --------------------------------------------------------
 
@@ -139,9 +173,16 @@ CREATE TABLE IF NOT EXISTS `ojt_records` (
 DROP TABLE IF EXISTS `ojt_requirements`;
 CREATE TABLE IF NOT EXISTS `ojt_requirements` (
   `requirementID` int NOT NULL,
-  `requiredhours` float NOT NULL,
+  `requiredHours` time NOT NULL,
   PRIMARY KEY (`requirementID`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+--
+-- Dumping data for table `ojt_requirements`
+--
+
+INSERT INTO `ojt_requirements` (`requirementID`, `requiredHours`) VALUES
+(1, '400:00:00');
 
 -- --------------------------------------------------------
 
@@ -154,9 +195,18 @@ CREATE TABLE IF NOT EXISTS `program` (
   `programID` int NOT NULL,
   `departmentID` int NOT NULL,
   `programName` varchar(10) NOT NULL,
+  `programDescription` varchar(100) NOT NULL,
   PRIMARY KEY (`programID`),
   KEY `departmentID` (`departmentID`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+--
+-- Dumping data for table `program`
+--
+
+INSERT INTO `program` (`programID`, `departmentID`, `programName`, `programDescription`) VALUES
+(1, 1, 'BSCS', 'Bachelor of Science in Computer Science'),
+(2, 1, 'BSIT', 'Bachelor of Science in Information Technology');
 
 -- --------------------------------------------------------
 
@@ -173,8 +223,8 @@ CREATE TABLE IF NOT EXISTS `student` (
   `companyID` int NOT NULL,
   `firstName` varchar(30) NOT NULL,
   `lastName` varchar(30) NOT NULL,
-  `totalRenderedHours` float DEFAULT NULL,
-  `demerit` float DEFAULT NULL,
+  `totalRenderedHours` time DEFAULT NULL,
+  `demerit` time DEFAULT NULL,
   `middleInitial` varchar(1) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
   `suffix` varchar(5) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
   PRIMARY KEY (`studID`),
@@ -183,6 +233,14 @@ CREATE TABLE IF NOT EXISTS `student` (
   KEY `teacherID` (`teacherID`),
   KEY `companyID` (`companyID`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+--
+-- Dumping data for table `student`
+--
+
+INSERT INTO `student` (`studID`, `studEmail`, `programID`, `teacherID`, `companyID`, `firstName`, `lastName`, `totalRenderedHours`, `demerit`, `middleInitial`, `suffix`) VALUES
+(1, '2222613@slu.edu.ph', 1, 1, 1, 'Kaizer', 'Oman', '00:00:00', NULL, 'S', NULL),
+(2, '2214027@slu.edu.ph', 1, 1, 2, 'Gregg', 'Balagtey', '00:00:00', NULL, NULL, NULL);
 
 -- --------------------------------------------------------
 
@@ -203,6 +261,13 @@ CREATE TABLE IF NOT EXISTS `teacher` (
   KEY `teacherEmail` (`teacherEmail`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
+--
+-- Dumping data for table `teacher`
+--
+
+INSERT INTO `teacher` (`teacherID`, `teacherEmail`, `firstName`, `lastName`, `middleInitial`, `prefix`, `suffix`) VALUES
+(1, 'lanadelray@slu.edu.p', 'Elizabeth', 'Grant', 'W', NULL, NULL);
+
 -- --------------------------------------------------------
 
 --
@@ -212,10 +277,19 @@ CREATE TABLE IF NOT EXISTS `teacher` (
 DROP TABLE IF EXISTS `users`;
 CREATE TABLE IF NOT EXISTS `users` (
   `email` varchar(20) NOT NULL,
-  `hashedPassword` varchar(30) NOT NULL,
+  `hashedPassword` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
   `userType` varchar(10) NOT NULL,
   PRIMARY KEY (`email`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+--
+-- Dumping data for table `users`
+--
+
+INSERT INTO `users` (`email`, `hashedPassword`, `userType`) VALUES
+('2214027@slu.edu.ph', '$2b$10$BbCbatv6i1neu82eC.Aj7.gevFU16gJl6w/xa346p2eGMMfC2fbgS', 'student'),
+('2222613@slu.edu.ph', '$2b$10$AASMjbqWSFKGl4IDpCG3gej2GnRF6k3g9o234Sna/sBwhLKI9fRrS', 'student'),
+('lanadelray@slu.edu.p', '$2b$10$.NyqdKwIu6RAQUUgglxTqOAyZt7H7b/YnTU2kMqAawvonkP0E4WjS', 'teacher');
 
 --
 -- Constraints for dumped tables
@@ -232,8 +306,7 @@ ALTER TABLE `course`
 --
 ALTER TABLE `document_submission`
   ADD CONSTRAINT `document_submission_ibfk_1` FOREIGN KEY (`studID`) REFERENCES `student` (`studID`),
-  ADD CONSTRAINT `document_submission_ibfk_2` FOREIGN KEY (`documentID`) REFERENCES `document` (`docID`),
-  ADD CONSTRAINT `document_submission_ibfk_3` FOREIGN KEY (`statusID`) REFERENCES `document_status` (`statusID`);
+  ADD CONSTRAINT `document_submission_ibfk_2` FOREIGN KEY (`documentID`) REFERENCES `document` (`docID`);
 
 --
 -- Constraints for table `ojt_records`

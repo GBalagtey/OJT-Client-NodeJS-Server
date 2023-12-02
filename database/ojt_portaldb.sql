@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1:3306
--- Generation Time: Dec 02, 2023 at 03:33 AM
+-- Generation Time: Dec 02, 2023 at 03:41 AM
 -- Server version: 8.2.0
 -- PHP Version: 8.2.13
 
@@ -223,6 +223,7 @@ CREATE TABLE IF NOT EXISTS `student` (
   `companyID` int NOT NULL,
   `firstName` varchar(30) NOT NULL,
   `lastName` varchar(30) NOT NULL,
+  `supervisor` varchar(100) NOT NULL,
   `totalRenderedHours` time DEFAULT NULL,
   `demerit` time DEFAULT NULL,
   `middleInitial` varchar(1) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
@@ -238,9 +239,9 @@ CREATE TABLE IF NOT EXISTS `student` (
 -- Dumping data for table `student`
 --
 
-INSERT INTO `student` (`studID`, `studEmail`, `programID`, `teacherID`, `companyID`, `firstName`, `lastName`, `totalRenderedHours`, `demerit`, `middleInitial`, `suffix`) VALUES
-(1, '2222613@slu.edu.ph', 1, 1, 1, 'Kaizer', 'Oman', '00:00:00', NULL, 'S', NULL),
-(2, '2214027@slu.edu.ph', 1, 1, 2, 'Gregg', 'Balagtey', '00:00:00', NULL, NULL, NULL);
+INSERT INTO `student` (`studID`, `studEmail`, `programID`, `teacherID`, `companyID`, `firstName`, `lastName`, `supervisor`, `totalRenderedHours`, `demerit`, `middleInitial`, `suffix`) VALUES
+(1, '2222613@slu.edu.ph', 1, 1, 1, 'Kaizer', 'Oman', 'Henry Cavill', '00:00:00', NULL, 'S', NULL),
+(2, '2214027@slu.edu.ph', 1, 1, 2, 'Gregg', 'Balagtey', 'Axl Rose', '00:00:00', NULL, NULL, NULL);
 
 -- --------------------------------------------------------
 

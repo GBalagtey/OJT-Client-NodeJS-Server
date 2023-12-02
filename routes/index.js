@@ -23,42 +23,58 @@ router.get('/getHelp', (req, res) => {
 // GET dashboard page
 router.get('/dashboard', (req, res) => {
   const email = req.session.email;
-  // if (!email)
-  // {
-  //   res.redirect('/');
-  //   return
-  // }
-  // else
-  // {
-    res.render('dashboard', {email}); // Render the 'getHelp.ejs' file
-  // }
+
+  if (!email) {
+    res.redirect('/');
+    return;
+  }
+
+  // Fetch all data from the student table based on the email
+  const query = 'SELECT * FROM student WHERE studEmail = ?';
+  connection.query(query, [email], (error, results) => {
+    if (error) {
+      console.error('Error fetching user data:', error);
+      res.status(500).send('Internal Server Error');
+      return;
+    }
+
+    if (results.length > 0) {
+      // If user is found, pass all data to the view
+      const userData = results[0];
+      res.render('dashboard', { userData });
+    } else {
+      console.log('User not found');
+      res.send('User not found');
+    }
+  });
 });
 
-// Function to compare a password with its hash
-// async function comparePassword(password, hashedPassword) {
-//   try {
-//     console.log('Comparing passwords:', password, hashedPassword);
-//     const match = await bcrypt.compare(password, hashedPassword);
-//     console.log('Password comparison result:', match);
-//     return match;
-//   } catch (error) {
-//     throw error;
-//   }
-// }
 
+// Function to compare a password with its hash
 async function comparePassword(password, hashedPassword) {
   try {
     console.log('Comparing passwords:', password, hashedPassword);
-
-    // Simple password comparison (without hashing)
-    const match = password === hashedPassword;
-
+    const match = await bcrypt.compare(password, hashedPassword);
     console.log('Password comparison result:', match);
     return match;
   } catch (error) {
     throw error;
   }
 }
+
+// async function comparePassword(password, hashedPassword) {
+//   try {
+//     console.log('Comparing passwords:', password, hashedPassword);
+
+//     // Simple password comparison (without hashing)
+//     const match = password === hashedPassword;
+
+//     console.log('Password comparison result:', match);
+//     return match;
+//   } catch (error) {
+//     throw error;
+//   }
+// }
 
 // Handle login POST request
 router.post('/login', async (req, res) => {

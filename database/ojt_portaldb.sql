@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1:3306
--- Generation Time: Dec 02, 2023 at 03:41 AM
+-- Generation Time: Dec 02, 2023 at 04:07 AM
 -- Server version: 8.2.0
 -- PHP Version: 8.2.13
 
@@ -217,7 +217,7 @@ INSERT INTO `program` (`programID`, `departmentID`, `programName`, `programDescr
 DROP TABLE IF EXISTS `student`;
 CREATE TABLE IF NOT EXISTS `student` (
   `studID` int NOT NULL,
-  `studEmail` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
+  `studEmail` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
   `programID` int NOT NULL,
   `teacherID` int NOT NULL,
   `companyID` int NOT NULL,
@@ -252,7 +252,7 @@ INSERT INTO `student` (`studID`, `studEmail`, `programID`, `teacherID`, `company
 DROP TABLE IF EXISTS `teacher`;
 CREATE TABLE IF NOT EXISTS `teacher` (
   `teacherID` int NOT NULL,
-  `teacherEmail` varchar(20) NOT NULL,
+  `teacherEmail` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
   `firstName` varchar(30) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
   `lastName` varchar(30) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
   `middleInitial` varchar(1) DEFAULT NULL,
@@ -267,7 +267,7 @@ CREATE TABLE IF NOT EXISTS `teacher` (
 --
 
 INSERT INTO `teacher` (`teacherID`, `teacherEmail`, `firstName`, `lastName`, `middleInitial`, `prefix`, `suffix`) VALUES
-(1, 'lanadelray@slu.edu.p', 'Elizabeth', 'Grant', 'W', NULL, NULL);
+(1, 'lanadelrey@slu.edu.ph', 'Elizabeth', 'Grant', NULL, NULL, NULL);
 
 -- --------------------------------------------------------
 
@@ -277,7 +277,7 @@ INSERT INTO `teacher` (`teacherID`, `teacherEmail`, `firstName`, `lastName`, `mi
 
 DROP TABLE IF EXISTS `users`;
 CREATE TABLE IF NOT EXISTS `users` (
-  `email` varchar(20) NOT NULL,
+  `email` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
   `hashedPassword` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
   `userType` varchar(10) NOT NULL,
   PRIMARY KEY (`email`)
@@ -290,7 +290,7 @@ CREATE TABLE IF NOT EXISTS `users` (
 INSERT INTO `users` (`email`, `hashedPassword`, `userType`) VALUES
 ('2214027@slu.edu.ph', '$2b$10$BbCbatv6i1neu82eC.Aj7.gevFU16gJl6w/xa346p2eGMMfC2fbgS', 'student'),
 ('2222613@slu.edu.ph', '$2b$10$AASMjbqWSFKGl4IDpCG3gej2GnRF6k3g9o234Sna/sBwhLKI9fRrS', 'student'),
-('lanadelray@slu.edu.p', '$2b$10$.NyqdKwIu6RAQUUgglxTqOAyZt7H7b/YnTU2kMqAawvonkP0E4WjS', 'teacher');
+('lanadelrey@slu.edu.ph', '$2b$10$.NyqdKwIu6RAQUUgglxTqOAyZt7H7b/YnTU2kMqAawvonkP0E4WjS', 'teacher');
 
 --
 -- Constraints for dumped tables
@@ -314,8 +314,8 @@ ALTER TABLE `document_submission`
 --
 ALTER TABLE `ojt_records`
   ADD CONSTRAINT `ojt_records_ibfk_1` FOREIGN KEY (`studID`) REFERENCES `student` (`studID`),
-  ADD CONSTRAINT `ojt_records_ibfk_2` FOREIGN KEY (`teacherID`) REFERENCES `teacher` (`teacherID`),
-  ADD CONSTRAINT `ojt_records_ibfk_3` FOREIGN KEY (`companyID`) REFERENCES `company` (`companyID`);
+  ADD CONSTRAINT `ojt_records_ibfk_3` FOREIGN KEY (`companyID`) REFERENCES `company` (`companyID`),
+  ADD CONSTRAINT `ojt_records_ibfk_4` FOREIGN KEY (`teacherID`) REFERENCES `teacher` (`teacherID`);
 
 --
 -- Constraints for table `program`
@@ -327,10 +327,10 @@ ALTER TABLE `program`
 -- Constraints for table `student`
 --
 ALTER TABLE `student`
-  ADD CONSTRAINT `student_ibfk_1` FOREIGN KEY (`studEmail`) REFERENCES `users` (`email`),
   ADD CONSTRAINT `student_ibfk_2` FOREIGN KEY (`programID`) REFERENCES `program` (`programID`),
-  ADD CONSTRAINT `student_ibfk_3` FOREIGN KEY (`teacherID`) REFERENCES `teacher` (`teacherID`),
-  ADD CONSTRAINT `student_ibfk_4` FOREIGN KEY (`companyID`) REFERENCES `company` (`companyID`);
+  ADD CONSTRAINT `student_ibfk_4` FOREIGN KEY (`companyID`) REFERENCES `company` (`companyID`),
+  ADD CONSTRAINT `student_ibfk_5` FOREIGN KEY (`studEmail`) REFERENCES `users` (`email`) ON DELETE RESTRICT ON UPDATE RESTRICT,
+  ADD CONSTRAINT `student_ibfk_6` FOREIGN KEY (`teacherID`) REFERENCES `teacher` (`teacherID`);
 
 --
 -- Constraints for table `teacher`

@@ -19,16 +19,31 @@ router.get('/dashboard', (req, res) => {
 });
 
 // Function to compare a password with its hash
+// async function comparePassword(password, hashedPassword) {
+//   try {
+//     console.log('Comparing passwords:', password, hashedPassword);
+//     const match = await bcrypt.compare(password, hashedPassword);
+//     console.log('Password comparison result:', match);
+//     return match;
+//   } catch (error) {
+//     throw error;
+//   }
+// }
+
 async function comparePassword(password, hashedPassword) {
   try {
     console.log('Comparing passwords:', password, hashedPassword);
-    const match = await bcrypt.compare(password, hashedPassword);
+
+    // Simple password comparison (without hashing)
+    const match = password === hashedPassword;
+
     console.log('Password comparison result:', match);
     return match;
   } catch (error) {
     throw error;
   }
 }
+
 
 
 // Handle login POST request

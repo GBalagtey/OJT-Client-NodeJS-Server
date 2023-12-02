@@ -20,6 +20,16 @@ router.get('/getHelp', (req, res) => {
   res.render('getHelp'); // Render the 'getHelp.ejs' file
 });
 
+// GET change password page
+router.get('/getChangePassword', (req, res) => {
+  res.render('changePassword'); // Render the 'changePassword.ejs' file
+});
+
+// GET history page
+router.get('/getHistory', (req, res) => {
+  res.render('history'); // Render the 'history.ejs' file
+});
+
 // GET dashboard page
 router.get('/dashboard', (req, res) => {
   const email = req.session.email;
@@ -120,5 +130,14 @@ router.post('/login', async (req, res) => {
       res.status(500).send('Internal Server Error');
   }
 });
+
+router.post('/changePassword', async (req, res) => {
+  try {
+
+  } catch (error) {
+    console.error(error);
+    res.status(500).send('Internal Server Error');
+}
+})
 
 module.exports = router;

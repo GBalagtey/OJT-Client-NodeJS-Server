@@ -28,19 +28,19 @@
 <body>
     <header>
         <div class="logo" title="EduSyncTask">
-            <img src="./img/EduSyncTask.png" alt="">
+            <img src="./images/EduSyncTask.png" alt="">
             <h2>EduSyncTask</h2>
         </div>
         <div class="navbar">
-            <a href="index.html" class="active">
+            <a href="/dashboard" class="active">
                 <span class="material-icons-sharp">home</span>
                 <h3>Home</h3>
             </a>
-            <a href="history.html">
+            <a href="/getHistory">
                 <span class="material-icons-sharp">today</span>
                 <h3>History</h3>
             </a> 
-            <a href="password.html">
+            <a href="/getChangePassword">
                 <span class="material-icons-sharp">password</span>
                 <h3>Change Password</h3>
             </a>
@@ -66,7 +66,7 @@
                         <img src="/images/profile-1.jpg" alt="">
                     </div>
                     <div class="info">
-                        <p>Hey, <b>Alex</b> </p>
+                        <p>Hey, <b><%= userData.firstName %></b> </p>
                         <small class="text-muted">12102030</small>
                     </div>
                 </div>
@@ -78,7 +78,7 @@
                     <h5>Contact</h5>
                     <p>1234567890</p>
                     <h5>Email</h5>
-                    <p>unknown@gmail.com</p>
+                    <p><%= userData.studEmail %></p>
                     <h5>Address</h5>
                     <p>Ghost town Road, New York, America</p>
                 </div>

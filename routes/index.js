@@ -1,7 +1,14 @@
 var express = require('express');
+const session = require('express-session');
 var router = express.Router();
 var connection = require('../database')
 const bcrypt = require('bcrypt');
+
+router.use(session({
+  secret: 'ivar',
+  resave: false,
+  saveUninitialized: true
+}));
 
 /* GET home page. */
 router.get('/', function(req, res, next) {
@@ -15,8 +22,16 @@ router.get('/getHelp', (req, res) => {
 
 // GET dashboard page
 router.get('/dashboard', (req, res) => {
-  const {email} = req.session;
-  res.render('dashboard', {email}); // Render the 'getHelp.ejs' file
+  const email = req.session.email;
+  // if (!email)
+  // {
+  //   res.redirect('/');
+  //   return
+  // }
+  // else
+  // {
+    res.render('dashboard', {email}); // Render the 'getHelp.ejs' file
+  // }
 });
 
 // Function to compare a password with its hash
@@ -45,8 +60,6 @@ async function comparePassword(password, hashedPassword) {
   }
 }
 
-
-
 // Handle login POST request
 router.post('/login', async (req, res) => {
   try {
@@ -70,6 +83,7 @@ router.post('/login', async (req, res) => {
         comparePassword(enteredPassword, hashedPassword)
             .then((match) => {
               if (match) {
+                req.session.email = email;
                 console.log('User credentials are valid');
                 res.redirect('/dashboard');
               } else {

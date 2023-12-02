@@ -15,7 +15,8 @@ router.get('/getHelp', (req, res) => {
 
 // GET dashboard page
 router.get('/dashboard', (req, res) => {
-  res.render('dashboard'); // Render the 'getHelp.ejs' file
+  const {email} = req.session;
+  res.render('dashboard', {email}); // Render the 'getHelp.ejs' file
 });
 
 // Function to compare a password with its hash

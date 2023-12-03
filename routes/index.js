@@ -10,6 +10,7 @@ router.use(session({
   saveUninitialized: true
 }));
 
+// So you can't back if you logged out already
 const noCacheMiddleware = (req, res, next) => {
   res.header('Cache-Control', 'private, no-cache, no-store, must-revalidate');
   res.header('Expires', '-1');

@@ -62,3 +62,28 @@ function validatePassword() {
         submitBtn.setAttribute("disabled", "true");
     }
 }
+
+// progressBar
+// Update progress bar function
+// async function updateProgressBar() {
+//     try {
+//       const response = await fetch('/getProgressData'); // Assuming the endpoint is exposed at '/progressData'
+//       if (!response.ok) {
+//         throw new Error(`HTTP error! Status: ${response.status}`);
+//       }
+  
+//       const { totalRequiredHours, hoursWorked } = await response.json();
+  
+//       // Update the progress bar width
+//       const progressElement = document.querySelector('.progress');
+//       const percentage = (hoursWorked / totalRequiredHours) * 100;
+//       progressElement.style.setProperty('--progress-width', `${percentage}%`);
+//     } catch (error) {
+//       console.error('Error updating progress bar:', error);
+//     }
+//   }
+  
+//   // Call the function to update the progress bar when the page loads
+//   updateProgressBar();
+  
+

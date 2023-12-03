@@ -10,28 +10,47 @@ router.use(session({
   saveUninitialized: true
 }));
 
+const noCacheMiddleware = (req, res, next) => {
+  res.header('Cache-Control', 'private, no-cache, no-store, must-revalidate');
+  res.header('Expires', '-1');
+  res.header('Pragma', 'no-cache');
+  next();
+};
+
+router.use(noCacheMiddleware);
+
+const requireLogin = (req, res, next) => {
+  if (!req.session.email) {
+    // If there is no active session, redirect to the index (or login) page
+    return res.redirect('/');
+  }
+
+  // If the user has an active session, continue to the next middleware or route handler
+  next();
+};
+
 /* GET home page. */
 router.get('/', function(req, res, next) {
   res.render('index', { title: 'Express' });
 });
 
 // GET help page
-router.get('/getHelp', (req, res) => {
+router.get('/getHelp', requireLogin, (req, res) => {
   res.render('getHelp'); // Render the 'getHelp.ejs' file
 });
 
 // GET change password page
-router.get('/getChangePassword', (req, res) => {
+router.get('/getChangePassword', requireLogin, (req, res) => {
   res.render('changePassword'); // Render the 'changePassword.ejs' file
 });
 
 // GET history page
-router.get('/getHistory', (req, res) => {
+router.get('/getHistory', requireLogin, (req, res) => {
   res.render('history'); // Render the 'history.ejs' file
 });
 
 // GET dashboard page
-router.get('/dashboard', (req, res) => {
+router.get('/dashboard', requireLogin, (req, res) => {
   const email = req.session.email;
 
   if (!email) {
@@ -72,19 +91,19 @@ async function comparePassword(password, hashedPassword) {
   }
 }
 
-// async function comparePassword(password, hashedPassword) {
-//   try {
-//     console.log('Comparing passwords:', password, hashedPassword);
+// logout
+router.get('/logout', (req, res) => {
+  // Destroy the session
+  req.session.destroy((err) => {
+    if (err) {
+      console.error('Error destroying session:', err);
+    } else {
+      console.log('Session destroyed');
+      res.redirect('/'); // Redirect to the home page or any desired page after logout
+    }
+  });
+});
 
-//     // Simple password comparison (without hashing)
-//     const match = password === hashedPassword;
-
-//     console.log('Password comparison result:', match);
-//     return match;
-//   } catch (error) {
-//     throw error;
-//   }
-// }
 
 // Handle login POST request
 router.post('/login', async (req, res) => {

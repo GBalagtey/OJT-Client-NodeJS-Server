@@ -150,16 +150,22 @@ router.post('/login', async (req, res) => {
   }
 });
 
-// !!STILL DOESNT WORK
 router.post('/changePassword', async (req, res) => {
   try {
+    // Check if the session is still active
+    if (!req.session.email) {
+      // If there is no active session, redirect to the index (or login) page
+      return res.redirect('/');
+    }
+
     var email = req.session.email;
     const currentPassword = req.body.currentpass;
     const newPassword = req.body.newpass;
+    console.log("PASSWORD", currentPassword);
 
     // Query to get the hashedPassword for the user with the specified email
     const query = 'SELECT hashedPassword FROM users WHERE email = ?';
-    
+
     connection.query(query, [email], async (error, results) => {
       if (error) {
         console.error('Error fetching hashedPassword:', error);
@@ -206,6 +212,7 @@ router.post('/changePassword', async (req, res) => {
 
 
 
+const saltRounds = 10;
 async function hashPassword(password) {
   try {
     const salt = await bcrypt.genSalt(saltRounds);

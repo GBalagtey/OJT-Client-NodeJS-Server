@@ -23,13 +23,13 @@
     <title>Student Dashboard</title>
     <link rel="shortcut icon" href="./images/EduSynctask.png">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Sharp" rel="stylesheet">
-    <link rel="stylesheet" href="/stylesheets/style.css">
+    <link rel="stylesheet" href="/stylesheets/dashboard.css">
 </head>
 <body>
     <header>
         <div class="logo" title="EduSyncTask">
-            <img src="./images/EduSyncTask.png" alt="">
-            <h2>EduSyncTask</h2>
+            <img src="./images/slulogo.png" alt="">
+            <h2>OJT PORTAL</h2>
         </div>
         <div class="navbar">
             <a href="/dashboard" class="active">
@@ -68,7 +68,7 @@
                     </div>
                     <div class="info">
                         <p>Hey, <b><%= userData.firstName %></b> </p>
-                        <small class="text-muted">12102030</small>
+                        <small class="text-muted"><%= userData.studID %></small>
                     </div>
                 </div>
                 <div class="about">
@@ -77,7 +77,7 @@
                     <h5>DOB</h5>
                     <p><%= userData.dob %></p>
                     <h5>Contact</h5>
-                    <p><%= userData.phoneNumber %></p>
+                    <p>0<%= userData.phoneNumber %></p>
                     <h5>Email</h5>
                     <p><%= userData.studEmail %></p>
                     <h5>Address</h5>
@@ -89,7 +89,7 @@
         <main>
             <h1>Progress</h1>
             <div class="progress-bar">
-                <div class="progress" style="--progress-width: 0%;"></div>
+                <div class="progress" style="--progress-width: 50%;"></div>
                 <button id="modalBtn">Daily Report</button>
             </div>
 
@@ -120,8 +120,8 @@
                     <thead>
                         <tr>
                             <th>Date</th>
-                            <th>Total Hours</th>
-                            <th>Description</th>
+                            <th>Work Description</th>
+                            <th>Rendered Hours</th>
                         </tr>
                     </thead>
                     <tbody id="recordsTable">
@@ -135,31 +135,23 @@
 
         <div class="right">
             <div class="announcements">
-                <h2>Requirments</h2>
+                <h2>Requirements</h2>
                 <div class="updates">
                     <div class="message">
-                        <p>Submit required files</p>
-                        <button onclick="openDocumentModal()">Submit Documents</button>
+                        <span class="close" onclick="closeDocumentModal()">&times;</span>
+                        <h2>Select Required Documents</h2>
+                            <form id="documentForm">
+                            <!-- Example checkboxes -->
+                            <input type="checkbox" id="document1" name="document1" value="Document 1">
+                            <label for="document1">Document 1</label><br>
+                            <input type="checkbox" id="document2" name="document2" value="Document 2">
+                            <label for="document2">Document 2</label><br>
+                            <input type="checkbox" id="document3" name="document3" value="Document 3">
+                            <label for="document3">Document 3</label><br><br>
+                            <button type="submit">Submit</button>
+                            </form>
                     </div>
                 </div>
-            </div>
-        </div>
-
-        <!-- Requirments Modal -->
-        <div class="modal" id="documentModal">
-            <div class="modal-content">
-                <span class="close" onclick="closeDocumentModal()">&times;</span>
-                <h2>Select Required Documents</h2>
-                    <form id="documentForm">
-                    <!-- Example checkboxes -->
-                    <input type="checkbox" id="document1" name="document1" value="Document 1">
-                    <label for="document1">Document 1</label><br>
-                    <input type="checkbox" id="document2" name="document2" value="Document 2">
-                    <label for="document2">Document 2</label><br>
-                    <input type="checkbox" id="document3" name="document3" value="Document 3">
-                    <label for="document3">Document 3</label><br><br>
-                    <button type="submit">Submit</button>
-                    </form>
             </div>
         </div>
 

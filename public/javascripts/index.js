@@ -1,4 +1,5 @@
 document.getElementById('getStarted').addEventListener('click', function() {
-    window.location.href = 'http://localhost:3000/login';
+    const loginPageURL = `${window.location.protocol}//${window.location.host}/login`;
+    window.location.href = loginPageURL;
   });
   

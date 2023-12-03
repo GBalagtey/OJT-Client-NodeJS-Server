@@ -284,10 +284,11 @@ router.get('/getLatestRecords', requireLogin, (req, res) => {
 
   // Adjust the query to retrieve the relevant records for the specific student
   const query = `
-    SELECT date, renderedHours, workDescription
+    SELECT date, workDescription, renderedHours
     FROM ojt_records
     WHERE studID = ?
-    ORDER BY date DESC;
+    ORDER BY date DESC
+    LIMIT 3;
   `;
 
   connection.query(query, [studId], (error, results) => {

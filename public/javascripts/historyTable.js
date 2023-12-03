@@ -14,9 +14,10 @@ function formatDate(dateString) {
           const row = document.createElement('tr');
           row.innerHTML = `
             <td>${formatDate(record.date)}</td>
-            <td>${record.renderedHours}</td>
             <td>${record.workDescription}</td>
+            <td>${record.renderedHours}</td>
           `;
+
           recordsTable.appendChild(row);
         });
       })

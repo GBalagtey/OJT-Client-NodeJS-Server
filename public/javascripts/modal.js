@@ -17,12 +17,12 @@ window.onclick = function(event) {
     }
 }
 
-workForm.addEventListener('submit', function(e) {
-    e.preventDefault();
-    const renderedHours = document.getElementById('renderedHours').value;
-    const description = document.getElementById('description').value;
-    // Here, you can handle the submitted data (renderedHours and description)
-    // For example, you might send it to a server using fetch or perform other actions.
-    // Then, you can close the modal:
-    modal.style.display = 'none';
-});
+// workForm.addEventListener('submit', function(e) {
+//     e.preventDefault();
+//     const renderedHours = document.getElementById('renderedHours').value;
+//     const description = document.getElementById('description').value;
+//     // Here, you can handle the submitted data (renderedHours and description)
+//     // For example, you might send it to a server using fetch or perform other actions.
+//     // Then, you can close the modal:
+//     modal.style.display = 'none';
+// });

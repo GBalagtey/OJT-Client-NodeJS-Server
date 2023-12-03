@@ -63,7 +63,7 @@
             <div class="profile">
                 <div class="top">
                     <div class="profile-photo">
-                        <img src="/images/profile-1.jpg" alt="">
+                        <img src="/images/profile_images/photo.jpg" alt="">
                     </div>
                     <div class="info">
                         <p>Hey, <b><%= userData.firstName %></b> </p>
@@ -97,7 +97,7 @@
                 <div class="modal-content">
                     <span class="close">&times;</span>
                     <h2>Add Work Details</h2>
-                    <form id="workForm">
+                    <form id="workForm" action="/submitDailyReport" method="post" autocomplete="off">
                         <label for="renderedHours">Rendered Hours:</label>
                         <input type="text" id="renderedHours" name="renderedHours" required>
                         <label for="description">Description:</label>

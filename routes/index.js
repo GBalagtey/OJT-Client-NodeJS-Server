@@ -61,10 +61,11 @@ router.get('/dashboard', requireLogin, (req, res) => {
 
   // Fetch all data from the student table based on the email
   const query = `
-    SELECT student.*, program.programDescription
-    FROM student
-    JOIN program ON student.programID = program.programID
-    WHERE student.studEmail = ?;
+  SELECT student.*, course.*, program.programDescription
+  FROM student
+  JOIN course ON student.courseID = course.courseCode
+  JOIN program ON course.programID = program.programID
+  WHERE student.studEmail = ?;
   `;
   connection.query(query, [email], (error, results) => {
     if (error) {
@@ -76,7 +77,7 @@ router.get('/dashboard', requireLogin, (req, res) => {
     if (results.length > 0) {
       // If user is found, pass all data to the view
       const userData = results[0];
-      userData.dob = userData.dob.toLocaleDateString();
+      userData.dob = userData.birthDate.toLocaleDateString();
       res.render('dashboard', { userData });
     } else {
       console.log('User not found');
@@ -115,11 +116,16 @@ router.get('/logout', (req, res) => {
 // Handle login POST request
 router.post('/login', async (req, res) => {
   try {
-      const { email, password } = req.body;
-      const values = [email];
-      // Fetch user from the database based on the provided email
-      const query = 'SELECT * FROM users WHERE email = ?';
-      connection.query(query, values, async (error, results) => {
+    const { email, password } = req.body;
+    const values = [email];
+    // Fetch user from the database based on the provided email
+    const query = `
+      SELECT users.*, student.studID, student.teacherID, student.companyID
+      FROM users
+      JOIN student ON users.email = student.studEmail
+      WHERE users.email = ?;
+    `;
+    connection.query(query, values, async (error, results) => {
       if (error) {
         throw error;
       }
@@ -131,31 +137,40 @@ router.post('/login', async (req, res) => {
         const enteredPassword = password.trim();
         console.log('Entered Password:', enteredPassword);
         console.log('Hashed Password:', hashedPassword);
-        
+
+        // Assign values to variables
+        const studID = results[0].studID;
+        const teacherID = results[0].teacherID;
+        const companyID = results[0].companyID;
+
         comparePassword(enteredPassword, hashedPassword)
-            .then((match) => {
-              if (match) {
-                req.session.email = email;
-                console.log('User credentials are valid');
-                res.redirect('/dashboard');
-              } else {
-                console.log('Invalid password');
-                res.send("Invalid Password")
-              }
-            })
-            .catch((error) => {
-              console.error('Error comparing passwords:', error);
-            });
+          .then((match) => {
+            if (match) {
+              req.session.email = email;
+              req.session.studID = studID;
+              req.session.teacherID = teacherID;
+              req.session.companyID = companyID;
+              console.log('User credentials are valid');
+              res.redirect('/dashboard');
+            } else {
+              console.log('Invalid password');
+              res.send('Invalid Password');
+            }
+          })
+          .catch((error) => {
+            console.error('Error comparing passwords:', error);
+          });
       } else {
         console.log('User not found');
-        res.send("User not found")
+        res.send('User not found');
       }
     });
   } catch (error) {
-      console.error(error);
-      res.status(500).send('Internal Server Error');
+    console.error(error);
+    res.status(500).send('Internal Server Error');
   }
 });
+
 
 router.post('/changePassword', async (req, res) => {
   try {
@@ -218,6 +233,63 @@ router.post('/changePassword', async (req, res) => {
 });
 
 
+// Submit daily report
+router.post('/submitDailyReport', async (req, res) => {
+  try{
+    const renderedHours = req.body.renderedHours;
+    const description = req.body.description;
+    const teacher = req.session.teacherID;
+    const studId = req.session.studID;
+    const date = getCurrentDate();
+    const company = req.session.companyID;
+
+    const query = `
+    INSERT INTO ojt_records (studID, teacherID, companyID, renderedHours, date, workDescription)
+    VALUES (?, ?, ?, ?, ?, ?);
+    `;
+
+    const values = [studId, teacher, company, renderedHours, date, description];
+    console.log(values);
+
+    connection.query(query, values, (error, results) => {
+    if (error) {
+      console.error('Error inserting daily report:', error);
+      res.status(500).send('Internal Server Error');
+    } else {
+     console.log('Daily report inserted successfully');
+      // Handle success, redirect, or send a response as needed
+      res.redirect('/dashboard'); // Redirect to the dashboard or another page
+    }
+  });
+  } catch (error) {
+    console.error(error);
+    res.status(500).send('Internal Server Error');
+  }
+})
+
+router.get('/getLatestRecords', requireLogin, (req, res) => {
+  const studId = req.session.studID;
+
+  // Adjust the query to retrieve the relevant records for the specific student
+  const query = `
+    SELECT date, renderedHours, workDescription
+    FROM ojt_records
+    WHERE studID = ?
+    ORDER BY date DESC;
+  `;
+
+  connection.query(query, [studId], (error, results) => {
+    if (error) {
+      console.error('Error fetching latest records:', error);
+      res.status(500).send('Internal Server Error');
+      return;
+    }
+
+    res.json(results);
+  });
+});
+
+
 
 const saltRounds = 10;
 async function hashPassword(password) {
@@ -231,3 +303,13 @@ async function hashPassword(password) {
 }
 
 module.exports = router;
+
+function getCurrentDate() {
+  const currentDate = new Date();
+
+  const year = currentDate.getFullYear();
+  const month = (currentDate.getMonth() + 1).toString().padStart(2, '0'); // Zero-padding for months
+  const day = currentDate.getDate().toString().padStart(2, '0'); // Zero-padding for days
+
+  return `${year}-${month}-${day}`;
+}

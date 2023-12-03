@@ -59,7 +59,12 @@ router.get('/dashboard', requireLogin, (req, res) => {
   }
 
   // Fetch all data from the student table based on the email
-  const query = 'SELECT * FROM student WHERE studEmail = ?';
+  const query = `
+    SELECT student.*, program.programDescription
+    FROM student
+    JOIN program ON student.programID = program.programID
+    WHERE student.studEmail = ?;
+  `;
   connection.query(query, [email], (error, results) => {
     if (error) {
       console.error('Error fetching user data:', error);
@@ -70,6 +75,7 @@ router.get('/dashboard', requireLogin, (req, res) => {
     if (results.length > 0) {
       // If user is found, pass all data to the view
       const userData = results[0];
+      userData.dob = userData.dob.toLocaleDateString();
       res.render('dashboard', { userData });
     } else {
       console.log('User not found');

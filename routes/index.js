@@ -61,7 +61,7 @@ router.get('/dashboard', requireLogin, (req, res) => {
 
   // Fetch all data from the student table based on the email
   const query = `
-  SELECT student.*, course.*, program.programDescription
+  SELECT student.*, course.*, program.programDescription, student.photo
   FROM student
   JOIN course ON student.courseID = course.courseCode
   JOIN program ON course.programID = program.programID
@@ -78,6 +78,11 @@ router.get('/dashboard', requireLogin, (req, res) => {
       // If user is found, pass all data to the view
       const userData = results[0];
       userData.dob = userData.birthDate.toLocaleDateString();
+
+      // Convert the Buffer data to a base64 string
+      const base64Image = Buffer.from(userData.photo).toString('base64');
+      userData.photo = `data:image/jpeg;base64,${base64Image}`;
+      
       res.render('dashboard', { userData });
     } else {
       console.log('User not found');

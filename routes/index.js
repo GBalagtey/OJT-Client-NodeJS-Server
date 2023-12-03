@@ -85,10 +85,11 @@ router.get('/dashboard', requireLogin, (req, res) => {
       const userData = results[0];
       userData.dob = userData.birthDate.toLocaleDateString();
 
+      if(userData.photo != null){
       // Convert the Buffer data to a base64 string
       const base64Image = Buffer.from(userData.photo).toString('base64');
       userData.photo = `data:image/jpeg;base64,${base64Image}`;
-
+      }
       res.render('dashboard', { userData });
     } else {
       console.log('User not found');

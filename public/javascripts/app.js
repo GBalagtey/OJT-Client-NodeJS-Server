@@ -1,6 +1,7 @@
 const sideMenu = document.querySelector("aside");
 const profileBtn = document.querySelector("#profile-btn");
 const themeToggler = document.querySelector(".theme-toggler");
+const body = document.body;
 
 profileBtn.onclick = function() {
     sideMenu.classList.toggle('active');

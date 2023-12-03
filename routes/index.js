@@ -35,6 +35,12 @@ router.get('/', function(req, res, next) {
   res.render('index', { title: 'Express' });
 });
 
+// Add a new route for the "Get Started" button
+router.get('/Login', (req, res) => {
+  res.render('login'); // Render the 'login.ejs' file
+});
+
+
 // GET help page
 router.get('/getHelp', requireLogin, (req, res) => {
   res.render('getHelp'); // Render the 'getHelp.ejs' file
@@ -293,19 +299,6 @@ router.get('/getLatestRecords', requireLogin, (req, res) => {
     res.json(results);
   });
 });
-
-// Need to get for the progress bar
-// router.get('/getProgressData', requireLogin, (req, res) => {
-//   // Retrieve totalRequiredHours and hoursWorked from your SQL database
-//   const totalRequiredHours = /* logic to get total required hours */;
-//   const hoursWorked = /* logic to get hours worked */;
-
-//   // Send the data as JSON
-//   res.json({ totalRequiredHours, hoursWorked });
-// });
-
-
-
 
 const saltRounds = 10;
 async function hashPassword(password) {

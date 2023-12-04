@@ -67,11 +67,16 @@ router.get('/dashboard', requireLogin, (req, res) => {
 
   // Fetch all data from the student table based on the email
   const query = `
-  SELECT student.*, course.*, program.programDescription
-  FROM student
-  JOIN course ON student.courseID = course.courseCode
-  JOIN program ON course.programID = program.programID
-  WHERE student.studEmail = ?;
+    SELECT student.*, course.*, program.programDescription, 
+      ojt_requirements.requiredHours, 
+      SEC_TO_TIME(SUM(TIME_TO_SEC(ojt_records.renderedHours))) AS total_time,
+      SEC_TO_TIME(TIME_TO_SEC(student.demerit) + TIME_TO_SEC(ojt_requirements.requiredHours)) AS hours_required
+    FROM student
+    JOIN course ON student.courseID = course.courseCode
+    JOIN program ON course.programID = program.programID
+    JOIN ojt_requirements ON ojt_requirements.requirementID = student.requirementID
+    JOIN ojt_records ON ojt_records.studID = student.studID
+    WHERE student.studEmail = ?
   `;
   connection.query(query, [email], (error, results) => {
     if (error) {
@@ -90,6 +95,15 @@ router.get('/dashboard', requireLogin, (req, res) => {
       const base64Image = Buffer.from(userData.photo).toString('base64');
       userData.photo = `data:image/jpeg;base64,${base64Image}`;
       }
+      const totalTime = userData.total_time;
+      const requiredTotalTime = userData.hours_required;
+      console.log(totalTime);
+      console.log(requiredTotalTime)
+      const partDuration = parseTime(totalTime);
+      const totalDuration = parseTime(requiredTotalTime);
+      const percentage = (partDuration / totalDuration) * 100;
+      console.log(`Percentage: ${percentage}%`);
+      userData.totalRenderedHours = percentage;
       res.render('dashboard', { userData });
     } else {
       console.log('User not found');
@@ -98,6 +112,11 @@ router.get('/dashboard', requireLogin, (req, res) => {
   });
 });
 
+//function to convert time to seconds
+function parseTime(timeString) {
+  const [hours, minutes, seconds] = timeString.split(':').map(Number);
+  return hours * 3600 + minutes * 60 + seconds;
+}
 
 // Function to compare a password with its hash
 async function comparePassword(password, hashedPassword) {

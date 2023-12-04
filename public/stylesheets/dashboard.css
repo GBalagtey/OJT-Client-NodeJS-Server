@@ -221,7 +221,7 @@ main .progress {
     height: 100%;
     background-color: #7380ec;
     border-radius: 4px;
-    transition: width 0.3s ease-in-out;
+    transition: width 1s ease-in-out;
 }
 
 main .button#modalBtn {

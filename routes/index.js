@@ -112,6 +112,7 @@ router.get('/dashboard', requireLogin, (req, res) => {
   });
 });
 
+
 //function to convert time to seconds
 function parseTime(timeString) {
   const [hours, minutes, seconds] = timeString.split(':').map(Number);
@@ -308,6 +309,28 @@ router.get('/getLatestRecords', requireLogin, (req, res) => {
     WHERE studID = ?
     ORDER BY date DESC
     LIMIT 3;
+  `;
+
+  connection.query(query, [studId], (error, results) => {
+    if (error) {
+      console.error('Error fetching latest records:', error);
+      res.status(500).send('Internal Server Error');
+      return;
+    }
+
+    res.json(results);
+  });
+});
+
+router.get('/getRecordHistory', requireLogin, (req, res) => {
+  const studId = req.session.studID;
+
+  // Adjust the query to retrieve the relevant records for the specific student
+  const query = `
+    SELECT *
+    FROM ojt_records
+    WHERE studID = ?
+    ORDER BY date DESC;
   `;
 
   connection.query(query, [studId], (error, results) => {

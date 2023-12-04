@@ -8,6 +8,13 @@
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Sharp" rel="stylesheet">
     <link rel="shortcut icon" href="./img/EduSynctask.png">
     <link rel="stylesheet" href="/stylesheets/dashboard.css">
+    <style>
+        .table {
+            max-height: 800px; /* Set your desired maximum height */
+            overflow-y: auto; /* Add a vertical scrollbar if content overflows the maximum height */
+            display: block; /* Enable block display for proper rendering */
+        }
+    </style>
 </head>
 <body>
     <header>
@@ -48,22 +55,21 @@
             <div>
                 <h2>OJT Record History</h2>
             </div>
-            <table>
+            <table class="table">
                 <thead>
                     <tr>
-                        <th>Time</th>
-                        <th>Room No.</th>
-                        <th>Subject</th>
-                        <th></th>
+                        <th>Date</th>
+                        <th>Work Description</th>
+                        <th>Rendered Hours</th>
                     </tr>
                 </thead>
-                <tbody></tbody>
+                <tbody id="timeTable"></tbody>
             </table>
         </div>
     </main>
 
 </body>
 
-<script src="timeTable.js"></script>
+<script src="/javascripts/timeTable.js"></script>
 <script src="/javascripts/app.js"></script>
 </html>

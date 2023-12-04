@@ -67,10 +67,11 @@ router.get('/dashboard', requireLogin, (req, res) => {
 
   // Fetch all data from the student table based on the email
   const query = `
-    SELECT student.*, course.*, program.programDescription 
+    SELECT student.*, course.*, program.programDescription, company.*
     FROM student
     JOIN course ON student.courseID = course.courseCode
     JOIN program ON course.programID = program.programID
+    JOIN company ON company.companyID = student.companyID
     WHERE student.studEmail = ?
   `;
   connection.query(query, [email], (error, results) => {

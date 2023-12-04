@@ -26,5 +26,29 @@ function formatDate(dateString) {
       });
   }
   
+  function progressWidthFill() {
+    const progressWidth = document.getElementById('progress');
+
+    fetch('/getProgress')
+      .then(response => response.json())
+      .then(data => {
+        if(data.length > 0){
+        const totalRenderedHours = parseTime(data[0].total_time);
+        const totalRequiredHours = parseTime(data[0].hours_required);
+        const percentage = (totalRenderedHours/ totalRequiredHours) * 100;
+        console.log(`Percentage: ${percentage}%`);
+        progressWidth.style.width = percentage + '%';
+      }
+      })
+      .catch(error => {
+        console.error('Error fetching latest records:', error);
+      });
+  }
+  //function to convert time to seconds
+function parseTime(timeString) {
+  const [hours, minutes, seconds] = timeString.split(':').map(Number);
+  return hours * 3600 + minutes * 60 + seconds;
+}
   populateRecentRecords();
+  progressWidthFill();
   

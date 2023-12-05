@@ -167,7 +167,7 @@ router.post('/login', async (req, res) => {
               res.redirect('/dashboard');
             } else {
               console.log('Invalid password');
-              res.send('Invalid Password');
+              res.render('login', {error: 'Invalid Credentials'});
             }
           })
           .catch((error) => {
@@ -175,7 +175,7 @@ router.post('/login', async (req, res) => {
           });
       } else {
         console.log('User not found');
-        res.send('User not found');
+        res.render('login', {error: 'Invalid Credentials'});
       }
     });
   } catch (error) {

@@ -88,7 +88,7 @@ router.get('/getDashboardFaculty', requireLogin, (req, res) => {
       // req.session.studID = studID;
       // req.session.teacherID = teacherID;
       // req.session.companyID = companyID;
-      // userData.dob = userData.birthDate.toLocaleDateString();
+      userData.dob = userData.birthDate.toLocaleDateString();
 
       if(userData.photo != null){
       // Convert the Buffer data to a base64 string

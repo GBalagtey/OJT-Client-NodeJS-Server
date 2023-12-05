@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Teacher Dashboard</title>
+    <link rel="shortcut icon" href="./images/EduSynctask.png">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Sharp" rel="stylesheet">
+    <link rel="stylesheet" href="/stylesheets/dashboard.css">
+</head>
+<body>
+    <header>
+        <div class="logo" title="EduSyncTask">
+            <img src="./images/slulogo.png" alt="">
+            <h2>OJT PORTAL</h2>
+        </div>
+        <div class="navbar">
+            <a href="/dashboardFaculty" class="active">
+                <span class="material-icons-sharp">home</span>
+                <h3>Home</h3>
+            </a>
+            <a href="/studentList">
+                <span class="material-icons-sharp">today</span>
+                <h3>Students</h3>
+            </a> 
+            <a href="/getChangePassword">
+                <span class="material-icons-sharp">password</span>
+                <h3>Change Password</h3>
+            </a>
+            <a href="/logout">
+                <span class="material-icons-sharp" onclick="">logout</span>
+                <h3>Logout</h3>
+            </a>
+        </div>
+        <div id="profile-btn">
+            <span class="material-icons-sharp">person</span>
+        </div>
+        <div class="theme-toggler">
+            <span class="material-icons-sharp active">light_mode</span>
+            <span class="material-icons-sharp">dark_mode</span>
+        </div>
+        
+        
+    </header>
+    <div class="container">
+        <aside>
+            <div class="profile">
+                <div class="top">
+                    <div class="profile-photo">
+                        <img id="profile-photo-img" src="<%= userData.photo %>" alt="">
+                    </div>
+                    <div class="info">
+                        <p>Hey, <b><%= userData.firstName %></b> </p>
+                        <!-- <small class="text-muted"><%= userData.studID %></small> -->
+                    </div>
+                </div>
+                <div class="about">
+                    <h3> PERSONAL DETAILS</h3>
+                    <hr><br>
+                    <h5>Course</h5>
+                    <!-- <p><%= userData.programDescription %></p> -->
+                    <h5>DOB</h5>
+                    <!-- <p><%= userData.dob %></p> -->
+                    <h5>Contact</h5>
+                    <!-- <p>0<%= userData.phoneNumber %></p> -->
+                    <h5>Email</h5>
+                    <p><%= userData.teacherEmail %></p>
+                    <h5>Address</h5>
+                    <!-- <p><%= userData.address %></p> -->
+                    <br>
+                    <h3> COMPANY DETAILS</h3>
+                    <hr><br>
+                    <h5>Company</h5>
+                    <!-- <p><%= userData.companyName %></p> -->
+                    <h5>Address</h5>
+                    <!-- <p><%= userData.companyLocation %></p> -->
+                    <h5>Description</h5>
+                    <!-- <p><%= userData.companyDescription %></p> -->
+                    <h5>Supervisor</h5>
+                    <!-- <p><%= userData.supervisor %></p> -->
+                </div>
+            </div>
+        </aside>
+
+        <main>
+            <h1>Student Interns</h1>
+            <div class="interns">
+                <!-- Databasse inserted here-->
+            </div>
+
+            <!-- Progress Modal -->
+            <!-- <div id="myModal" class="modal">
+                <div class="modal-content">
+                    <span class="close">&times;</span>
+                    <h2>Add Work Details</h2>
+                    <form id="workForm" action="/submitDailyReport" method="post" autocomplete="off">
+                        <label for="renderedHours">Rendered Hours:</label>
+                        <input type="text" id="renderedHours" name="renderedHours" required>
+                        <label for="description">Description:</label>
+                        <textarea id="description" name="description" rows="4" cols="30" required></textarea>
+                        <button type="submit">Submit</button>
+                    </form>
+                </div>
+            </div> -->
+            <!-- End of Progress Modal -->
+
+        </main>
+
+        <div class="right">
+            <div class="announcements">
+                <h2>Announcements</h2>
+                <div class="updates">
+                    <div class="message">
+                        <p> <b>Academic</b> Summer training internship with Live Projects.</p>
+                        <small class="text-muted">2 Minutes Ago</small>
+                    </div>
+                    <div class="message">
+                        <p> <b>Co-curricular</b> Global internship oportunity by Student organization.</p>
+                        <small class="text-muted">10 Minutes Ago</small>
+                    </div>
+                    <div class="message">
+                        <p> <b>Examination</b> Instructions for Mid Term Examination.</p>
+                        <small class="text-muted">Yesterday</small>
+                    </div>
+                </div>
+            </div> 
+        </div>
+
+    </div>
+    <script src ="/javascripts/document.js"></script>
+    <script src="/javascripts/app.js"></script>
+    <script src="/javascripts/modal.js"></script>
+    <script src="/javascripts/recentRecords.js"></script>
+</body>
+</html>
+

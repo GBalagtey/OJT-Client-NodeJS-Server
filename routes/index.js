@@ -45,11 +45,6 @@ router.get('/getHelp', requireLogin, (req, res) => {
   res.render('getHelp'); // Render the 'getHelp.ejs' file
 });
 
-// GET faculty dashboard page
-router.get('/getDashboardFaculty', requireLogin, (req, res) => {
-  res.render('dashboardFaculty'); // Render the 'dashboardFaculty.ejs' file
-});
-
 // GET change password page
 router.get('/getChangePassword', requireLogin, (req, res) => {
   res.render('changePassword'); // Render the 'changePassword.ejs' file
@@ -58,6 +53,56 @@ router.get('/getChangePassword', requireLogin, (req, res) => {
 // GET history page
 router.get('/getHistory', requireLogin, (req, res) => {
   res.render('history'); // Render the 'history.ejs' file
+});
+
+// GET faculty dashboard page
+router.get('/getDashboardFaculty', requireLogin, (req, res) => {
+  const email = req.session.email;
+
+  if (!email) {
+    res.redirect('/');
+    return;
+  }
+  // Fetch all data from the student table based on the email
+  const query = `
+  SELECT teacher.*
+  FROM teacher
+  WHERE teacher.teacherEmail = ?
+  `;
+
+  connection.query(query, [email], (error, results) => {
+    if (error) {
+      console.error('Error fetching user data:', error);
+      res.status(500).send('Internal Server Error');
+      return;
+    }
+
+    if (results.length > 0) {
+      // If user is found, pass all data to the view
+      const userData = results[0];
+      // const studID = results[0].studID;
+      const teacherID = results[0].teacherID;
+      // const companyID = results[0].companyID;
+      const userType = results[0].userType;
+      req.session.email = email;
+      // req.session.studID = studID;
+      // req.session.teacherID = teacherID;
+      // req.session.companyID = companyID;
+      // userData.dob = userData.birthDate.toLocaleDateString();
+
+      if(userData.photo != null){
+      // Convert the Buffer data to a base64 string
+      const base64Image = Buffer.from(userData.photo).toString('base64');
+      userData.photo = `data:image/jpeg;base64,${base64Image}`;
+      }
+      res.render('dashboardFaculty', { userData });
+    } else {
+      console.log('User not found');
+      res.send('User not found');
+    }
+  });
+
+  
 });
 
 // GET dashboard page

@@ -234,6 +234,7 @@ main .progress-bar {
     background-color: #eee;
     border-radius: 4px;
     position: relative;
+    margin-bottom: 75px;
 }
 
 main .progress {
@@ -254,7 +255,13 @@ main .progress {
     background-color: var(--color-primary);
     cursor: pointer;
     margin: 1rem 1.5rem 1rem 0;
-    margin-top: 1.5rem;
+    margin-top: 25px;
+    margin-left: 89.9%;
+    width: 118px;
+    height: 35px;
+    font-size: 14px;
+    font-family: 'Poppins', sans-serif;
+    transition: 0.3s;
 }
 
 #modalBtn:hover {
@@ -276,13 +283,57 @@ main .progress {
 }
 
 .modal-content {
+    top:22%;
+    left: 33%;
+    height: 50%;
+    width: 30%;
     background-color: white;
     padding: 20px;
     border-radius: 8px;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
     position: relative;
+    text-align: center;
 }
 
+#workForm{
+    margin-top: 2%;
+    font-size: 15px;
+}
+
+#renderedHours {
+    width: 150px;
+    height: 30px;
+    text-align: center;
+    font-family: 'Poppins', sans-serif;
+  }
+
+#description {
+    width: 90%;
+    height: 150px;
+    font-size: 14px;
+    border-radius: 3px;
+    font-family: 'Poppins', sans-serif;
+}
+
+.submit-dtr {
+    background: none;
+    border: 2px solid var(--color-primary) !important;
+    border-radius: var(--border-radius-1);
+    color: var(--color-white);
+    margin-top: 2%;
+    margin-left: 20px;
+    width: 100px;
+    height: 35px;
+    font-size: 14px;
+    font-family: 'Poppins', sans-serif;
+    background-color: var(--color-primary);
+    transition: 0.3s;
+}
+
+.submit-dtr:hover {
+    color: var(--color-primary);
+    background-color: transparent;
+}
 .close {
     position: absolute;
     top: 5px;
@@ -301,7 +352,10 @@ main .timetable h2{
 main .timetable table{
     background-color: var(--color-white);
     width: 100%;
-    border-radius: var(--card-border-radius);
+    border-top-right-radius: 10px;
+    border-top-left-radius: 10px;
+    border-bottom-left-radius: 40px;
+    border-bottom-right-radius: 40px;
     padding: var(--card-padding);
     text-align: center;
     box-shadow: var(--box-shadow);

@@ -40,10 +40,14 @@ router.get('/Login', (req, res) => {
   res.render('login'); // Render the 'login.ejs' file
 });
 
-
 // GET help page
 router.get('/getHelp', requireLogin, (req, res) => {
   res.render('getHelp'); // Render the 'getHelp.ejs' file
+});
+
+// GET faculty dashboard page
+router.get('/getDashboardFaculty', requireLogin, (req, res) => {
+  res.render('dashboardFaculty'); // Render the 'dashboardFaculty.ejs' file
 });
 
 // GET change password page
@@ -84,6 +88,14 @@ router.get('/dashboard', requireLogin, (req, res) => {
     if (results.length > 0) {
       // If user is found, pass all data to the view
       const userData = results[0];
+      const studID = results[0].studID;
+      const teacherID = results[0].teacherID;
+      const companyID = results[0].companyID;
+      const userType = results[0].userType;
+      req.session.email = email;
+      req.session.studID = studID;
+      req.session.teacherID = teacherID;
+      req.session.companyID = companyID;
       userData.dob = userData.birthDate.toLocaleDateString();
 
       if(userData.photo != null){
@@ -133,10 +145,11 @@ router.post('/login', async (req, res) => {
     const values = [email];
     // Fetch user from the database based on the provided email
     const query = `
-      SELECT users.*, student.studID, student.teacherID, student.companyID
-      FROM users
-      JOIN student ON users.email = student.studEmail
-      WHERE users.email = ?;
+    SELECT users.*, student.*, teacher.*
+    FROM users
+    LEFT OUTER JOIN student ON users.email = student.studEmail
+    LEFT JOIN teacher ON teacher.teacherEmail = users.email
+    WHERE users.email = ?;
     `;
     connection.query(query, values, async (error, results) => {
       if (error) {
@@ -152,19 +165,25 @@ router.post('/login', async (req, res) => {
         console.log('Hashed Password:', hashedPassword);
 
         // Assign values to variables
-        const studID = results[0].studID;
-        const teacherID = results[0].teacherID;
-        const companyID = results[0].companyID;
+        // const studID = results[0].studID;
+        // const teacherID = results[0].teacherID;
+        // const companyID = results[0].companyID;
+        const userType = results[0].userType;
 
         comparePassword(enteredPassword, hashedPassword)
           .then((match) => {
             if (match) {
               req.session.email = email;
-              req.session.studID = studID;
-              req.session.teacherID = teacherID;
-              req.session.companyID = companyID;
+              // req.session.studID = studID;
+              // req.session.teacherID = teacherID;
+              // req.session.companyID = companyID;
               console.log('User credentials are valid');
-              res.redirect('/dashboard');
+              if(userType == 'student'){
+                res.redirect('/dashboard');
+              } else if (userType == 'teacher'){
+                res.redirect('/getDashboardFaculty');
+              }
+              
             } else {
               console.log('Invalid password');
               res.render('login', {error: 'Invalid Credentials'});
@@ -183,6 +202,8 @@ router.post('/login', async (req, res) => {
     res.status(500).send('Internal Server Error');
   }
 });
+
+
 
 
 router.post('/changePassword', async (req, res) => {

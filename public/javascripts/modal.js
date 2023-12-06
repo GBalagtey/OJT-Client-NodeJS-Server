@@ -2,7 +2,6 @@ const modal = document.getElementById('myModal');
 const modalBtn = document.getElementById('modalBtn');
 const closeBtn = document.getElementsByClassName('close')[0];
 const workForm = document.getElementById('workForm');
-const currentDate = new Date();
 
 modalBtn.onclick = function() {
     modal.style.display = 'block';
@@ -17,10 +16,6 @@ window.onclick = function(event) {
         modal.style.display = 'none';
     }
 }
-
-const formattedDate = `${currentDate.getMonth() + 1}/${currentDate.getDate()}/${currentDate.getFullYear()}`;
-                          
-document.getElementById("currentDate").textContent = formattedDate;
 
 // workForm.addEventListener('submit', function(e) {
 //     e.preventDefault();

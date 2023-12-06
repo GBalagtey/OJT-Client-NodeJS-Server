@@ -55,6 +55,7 @@ router.get('/getHistory', requireLogin, (req, res) => {
   res.render('history'); // Render the 'history.ejs' file
 });
 
+
 // GET faculty dashboard page
 router.get('/getDashboardFaculty', requireLogin, (req, res) => {
   const email = req.session.email;
@@ -86,11 +87,13 @@ router.get('/getDashboardFaculty', requireLogin, (req, res) => {
       const userType = results[0].userType;
       req.session.email = email;
       req.session.teacherID = teacherID;
+      req.session.currentDate = getCurrentDate();
       console.log('Teacher ID stored in session:', teacherID);
       // req.session.studID = studID;
       // req.session.teacherID = teacherID;
       // req.session.companyID = companyID;
       userData.dob = userData.birthDate.toLocaleDateString();
+      userData.currentDate = req.session.currentDate;
 
       if(userData.photo != null){
       // Convert the Buffer data to a base64 string
@@ -143,12 +146,14 @@ router.get('/dashboard', requireLogin, (req, res) => {
       req.session.studID = studID;
       req.session.teacherID = teacherID;
       req.session.companyID = companyID;
+      req.session.currentDate = getCurrentDate();
       userData.dob = userData.birthDate.toLocaleDateString();
 
       if(userData.photo != null){
       // Convert the Buffer data to a base64 string
       const base64Image = Buffer.from(userData.photo).toString('base64');
       userData.photo = `data:image/jpeg;base64,${base64Image}`;
+      userData.currentDate = req.session.currentDate;
       }
       res.render('dashboard', { userData });
     } else {
@@ -267,7 +272,7 @@ router.post('/changePassword', async (req, res) => {
     console.log("PASSWORD", currentPassword);
 
     // Query to get the hashedPassword for the user with the specified email
-    const query = 'SELECT hashedPassword FROM users WHERE email = ?';
+    const query = 'SELECT hashedPassword, userType FROM users WHERE email = ?';
 
     connection.query(query, [email], async (error, results) => {
       if (error) {
@@ -278,6 +283,7 @@ router.post('/changePassword', async (req, res) => {
 
       if (results.length > 0) {
         const hashedPasswordFromDatabase = results[0].hashedPassword;
+        const userType = results[0].userType;
 
         // Compare the entered current password with the hashed password from the database
         const passwordMatch = await comparePassword(currentPassword, hashedPasswordFromDatabase);
@@ -294,7 +300,12 @@ router.post('/changePassword', async (req, res) => {
               res.status(500).send('Internal Server Error');
             } else {
               console.log('Password updated successfully');
-              res.redirect('/dashboard');
+              if(userType == 'student'){
+                res.redirect('/dashboard');
+              } else if (userType == 'teacher'){
+                res.redirect('/dashboardFaculty');
+              }
+            
             }
           });
         } else {

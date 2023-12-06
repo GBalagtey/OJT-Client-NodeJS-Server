@@ -113,7 +113,7 @@
                     <h2 class="title-modal">Add Work Details</h2>
                     <form id="workForm" action="/submitDailyReport" method="post" autocomplete="off">
                         <label for="renderedHours">Date</label>
-                        <p id="currentDate"></p>
+                        <p id="currentDate"><%= userData.date %></p>
                         <br>
                         <label for="renderedHours">Rendered Hours</label><br>
                         <input type="text" id="renderedHours" name="renderedHours" required placeholder="HH:MM:SS"><br>
@@ -152,7 +152,7 @@
                 <div class="updates">
                     <div class="message">
                         <span class="close" onclick="closeDocumentModal()">&times;</span>
-                        <h2>Select Required Documents</h2>
+                        <h2>Required Documents</h2>
                             <form id="documentForm">
                             <!-- Example checkboxes -->
                             <input type="checkbox" id="document1" name="document1" value="Document 1">
@@ -161,7 +161,6 @@
                             <label for="document2">Document 2</label><br>
                             <input type="checkbox" id="document3" name="document3" value="Document 3">
                             <label for="document3">Document 3</label><br><br>
-                            <button type="submit">Submit</button>
                             </form>
                     </div>
                 </div>

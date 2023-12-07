@@ -19,6 +19,7 @@ function formatDate(dateString) {
           const row = document.createElement('tr');
           row.innerHTML = `
             <td>${record.firstName} ${record.lastName}</td>
+            <td>${record.companyName}</td>
             <td>${record.workDescription}</td>
             <td>${record.renderedHours}</td>
           `;

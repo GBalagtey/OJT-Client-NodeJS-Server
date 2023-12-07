@@ -394,11 +394,14 @@ router.get('/getStudentRecords', requireLogin, (req, res) => {
       student.lastName,
       student.totalRenderedHours,
       student.companyID,
+      company.companyName,
       SUM(ojt_records.renderedHours) AS totalRenderedHoursOjt
     FROM
       student
     LEFT JOIN
       ojt_records ON student.studID = ojt_records.studID
+    LEFT JOIN
+    company ON student.companyID = company.companyID
     WHERE
       student.teacherID = ?
     GROUP BY

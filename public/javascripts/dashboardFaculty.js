@@ -23,17 +23,17 @@ function populateStudentRecords() {
 
           recordsTable.innerHTML = '';
           records.forEach(record => {
-            console.log(records.totalRenderedHoursOjt);
-            console.log(records.requiredHours);
-            const hardcodedTotalRenderedHours = records.totalRenderedHoursOjt;
-            const hardcodedTotalRequiredHours = records.requiredHours;
+            console.log(record.totalRenderedHoursOjt);
+            console.log(record.requiredHours);
+            const hardcodedTotalRenderedHours = record.totalRenderedHoursOjt;
+            const hardcodedTotalRequiredHours = record.requiredHours;
             const progressPercentage = calculateProgress(hardcodedTotalRenderedHours, hardcodedTotalRequiredHours);
               const row = document.createElement('tr');
               row.innerHTML = `
                   <td>${record.firstName} ${record.lastName}</td>
                   <td>${record.companyName}</td>
                   <td>
-                      <div class="progress-bar" style="width: ${progressPercentage}%"></div>
+                      <div class="progress-bar" style="width: ${progressPercentage}%; background-color: #7380ec;"></div>
                   </td>
                   <td>${record.renderedHours}</td>
               `;
@@ -47,7 +47,9 @@ function populateStudentRecords() {
 }
 
 function calculateProgress(totalRenderedHours, totalRequiredHours) {
-  const percentage = (totalRenderedHours / totalRequiredHours) * 100;
+  const renderedHours = totalRenderedHours;
+  const requiredHours = parseTime(totalRequiredHours);
+  const percentage = (renderedHours / requiredHours) * 100;
   console.log(`Percentage: ${percentage}%`);
   return percentage;
 }

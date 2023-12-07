@@ -245,6 +245,14 @@ main .progress {
     transition: width 0.5s ease-in-out;
 }
 
+main .progress {
+    width: var(--progress-width);
+    height: 100%;
+    background-color: #7380ec;
+    border-radius: 4px;
+    transition: width 0.5s ease-in-out;
+}
+
 #modalBtn {
     background: none;
     border: none;

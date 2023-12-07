@@ -62,3 +62,61 @@ function parseTime(timeString) {
 
 // Call progressWidthFill before populateStudentRecords
 populateStudentRecords();
+
+// Function for Filter (you got this Gregg)
+// Get the table rows
+const table = document.getElementById('recordsTable');
+const rows = table.getElementsByTagName('tr');
+
+// Function to sort by student's name
+function sortByName() {
+  const sortedRows = Array.from(rows).slice(1); // Ignore the header row
+
+  sortedRows.sort((a, b) => {
+    const nameA = a.cells[0].textContent.toUpperCase();
+    const nameB = b.cells[0].textContent.toUpperCase();
+
+    if (nameA < nameB) return -1;
+    if (nameA > nameB) return 1;
+    return 0;
+  });
+
+  table.innerHTML = '';
+  table.appendChild(rows[0]); // Add the header row
+
+  sortedRows.forEach(row => {
+    table.appendChild(row);
+  });
+}
+
+// Function to sort by company name
+function sortByCompany() {
+  const sortedRows = Array.from(rows).slice(1); // Ignore the header row
+
+  sortedRows.sort((a, b) => {
+    const companyA = a.cells[1].textContent.toUpperCase();
+    const companyB = b.cells[1].textContent.toUpperCase();
+
+    if (companyA < companyB) return -1;
+    if (companyA > companyB) return 1;
+    return 0;
+  });
+
+  table.innerHTML = '';
+  table.appendChild(rows[0]); // Add the header row
+
+  sortedRows.forEach(row => {
+    table.appendChild(row);
+  });
+}
+
+// Function to sort by progress
+function sortByProgress() {
+  // Your logic for sorting by progress goes here
+  // Assuming you have the progress as a numerical value in cells[2]
+}
+
+// Attach event listeners for sorting
+document.getElementById('sortByName').addEventListener('click', sortByName);
+document.getElementById('sortByCompany').addEventListener('click', sortByCompany);
+document.getElementById('sortByProgress').addEventListener('click', sortByProgress);

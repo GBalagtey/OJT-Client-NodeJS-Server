@@ -55,6 +55,10 @@ router.get('/getHistory', requireLogin, (req, res) => {
   res.render('history'); // Render the 'history.ejs' file
 });
 
+// GET student list page
+router.get('/getStudentList', requireLogin, (req, res) => {
+  res.render('studentList'); // Render the 'studentList.ejs' file
+});
 
 // GET faculty dashboard page
 router.get('/getDashboardFaculty', requireLogin, (req, res) => {

@@ -106,8 +106,6 @@ router.get('/getDashboardFaculty', requireLogin, (req, res) => {
       res.send('User not found');
     }
   });
-
-  
 });
 
 // GET dashboard page

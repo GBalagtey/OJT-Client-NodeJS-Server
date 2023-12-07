@@ -35,7 +35,7 @@ function populateStudentRecords() {
                   <td>
                       <div class="progress-bar" style="width: ${progressPercentage}%; background-color: #7380ec;"></div>
                   </td>
-                  <td>${record.renderedHours}</td>
+                  <td>${progressPercentage.toFixed(2)}</td>
               `;
 
               recordsTable.appendChild(row);

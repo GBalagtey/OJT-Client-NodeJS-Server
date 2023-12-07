@@ -389,23 +389,25 @@ router.get('/getStudentRecords', requireLogin, (req, res) => {
 
   // Adjust the query to retrieve the relevant records for the specific student
   const query = `
-    SELECT
-      student.firstName,
-      student.lastName,
-      student.totalRenderedHours,
-      student.companyID,
-      company.companyName,
-      SUM(ojt_records.renderedHours) AS totalRenderedHoursOjt
-    FROM
-      student
-    LEFT JOIN
-      ojt_records ON student.studID = ojt_records.studID
-    LEFT JOIN
+  SELECT
+    student.firstName,
+    student.lastName,
+    student.companyID,
+    company.companyName,
+    ojt_requirements.requiredHours,
+    SUM(ojt_records.renderedHours) AS totalRenderedHoursOjt
+  FROM
+    student
+  LEFT JOIN
+    ojt_records ON student.studID = ojt_records.studID
+  LEFT JOIN
     company ON student.companyID = company.companyID
-    WHERE
-      student.teacherID = ?
-    GROUP BY
-      student.studID;
+  LEFT JOIN
+    ojt_requirements ON student.requirementID = ojt_requirements.requirementID
+  WHERE
+    student.teacherID = ?
+  GROUP BY
+    student.studID;
   `;
 
   connection.query(query, [teacherID], (error, results) => {

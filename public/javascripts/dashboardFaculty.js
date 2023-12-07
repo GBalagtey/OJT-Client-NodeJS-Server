@@ -5,54 +5,43 @@ function formatDate(dateString) {
   
   function populateStudentRecords() {
     const recordsTable = document.getElementById('recordsTable');
-  
+
     fetch('/getStudentRecords')
-      .then(response => {
-        console.log('Raw response:', response);
-        return response.json();
-      })
-      .then(records => {
-        console.log('Fetched records:', records);
-  
-        recordsTable.innerHTML = '';
-        records.forEach(record => {
-          const row = document.createElement('tr');
-          row.innerHTML = `
-            <td>${record.firstName} ${record.lastName}</td>
-            <td>${record.companyName}</td>
-            <td>${record.workDescription}</td>
-            <td>${record.renderedHours}</td>
-          `;
-  
-          recordsTable.appendChild(row);
+        .then(response => response.json())
+        .then(records => {
+            recordsTable.innerHTML = '';
+            records.forEach(record => {
+                const row = document.createElement('tr');
+                const progressPercentage = calculateProgressPercentage(record.requiredHours, record.totalRenderedHoursOjt);
+
+                // Update the row to include a progress bar
+                row.innerHTML = `
+                    <td>${record.firstName} ${record.lastName}</td>
+                    <td>${record.companyName}</td>
+                    <td>
+                        <div class="progress-bar" style="width: ${progressPercentage}%"></div>
+                    </td>
+                    <td>${record.totalRenderedHoursOjt}</td>
+                `;
+                console.log(record.firstName);
+                console.log(record.requiredHours);
+                console.log(record.totalRenderedHoursOjt);
+
+                recordsTable.appendChild(row);
+            });
+        })
+        .catch(error => {
+            console.error('Error fetching student records:', error);
         });
-      })
-      .catch(error => {
-        console.error('Error fetching student records:', error);
-      });
-  }
+}
   
-  
-  
-//   function progressWidthFill() {
-//     const progressWidth = document.getElementById('progress');
-  
-//     fetch('/getProgress')
-//       .then(response => response.json())
-//       .then(data => {
-//         if (data.length > 0) {
-//           const totalRenderedHours = parseTime(data[0].total_time);
-//           const totalRequiredHours = parseTime(data[0].hours_required);
-//           const percentage = (totalRenderedHours / totalRequiredHours) * 100;
-//           console.log(`Percentage: ${percentage}%`);
-//           progressWidth.style.width = percentage + '%';
-//         }
-//       })
-//       .catch(error => {
-//         console.error('Error fetching progress data:', error);
-//       });
-//   }
-  
+  function calculateProgressPercentage(requiredHours, totalRenderedHoursOjt) {
+    const totalRequiredHours = requiredHours; // Use the total required hours from the record itself
+    const totalRenderedHours = totalRenderedHoursOjt;
+    const percentage = (totalRenderedHours / totalRequiredHours) * 100;
+    return Math.min(100, percentage); // Ensure the percentage does not exceed 100%
+}
+
   // Function to convert time to seconds
   function parseTime(timeString) {
     const [hours, minutes, seconds] = timeString.split(':').map(Number);

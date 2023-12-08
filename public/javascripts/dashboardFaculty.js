@@ -5,21 +5,19 @@ function formatDate(dateString) {
 
 function populateStudentRecords() {
   const recordsTable = document.getElementById('recordsTable');
+  const modalContent = document.getElementById('modalContent'); // Added this line
 
   fetch('/getStudentRecords')
-      .then(response => {
-          console.log('Raw response:', response);
-          return response.json();
-      })
+      .then(response => response.json())
       .then(records => {
           console.log('Fetched records:', records);
           recordsTable.innerHTML = '';
+
           records.forEach(record => {
-            console.log(record.totalRenderedHoursOjt);
-            console.log(record.requiredHours);
-            const hardcodedTotalRenderedHours = record.totalRenderedHoursOjt;
-            const hardcodedTotalRequiredHours = record.requiredHours;
-            const progressPercentage = calculateProgress(hardcodedTotalRenderedHours, hardcodedTotalRequiredHours);
+              const hardcodedTotalRenderedHours = record.totalRenderedHoursOjt;
+              const hardcodedTotalRequiredHours = record.requiredHours;
+              const progressPercentage = calculateProgress(hardcodedTotalRenderedHours, hardcodedTotalRequiredHours);
+
               const row = document.createElement('tr');
               row.innerHTML = `
                   <td>${record.firstName} ${record.lastName}</td>
@@ -28,7 +26,13 @@ function populateStudentRecords() {
                       <div class="progress-bar" style="width: ${progressPercentage}%; background-color: #7380ec;"></div>
                   </td>
                   <td>${progressPercentage.toFixed(2)}</td>
+                  <td><a href="#" class="more-link">More</a></td>
               `;
+
+              row.addEventListener('click', () => {
+                  // Call a function to populate modal content based on the clicked row
+                  openModal(record, progressPercentage);
+              });
 
               recordsTable.appendChild(row);
           });
@@ -36,6 +40,38 @@ function populateStudentRecords() {
       .catch(error => {
           console.error('Error fetching student records:', error);
       });
+}
+
+function openModal(record, progressPercentage) {
+  const modalContent = document.getElementById('modalContent');
+
+  // Fetch additional data based on the clicked row
+  fetch(`/getAdditionalData?studID=${record.studID}`) // Adjust the URL and parameters as needed
+    .then(response => response.json())
+    .then(additionalData => {
+      // Example: Populate modal content with the data from the clicked row and additional data
+      modalContent.innerHTML = `
+        <span class="close" onclick="closeModal()">&times;</span>
+        <h2 class="title-modal">Add Work Details</h2>
+        <div class="progress-bar" style="position: relative; width: 100%; background-color: #e0e0e0; border-radius: 5px;">
+          <div style="position: absolute; top: 0; left: 0; width: ${progressPercentage}%; height: 100%; background-color: #7380ec; border-radius: 5px;"></div>
+        </div>
+        <p>Student: ${record.firstName} ${record.lastName}</p>
+        <p>Company: ${record.companyName}</p>
+      `;
+
+      const modal = document.getElementById('myModal');
+      modal.style.display = 'block';
+    })
+    .catch(error => {
+      console.error('Error fetching additional data:', error);
+    });
+}
+
+
+function closeModal() {
+  const modal = document.getElementById('myModal');
+  modal.style.display = 'none';
 }
 
 function calculateProgress(totalRenderedHours, totalRequiredHours) {
@@ -52,7 +88,6 @@ function parseTime(timeString) {
   return hours * 3600 + minutes * 60 + seconds;
 }
 
-// Call progressWidthFill before populateStudentRecords
 populateStudentRecords();
 
 // Function for Filter (you got this Gregg)
@@ -112,3 +147,4 @@ function sortByProgress() {
 document.getElementById('sortByName').addEventListener('click', sortByName);
 document.getElementById('sortByCompany').addEventListener('click', sortByCompany);
 document.getElementById('sortByProgress').addEventListener('click', sortByProgress);
+

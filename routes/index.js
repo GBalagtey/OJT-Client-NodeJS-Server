@@ -461,6 +461,28 @@ LEFT JOIN
   });
 });
 
+router.get('/getAdditionalData', (req, res) => {
+  const studID = req.query.studID;
+
+  const query = `
+  SELECT docID
+FROM 
+document_sub
+WHERE
+studID = 2222613;
+  `;
+
+  connection.query(query, [teacherID], (error, results) => {
+    if (error) {
+      console.error('Error fetching latest records:', error);
+      res.status(500).send('Internal Server Error');
+      return;
+    }
+
+    res.json(results);
+  });
+});
+
 
 router.get('/getRecordHistory', requireLogin, (req, res) => {
   const studId = req.session.studID;

@@ -50,6 +50,11 @@ router.get('/getChangePassword', requireLogin, (req, res) => {
   res.render('changePassword'); // Render the 'changePassword.ejs' file
 });
 
+// GET change password page
+router.get('/getChangePasswordFaculty', requireLogin, (req, res) => {
+  res.render('changePasswordFaculty'); // Render the 'changePasswordFaculty.ejs' file
+});
+
 // GET history page
 router.get('/getHistory', requireLogin, (req, res) => {
   res.render('history'); // Render the 'history.ejs' file

@@ -13,14 +13,6 @@ function populateStudentRecords() {
       })
       .then(records => {
           console.log('Fetched records:', records);
-          
-
-
-          
-          // const hardcodedTotalRenderedHours = record.totalRenderedHoursOjt;
-          // const hardcodedTotalRequiredHours = record.requiredHours;
-          
-
           recordsTable.innerHTML = '';
           records.forEach(record => {
             console.log(record.totalRenderedHoursOjt);

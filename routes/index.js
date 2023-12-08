@@ -428,6 +428,39 @@ router.get('/getStudentRecords', requireLogin, (req, res) => {
   });
 });
 
+router.get('/getAllStudentRecords', requireLogin, (req, res) => {
+  const studId = req.session.studID;
+  const teacherID = req.session.teacherID; // Log this line
+  console.log('Teacher ID in getStudentRecords:', teacherID);
+
+  // Adjust the query to retrieve the relevant records for the specific student
+  const query = `
+  SELECT
+    student.firstName,
+    student.lastName,
+    student.studEmail, 
+    student.supervisor,
+    company.companyName,
+    CONCAT(teacher.firstName, ' ', teacher.lastName) AS teacherName
+  FROM
+    student
+  LEFT JOIN
+    company ON student.companyID = company.companyID
+LEFT JOIN
+	teacher ON student.teacherID = teacher.teacherID
+  `;
+
+  connection.query(query, [teacherID], (error, results) => {
+    if (error) {
+      console.error('Error fetching latest records:', error);
+      res.status(500).send('Internal Server Error');
+      return;
+    }
+
+    res.json(results);
+  });
+});
+
 
 router.get('/getRecordHistory', requireLogin, (req, res) => {
   const studId = req.session.studID;

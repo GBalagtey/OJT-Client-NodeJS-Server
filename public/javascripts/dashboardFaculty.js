@@ -44,7 +44,8 @@ function populateStudentRecords() {
 
 function openModal(record, progressPercentage) {
   const modalContent = document.getElementById('modalContent');
-
+  console.log(record.studID);
+  
   // Fetch additional data based on the clicked row
   fetch(`/getAdditionalData?studID=${record.studID}`) // Adjust the URL and parameters as needed
     .then(response => response.json())
@@ -58,6 +59,20 @@ function openModal(record, progressPercentage) {
         </div>
         <p>Student: ${record.firstName} ${record.lastName}</p>
         <p>Company: ${record.companyName}</p>
+        
+        <div class="announcements">
+          <h2>Requirements</h2>
+          <div class="updates">
+          <div class="message">
+            <span class="close" onclick="closeDocumentModal()">&times;</span>
+            <h3 id="submittedDisplay">Submitted Documents</h3>
+            <form id="documentForm">
+            </form>
+            <h3 id="pendingDisplay">Other required documents</h3>
+            <form id="pendingDocument">
+            </form>
+          </div>
+        </div>
       `;
 
       const modal = document.getElementById('myModal');
@@ -69,6 +84,7 @@ function openModal(record, progressPercentage) {
 }
 
 
+
 function closeModal() {
   const modal = document.getElementById('myModal');
   modal.style.display = 'none';
@@ -78,8 +94,12 @@ function calculateProgress(totalRenderedHours, totalRequiredHours) {
   const renderedHours = totalRenderedHours;
   const requiredHours = parseTime(totalRequiredHours);
   const percentage = (renderedHours / requiredHours) * 100;
-  console.log(`Percentage: ${percentage}%`);
-  return percentage;
+  
+  // Ensure the percentage does not exceed 100%
+  const cappedPercentage = Math.min(percentage, 100);
+  
+  console.log(`Percentage: ${cappedPercentage}%`);
+  return cappedPercentage;
 }
 
 // Function to convert time to seconds
@@ -147,4 +167,5 @@ function sortByProgress() {
 document.getElementById('sortByName').addEventListener('click', sortByName);
 document.getElementById('sortByCompany').addEventListener('click', sortByCompany);
 document.getElementById('sortByProgress').addEventListener('click', sortByProgress);
+
 

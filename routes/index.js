@@ -401,10 +401,11 @@ router.get('/getStudentRecords', requireLogin, (req, res) => {
     student.firstName,
     student.lastName,
     student.companyID,
+    student.studID,
     company.companyName,
     ojt_requirements.requiredHours,
     SUM(ojt_records.renderedHours) AS totalRenderedHoursOjt
-  FROM
+  FROM  
     student
   LEFT JOIN
     ojt_records ON student.studID = ojt_records.studID
@@ -493,21 +494,19 @@ router.get('/getAdditionalData', (req, res) => {
   const studID = req.query.studID;
 
   const query = `
-  SELECT docID
-FROM 
-document_sub
-WHERE
-studID = 2222613;
+    SELECT docID
+    FROM document_sub
+    WHERE studID = ?;
   `;
 
-  connection.query(query, [teacherID], (error, results) => {
+  connection.query(query, [studID], (error, results) => {
     if (error) {
-      console.error('Error fetching latest records:', error);
-      res.status(500).send('Internal Server Error');
+      console.error('Error fetching additional data:', error);
+      res.status(500).json({ error: 'Internal Server Error' }); // Send JSON error response
       return;
     }
 
-    res.json(results);
+    res.json(results);  
   });
 });
 

@@ -32,26 +32,6 @@ function closeDocumentModal() {
     modal.style.display = 'none';
 }
 
-// Function to handle form submission
-document.getElementById('documentForm').addEventListener('submit', function (event) {
-    event.preventDefault();
-
-    // Collect selected documents
-    const selectedDocuments = [];
-    const checkboxes = document.querySelectorAll('input[type="checkbox"]');
-    checkboxes.forEach(checkbox => {
-        if (checkbox.checked) {
-            selectedDocuments.push(checkbox.value);
-        }
-    });
-
-    // Do something with the selected documents (e.g., submit them)
-    console.log('Selected Documents:', selectedDocuments);
-
-    // Close the modal after submission
-    closeDocumentModal();
-});
-
 function validatePassword() {
     var newPassword = document.getElementById("newpass").value;
     var confirmPassword = document.getElementById("confirmpass").value;

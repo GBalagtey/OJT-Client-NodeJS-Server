@@ -198,6 +198,10 @@ aside .profile .about p{
 aside .profile .about{
     margin-top: 1rem;
 }
+#uploadPhoto {
+    border-radius: 50%;
+    border-color: transparent;
+}
 
 /* Home Section  */
 main{
@@ -420,6 +424,12 @@ main .timetable.active .closeBtn{
     top: 5%;right: 5%;
 }
 
+#no-records {
+    font-size: 20px;
+    position: absolute;
+    top: 45%;
+    left: 45%;
+}
 
 /* Search Bar */ 
 .search__input {
@@ -461,7 +471,9 @@ main .timetable.active .closeBtn{
 
 /* Right  */
 .right{margin-top: 2.2rem;padding-left: 1.5rem;}
-
+.right .announcements {
+    margin-bottom: 10%;
+}
 .right .announcements h2{margin-bottom: .8rem;}
 .right .announcements h3{margin-bottom: .8rem;}
 .right .announcements .message form{

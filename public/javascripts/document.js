@@ -1,22 +1,29 @@
 const documentForm = document.getElementById("documentForm");
 const pendingDocument = document.getElementById("pendingDocument");
 const pendingDisplay = document.getElementById("pendingDisplay");
+const submittedDisplay = document.getElementById("submittedDisplay");
 
 function populateDocument() {
   fetch('/getSubmittedDocuments')
     .then(response => response.json())
     .then(records => {
-      records.forEach(record => {
+        if (records.length === 0) {
+            submittedDisplay.style.display = 'none';
+            documentForm.style.display = 'none';
+            pendingDisplay.innerText = "Required Documents";
+          } else {
+        records.forEach(record => {
 
-        const newLabel = document.createElement("label");
-        newLabel.textContent = record.docName;
-        newLabel.htmlFor = record.docName;
-        newLabel.style.color = 'green';
+            const newLabel = document.createElement("label");
+            newLabel.textContent = record.docName;
+            newLabel.htmlFor = record.docName;
+            newLabel.style.color = 'green';
 
-        documentForm.appendChild(newLabel);
+            documentForm.appendChild(newLabel);
 
-        documentForm.appendChild(document.createElement("br"));
-      });
+            documentForm.appendChild(document.createElement("br"));
+        });
+        }
     })
     .catch(error => {
       console.error('Error fetching latest records:', error);

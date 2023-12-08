@@ -463,6 +463,10 @@ main .timetable.active .closeBtn{
 .right{margin-top: 2.2rem;padding-left: 1.5rem;}
 
 .right .announcements h2{margin-bottom: .8rem;}
+.right .announcements h3{margin-bottom: .8rem;}
+.right .announcements .message form{
+    margin-bottom: .8rem;
+}
 .right .announcements .updates{
     background-color: var(--color-white);
     padding: var(--card-padding);
@@ -498,6 +502,8 @@ main .timetable.active .closeBtn{
     overflow: hidden;
 }
 .right .leaves .teacher:hover{box-shadow: none;}
+
+
 
 
 

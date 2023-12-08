@@ -127,7 +127,7 @@ router.get('/dashboard', requireLogin, (req, res) => {
     FROM student
     JOIN course ON student.courseID = course.courseCode
     JOIN program ON course.programID = program.programID
-    JOIN company ON company.companyID = student.companyID
+    LEFT JOIN company ON company.companyID = student.companyID
     WHERE student.studEmail = ?
   `;
   connection.query(query, [email], (error, results) => {
@@ -446,18 +446,62 @@ router.get('/getRecordHistory', requireLogin, (req, res) => {
   });
 });
 
+router.get('/getSubmittedDocuments', requireLogin, (req, res) => {
+  const studID =req.session.studID;
+
+  const query = `SELECT document.docName FROM document
+  JOIN document_sub ON document_sub.docID = document.docID
+  JOIN student ON student.studID = document_sub.studID
+  WHERE document_sub.hasBeenSubmitted AND student.studID = ?
+  ORDER BY document.docName;`;
+
+  connection.query(query, [studID], (error, results) => {
+    if(error) {
+      console.error('Error fetching submitted documents:', error);
+      res.status(500).send('Internal Server Error');
+      return;
+    }
+  res.json(results);
+  });
+});
+
+router.get('/getPendingDocuments', requireLogin, (req, res) => {
+  const studID =req.session.studID;
+
+  const query = `SELECT document.docID, document.docName 
+  FROM document
+  WHERE document.isOptional = ?
+    AND NOT EXISTS (
+      SELECT 1
+      FROM document_sub
+      JOIN student ON student.studID = document_sub.studID
+      WHERE document_sub.docID = document.docID
+        AND student.studID = ?
+        AND document_sub.hasBeenSubmitted
+    );`;
+
+  connection.query(query, [0, studID], (error, results) => {
+    if(error) {
+      console.error('Error fetching pending documents:', error);
+      res.status(500).send('Internal Server Error');
+      return;
+    }
+  res.json(results);
+  });
+});
+
 router.get('/getProgress', requireLogin, (req, res) => {
   const studId = req.session.studID;
 
   // Adjust the query to retrieve the relevant records for the specific student
   const query = `
-    SELECT      
-      SEC_TO_TIME(SUM(TIME_TO_SEC(ojt_records.renderedHours))) AS total_time,
+  SELECT      
+  COALESCE(SEC_TO_TIME(SUM(TIME_TO_SEC(ojt_records.renderedHours))), '00:00:00') AS total_time,
       SEC_TO_TIME(TIME_TO_SEC(student.demerit) + TIME_TO_SEC(ojt_requirements.requiredHours)) AS hours_required
-    FROM ojt_records
-    JOIN student ON student.studID = ojt_records.studID
+    FROM student
+    LEFT JOIN ojt_records ON student.studID = ojt_records.studID
     JOIN ojt_requirements ON ojt_requirements.requirementID = student.requirementID
-    WHERE ojt_records.studID = ?
+    WHERE student.studID = ?;
   `;
 
   connection.query(query, [studId], (error, results) => {

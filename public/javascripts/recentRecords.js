@@ -33,11 +33,12 @@ function formatDate(dateString) {
       .then(response => response.json())
       .then(data => {
         if(data.length > 0){
-        const totalRenderedHours = parseTime(data[0].total_time);
-        const totalRequiredHours = parseTime(data[0].hours_required);
-        const percentage = (totalRenderedHours/ totalRequiredHours) * 100;
-        console.log(`Percentage: ${percentage}%`);
-        progressWidth.style.width = percentage + '%';
+          const totalRenderedHours = parseTime(data[0].total_time);
+          let percentage = 0;  
+          const totalRequiredHours = parseTime(data[0].hours_required);
+          percentage = (totalRenderedHours/ totalRequiredHours) * 100;
+          console.log(`Percentage: ${percentage}%`);
+          progressWidth.style.width = percentage + '%';
       }
       })
       .catch(error => {

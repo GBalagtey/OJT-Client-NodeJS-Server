@@ -85,16 +85,21 @@
                     <h5>Address</h5>
                     <p><%= userData.address %></p>
                     <br>
-                    <h3> COMPANY DETAILS</h3>
-                    <hr><br>
-                    <h5>Company</h5>
-                    <p><%= userData.companyName %></p>
-                    <h5>Address</h5>
-                    <p><%= userData.companyLocation %></p>
-                    <h5>Description</h5>
-                    <p><%= userData.companyDescription %></p>
-                    <h5>Supervisor</h5>
-                    <p><%= userData.supervisor %></p>
+                    
+                    <% if (userData.companyName !== null) { %>
+                        <h3> COMPANY DETAILS</h3>
+                        <hr><br>
+                        <div class="company">
+                          <h5>Company</h5>
+                          <p><%= userData.companyName %></p>
+                          <h5>Address</h5>
+                          <p><%= userData.companyLocation %></p>
+                          <h5>Description</h5>
+                          <p><%= userData.companyDescription %></p>
+                          <h5>Supervisor</h5>
+                          <p><%= userData.supervisor %></p>
+                        </div>
+                      <% } %>
                 </div>
             </div>
         </aside>
@@ -152,15 +157,11 @@
                 <div class="updates">
                     <div class="message">
                         <span class="close" onclick="closeDocumentModal()">&times;</span>
-                        <h2>Required Documents</h2>
+                        <h3>Submitted Documents</h3>
                             <form id="documentForm">
-                            <!-- Example checkboxes -->
-                            <input type="checkbox" id="document1" name="document1" value="Document 1">
-                            <label for="document1">Document 1</label><br>
-                            <input type="checkbox" id="document2" name="document2" value="Document 2">
-                            <label for="document2">Document 2</label><br>
-                            <input type="checkbox" id="document3" name="document3" value="Document 3">
-                            <label for="document3">Document 3</label><br><br>
+                            </form>
+                        <h3 id="pendingDisplay">Other required documents</h3>
+                        <form id="pendingDocument">
                             </form>
                     </div>
                 </div>

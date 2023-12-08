@@ -3,6 +3,7 @@ const session = require('express-session');
 var router = express.Router();
 var connection = require('../database')
 const bcrypt = require('bcrypt');
+const multer = require('multer');
 
 router.use(session({
   secret: 'ivar',
@@ -420,6 +421,32 @@ router.get('/getStudentRecords', requireLogin, (req, res) => {
     }
 
     res.json(results);
+  });
+});
+
+//UPLOAD PHOTO
+const storage = multer.memoryStorage();
+const upload = multer({ storage: storage });
+router.post('/upload', upload.single('file'), (req, res) => {
+  const file = req.file;
+  const studID = req.session.studID;
+
+  if (!file) {
+      return res.status(400).json({ error: 'No file provided' });
+  }
+  console.log('Received file:', file.originalname, 'with size:', file.size);
+
+  const blob = Buffer.from(file.buffer, 'binary');
+  const query = 'UPDATE student SET photo = ? WHERE studID = ?';
+
+  connection.query(query, [blob, studID], (error, results) => {
+      if (error) {
+          console.error('Error updating photo:', error);
+          res.status(500).json({ error: 'Internal Server Error' });
+      } else {
+          console.log('Photo updated successfully');
+          res.json({ success: true });
+      }
   });
 });
 

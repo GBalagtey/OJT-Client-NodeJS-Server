@@ -45,6 +45,44 @@ function formatDate(dateString) {
         console.error('Error fetching latest records:', error);
       });
   }
+
+  //UPLOAD PHOTO
+  function handleFileSelect(event) {
+    const fileInput = event.target;
+    const file = fileInput.files[0];
+
+    if (file) {
+        const reader = new FileReader();
+
+        reader.onload = function (e) {
+            const profilePhotoImg = document.getElementById('profile-photo-img');
+            profilePhotoImg.src = e.target.result;
+
+            uploadFile(file);
+        };
+
+        reader.readAsDataURL(file);
+    }
+}
+
+function uploadFile(file) {
+    const formData = new FormData();
+    formData.append('file', file);
+
+    fetch('/upload', {
+        method: 'POST',
+        body: formData,
+    })
+    .then(response => response.json())
+    .then(data => {
+        console.log('File uploaded successfully:', data);
+        // You can handle the server response here
+    })
+    .catch(error => {
+        console.error('Error uploading file:', error);
+    });
+}
+
   //function to convert time to seconds
 function parseTime(timeString) {
   const [hours, minutes, seconds] = timeString.split(':').map(Number);

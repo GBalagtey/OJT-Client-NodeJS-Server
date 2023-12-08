@@ -62,15 +62,25 @@
     <div class="container">
         <aside>
             <div class="profile">
-                <div class="top">
-                    <div class="profile-photo">
-                        <img id="profile-photo-img" src="<%= userData.photo %>" alt="">
+                    <div class="top">
+                        <button id="uploadPhoto">
+                            <label for="fileInput">
+                                <div class="profile-photo">
+                                    <% if (userData.photo === null) { %>
+                                        <img id="profile-photo-img" src="./images/uploadPhoto.png" alt="">
+                                    <% } else { %>
+                                        <img id="profile-photo-img" src="<%= userData.photo %>" alt="">
+                                    <% } %>
+                                </div>
+                            </label>
+                            <input type="file" id="fileInput" style="display: none;" accept="image/*" onchange="handleFileSelect(event)">
+                        </button>
+                        <input type="file" id="photoInput" name="photo" style="display: none;" accept="image/*">
+                        <div class="info">
+                            <p>Hey, <b><%= userData.firstName %></b> </p>
+                            <small class="text-muted"><%= userData.studID %></small>
+                        </div>  
                     </div>
-                    <div class="info">
-                        <p>Hey, <b><%= userData.firstName %></b> </p>
-                        <small class="text-muted"><%= userData.studID %></small>
-                    </div>
-                </div>
                 <div class="about">
                     <h3> PERSONAL DETAILS</h3>
                     <hr><br>
@@ -108,7 +118,11 @@
             <h1>Progress</h1>
             <div class="progress-bar">
                 <div id="progress" class="progress"></div>
+                <% if (userData.companyName !== null) { %>
                 <button id="modalBtn">Daily Report</button>
+                <% } else { %>
+                    <button id="modalBtn" disabled style="display: none;">Daily Report</button>
+                <% } %> 
             </div>
 
             <!-- Progress Modal -->
@@ -132,22 +146,23 @@
                 </div>
             </div>
             <!-- End of Progress Modal -->
-            
-            <div class="timetable" id="timetable">
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Date</th>
-                            <th>Work Description</th>
-                            <th>Rendered Hours</th>
-                        </tr>
-                    </thead>
-                    <tbody id="recordsTable">
-                        <!-- Records will be populated here -->
-                    </tbody>
-                </table>
-            </div>
-            
+            <% if (userData.companyName !== null) { %>
+                <h2>DTR for the last 3 days</h2>
+                <div class="timetable" id="timetable">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Date</th>
+                                <th>Work Description</th>
+                                <th>Rendered Hours</th>
+                            </tr>
+                        </thead>
+                        <tbody id="recordsTable">
+                            <!-- Records will be populated here -->
+                        </tbody>
+                    </table>
+                </div>
+              <% } %>
 
         </main>
 
@@ -157,7 +172,7 @@
                 <div class="updates">
                     <div class="message">
                         <span class="close" onclick="closeDocumentModal()">&times;</span>
-                        <h3>Submitted Documents</h3>
+                        <h3 id="submittedDisplay">Submitted Documents</h3>
                             <form id="documentForm">
                             </form>
                         <h3 id="pendingDisplay">Other required documents</h3>

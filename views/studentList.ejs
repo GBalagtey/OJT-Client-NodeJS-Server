@@ -16,15 +16,15 @@
             <h2>OJT PORTAL</h2>
         </div>
         <div class="navbar">
-            <a href="/getDashboardFaculty" class="active">
+            <a href="/getDashboardFaculty">
                 <span class="material-icons-sharp">home</span>
                 <h3>Home</h3>
             </a>
-            <a href="/getStudentList">
+            <a href="/getStudentList" class="active">
                 <span class="material-icons-sharp">today</span>
                 <h3>Students</h3>
             </a> 
-            <a href="/getChangePassword">
+            <a href="/getChangePasswordFaculty">
                 <span class="material-icons-sharp">password</span>
                 <h3>Change Password</h3>
             </a>
@@ -47,14 +47,16 @@
     <main style="margin: 0;">
         <div class="timetable active" id="timetable">
             <div>
-                <h2>OJT Record History</h2>
+                <h2>List of All Students</h2>
             </div>
             <table class="table">
                 <thead>
                     <tr>
-                        <th>Date</th>
-                        <th>Work Description</th>
-                        <th>Rendered Hours</th>
+                        <th>Student Name</th>
+                        <th>Company</th>
+                        <th>Contact Information</th>
+                        <th>Adviser</th>
+                        <th>Supervisor</th>
                     </tr>
                 </thead>
                 <tbody id="timeTable"></tbody>
@@ -64,5 +66,6 @@
 
 </body>
 <!-- Scripts -->
+<script src="/javascripts/studentTable.js"></script>
 </html>
 

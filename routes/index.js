@@ -51,6 +51,11 @@ router.get('/getChangePassword', requireLogin, (req, res) => {
   res.render('changePassword'); // Render the 'changePassword.ejs' file
 });
 
+// GET change password page
+router.get('/getChangePasswordFaculty', requireLogin, (req, res) => {
+  res.render('changePasswordFaculty'); // Render the 'changePasswordFaculty.ejs' file
+});
+
 // GET history page
 router.get('/getHistory', requireLogin, (req, res) => {
   res.render('history'); // Render the 'history.ejs' file
@@ -424,6 +429,7 @@ router.get('/getStudentRecords', requireLogin, (req, res) => {
   });
 });
 
+
 //UPLOAD PHOTO
 const storage = multer.memoryStorage();
 const upload = multer({ storage: storage });
@@ -447,6 +453,39 @@ router.post('/upload', upload.single('file'), (req, res) => {
           console.log('Photo updated successfully');
           res.json({ success: true });
       }
+    });
+  });
+
+router.get('/getAllStudentRecords', requireLogin, (req, res) => {
+  const studId = req.session.studID;
+  const teacherID = req.session.teacherID; // Log this line
+  console.log('Teacher ID in getStudentRecords:', teacherID);
+
+  // Adjust the query to retrieve the relevant records for the specific student
+  const query = `
+  SELECT
+    student.firstName,
+    student.lastName,
+    student.studEmail, 
+    student.supervisor,
+    company.companyName,
+    CONCAT(teacher.firstName, ' ', teacher.lastName) AS teacherName
+  FROM
+    student
+  LEFT JOIN
+    company ON student.companyID = company.companyID
+LEFT JOIN
+	teacher ON student.teacherID = teacher.teacherID
+  `;
+
+  connection.query(query, [teacherID], (error, results) => {
+    if (error) {
+      console.error('Error fetching latest records:', error);
+      res.status(500).send('Internal Server Error');
+      return;
+    }
+
+    res.json(results);
   });
 });
 

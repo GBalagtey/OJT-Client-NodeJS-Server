@@ -86,7 +86,8 @@ function openModal(record, progressPercentage) {
         .then(response => response.json())
         .then(submittedDocuments => {
           submittedDocuments.forEach(doc => {
-            const checkbox = document.createElement('input');
+            const checkbox = document.createElement('input');    
+            checkbox.checked = true;  
             checkbox.type = 'checkbox';
             checkbox.name = 'submittedDocument';
             checkbox.value = doc.docName;
@@ -102,24 +103,24 @@ function openModal(record, progressPercentage) {
         });
 
       // Populate pending documents
-      // const pendingDocumentForm = document.getElementById('pendingDocument');
-      // fetch('/getPendingDocuments')
-      //   .then(response => response.json())
-      //   .then(pendingDocuments => {
-      //     pendingDocuments.forEach(doc => {
-      //       const checkbox = document.createElement('input');
-      //       checkbox.type = 'checkbox';
-      //       checkbox.name = 'pendingDocument';
-      //       checkbox.value = doc.docName;
-      //       const label = document.createElement('label');
-      //       label.appendChild(checkbox);
-      //       label.appendChild(document.createTextNode(doc.docName));
-      //       pendingDocumentForm.appendChild(label);
-      //     });
-      //   })
-      //   .catch(error => {
-      //     console.error('Error fetching pending documents:', error);
-      //   });
+      const pendingDocumentForm = document.getElementById('pendingDocument');
+      fetch(`/getPendingDocumentsFaculty?studID=${record.studID}`)
+        .then(response => response.json())
+        .then(pendingDocuments => {
+          pendingDocuments.forEach(doc => {
+            const checkbox = document.createElement('input');
+            checkbox.type = 'checkbox';
+            checkbox.name = 'pendingDocument';
+            checkbox.value = doc.docName;
+            const label = document.createElement('label');
+            label.appendChild(checkbox);
+            label.appendChild(document.createTextNode(doc.docName));
+            pendingDocumentForm.appendChild(label);
+          });
+        })
+        .catch(error => {
+          console.error('Error fetching pending documents:', error);
+        });
     })
     .catch(error => {
       console.error('Error fetching additional data:', error);

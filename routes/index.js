@@ -578,8 +578,7 @@ router.get('/getPendingDocuments', requireLogin, (req, res) => {
 });
 
 router.get('/getSubmittedDocumentsFaculty', requireLogin, (req, res) => {
-  const studID =req.body.studID;
-  console.log(studID);
+  const studID =req.query.studID;
 
   const query = `SELECT document.docName FROM document
   JOIN document_sub ON document_sub.docID = document.docID
@@ -593,14 +592,12 @@ router.get('/getSubmittedDocumentsFaculty', requireLogin, (req, res) => {
       res.status(500).send('Internal Server Error');
       return;
     }
-    console.log('studID: ', studID);
-    console.log('Submitted Documents:', results);
   res.json(results);
   });
 });
 
 router.get('/getPendingDocumentsFaculty', requireLogin, (req, res) => {
-  const studID =req.body.studID;
+  const studID =req.query.studID;
 
   const query = `SELECT document.docID, document.docName 
   FROM document
@@ -620,9 +617,34 @@ router.get('/getPendingDocumentsFaculty', requireLogin, (req, res) => {
       res.status(500).send('Internal Server Error');
       return;
     }
+    console.log('studID: ', studID);
+    console.log('Submitted Documents:', results);
+    console.log(results);
   res.json(results);
   });
 });
+
+// router.post('/updateSubmittedDocuments', requireLogin, (req, res) => {
+//   try {
+//     const studID = req.query.studID;
+//   const docID = req.query.docID;
+//   const isChecked = req.query.isChecked;
+
+//   if (!studID || !docID) {
+//     res.status(400).send('Bad Request: Missing studID or docID');
+//     return;
+//   }
+
+//   const query = `
+//     DELETE FROM document_sub
+//     WHERE studID = ? AND docID = ?;
+//   `
+//   } catch (error) {
+    
+//   }
+  
+
+// });
 
 router.get('/getProgress', requireLogin, (req, res) => {
   const studId = req.session.studID;

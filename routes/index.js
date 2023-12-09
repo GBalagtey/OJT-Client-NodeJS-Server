@@ -578,23 +578,27 @@ router.get('/getPendingDocuments', requireLogin, (req, res) => {
 });
 
 router.get('/getSubmittedDocumentsFaculty', requireLogin, (req, res) => {
-  const studID =req.query.studID;
+  const studID = req.query.studID;
 
-  const query = `SELECT document.docName FROM document
-  JOIN document_sub ON document_sub.docID = document.docID
-  JOIN student ON student.studID = document_sub.studID
-  WHERE document_sub.hasBeenSubmitted AND student.studID = ?
-  ORDER BY document.docName;`;
+  const query = `
+    SELECT document.docName
+    FROM document
+    JOIN document_sub ON document_sub.docID = document.docID
+    JOIN student ON student.studID = document_sub.studID
+    WHERE (document_sub.hasBeenSubmitted = 1 OR document_sub.hasBeenSubmitted IS NULL)
+      AND student.studID = ?
+    ORDER BY document.docName;`;
 
   connection.query(query, [studID], (error, results) => {
-    if(error) {
+    if (error) {
       console.error('Error fetching submitted documents:', error);
       res.status(500).send('Internal Server Error');
       return;
     }
-  res.json(results);
+    res.json(results);
   });
 });
+
 
 router.get('/getPendingDocumentsFaculty', requireLogin, (req, res) => {
   const studID =req.query.studID;
@@ -627,7 +631,7 @@ router.get('/getPendingDocumentsFaculty', requireLogin, (req, res) => {
 // router.post('/updateSubmittedDocuments', requireLogin, (req, res) => {
 //   try {
 //     const studID = req.query.studID;
-//   const docID = req.query.docID;
+//   const docID = req.query.docID;   
 //   const isChecked = req.query.isChecked;
 
 //   if (!studID || !docID) {

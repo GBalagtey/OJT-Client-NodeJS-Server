@@ -17,13 +17,18 @@ function populateStudentRecords() {
               const hardcodedTotalRenderedHours = record.totalRenderedHoursOjt;
               const hardcodedTotalRequiredHours = record.requiredHours;
               const progressPercentage = calculateProgress(hardcodedTotalRenderedHours, hardcodedTotalRequiredHours);
+              if(record.companyName == null){
+                record.companyName = 'None';
+              }   
 
               const row = document.createElement('tr');
               row.innerHTML = `
                   <td>${record.firstName} ${record.lastName}</td>
                   <td>${record.companyName}</td>
                   <td>
-                      <div class="progress-bar" style="width: ${progressPercentage}%; background-color: #7380ec;"></div>
+                  <div class="progress-bar" style="position: relative; width: 100%; background-color: #e0e0e0; border-radius: 5px;">
+                    <div style="position: absolute; top: 0; left: 0; width: ${progressPercentage}%; height: 100%; background-color: #7380ec; border-radius: 5px;"></div>
+                  </div>
                   </td>
                   <td>${progressPercentage.toFixed(2)}</td>
                   <td><a href="#" class="more-link">More</a></td>

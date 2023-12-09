@@ -63,25 +63,69 @@ function openModal(record, progressPercentage) {
         <div class="announcements">
           <h2>Requirements</h2>
           <div class="updates">
-          <div class="message">
-            <span class="close" onclick="closeDocumentModal()">&times;</span>
-            <h3 id="submittedDisplay">Submitted Documents</h3>
-            <form id="documentForm">
-            </form>
-            <h3 id="pendingDisplay">Other required documents</h3>
-            <form id="pendingDocument">
-            </form>
+            <div class="message">
+              <h3 id="submittedDisplay">Submitted Documents</h3>
+              <form id="documentForm">
+                <!-- Populate submitted documents here -->
+              </form>
+              <h3 id="pendingDisplay">Other required documents</h3>
+              <form id="pendingDocument">
+                <!-- Populate pending documents here -->
+              </form>
+            </div>
           </div>
         </div>
       `;
 
       const modal = document.getElementById('myModal');
       modal.style.display = 'block';
+      console.log("LOOK AT ME ",  record.studID);
+      // Populate submitted documents
+      const documentForm = document.getElementById('documentForm');
+      fetch(`/getSubmittedDocumentsFaculty?studID=${record.studID}`, )
+        .then(response => response.json())
+        .then(submittedDocuments => {
+          submittedDocuments.forEach(doc => {
+            const checkbox = document.createElement('input');
+            checkbox.type = 'checkbox';
+            checkbox.name = 'submittedDocument';
+            checkbox.value = doc.docName;
+            const label = document.createElement('label');
+            label.appendChild(checkbox);
+            label.appendChild(document.createTextNode(doc.docName));
+            documentForm.appendChild(label);
+          });
+          
+        })
+        .catch(error => {
+          console.error('Error fetching submitted documents:', error);
+        });
+
+      // Populate pending documents
+      // const pendingDocumentForm = document.getElementById('pendingDocument');
+      // fetch('/getPendingDocuments')
+      //   .then(response => response.json())
+      //   .then(pendingDocuments => {
+      //     pendingDocuments.forEach(doc => {
+      //       const checkbox = document.createElement('input');
+      //       checkbox.type = 'checkbox';
+      //       checkbox.name = 'pendingDocument';
+      //       checkbox.value = doc.docName;
+      //       const label = document.createElement('label');
+      //       label.appendChild(checkbox);
+      //       label.appendChild(document.createTextNode(doc.docName));
+      //       pendingDocumentForm.appendChild(label);
+      //     });
+      //   })
+      //   .catch(error => {
+      //     console.error('Error fetching pending documents:', error);
+      //   });
     })
     .catch(error => {
       console.error('Error fetching additional data:', error);
     });
 }
+
 
 
 

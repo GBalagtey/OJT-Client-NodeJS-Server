@@ -577,6 +577,53 @@ router.get('/getPendingDocuments', requireLogin, (req, res) => {
   });
 });
 
+router.get('/getSubmittedDocumentsFaculty', requireLogin, (req, res) => {
+  const studID =req.body.studID;
+  console.log(studID);
+
+  const query = `SELECT document.docName FROM document
+  JOIN document_sub ON document_sub.docID = document.docID
+  JOIN student ON student.studID = document_sub.studID
+  WHERE document_sub.hasBeenSubmitted AND student.studID = ?
+  ORDER BY document.docName;`;
+
+  connection.query(query, [studID], (error, results) => {
+    if(error) {
+      console.error('Error fetching submitted documents:', error);
+      res.status(500).send('Internal Server Error');
+      return;
+    }
+    console.log('studID: ', studID);
+    console.log('Submitted Documents:', results);
+  res.json(results);
+  });
+});
+
+router.get('/getPendingDocumentsFaculty', requireLogin, (req, res) => {
+  const studID =req.body.studID;
+
+  const query = `SELECT document.docID, document.docName 
+  FROM document
+  WHERE document.isOptional = ?
+    AND NOT EXISTS (
+      SELECT 1
+      FROM document_sub
+      JOIN student ON student.studID = document_sub.studID
+      WHERE document_sub.docID = document.docID
+        AND student.studID = ?
+        AND document_sub.hasBeenSubmitted
+    );`;
+
+  connection.query(query, [0, studID], (error, results) => {
+    if(error) {
+      console.error('Error fetching pending documents:', error);
+      res.status(500).send('Internal Server Error');
+      return;
+    }
+  res.json(results);
+  });
+});
+
 router.get('/getProgress', requireLogin, (req, res) => {
   const studId = req.session.studID;
 

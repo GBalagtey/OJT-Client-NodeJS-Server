@@ -1,9 +1,12 @@
 var express = require('express');
 const session = require('express-session');
-var router = express.Router();
+const router = express.Router();
 var connection = require('../database')
 const bcrypt = require('bcrypt');
 const multer = require('multer');
+const compression = require(`compression`);
+
+router.use(compression());
 
 router.use(session({
   secret: 'ivar',

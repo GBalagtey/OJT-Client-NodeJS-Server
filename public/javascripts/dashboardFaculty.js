@@ -26,10 +26,9 @@ function populateStudentRecords() {
                   <td>${record.firstName} ${record.lastName}</td>
                   <td>${record.companyName}</td>
                   <td>
-                    <div class="progress-container">
-                    <div class="progress-circle"></div>
-                    <div class="percentage">75%</div>
-                    </div>
+                  <div class="progress-bar" style="position: relative; width: 100%; background-color: #e0e0e0; border-radius: 5px;">
+                  <div class="progress-circle" style="--progress: ${progressPercentage};"></div>
+                  </div>
                   </td>
                   <td>${progressPercentage.toFixed(2)}</td>
                   <td><a href="#" class="more-link">More</a></td>
@@ -103,17 +102,15 @@ function updateDocuments(studID) {
   const checkboxes = documentForm.querySelectorAll('[name="documents"]');
   const selectedDocuments = Array.from(checkboxes).filter(checkbox => checkbox.checked).map(checkbox => checkbox.value);
 
-  const requestBody = {
-    studID,
-    selectedDocuments: selectedDocuments || [], // Ensure it's an empty array if no checkboxes are checked
-  };
-
   fetch('/updateDocuments', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
     },
-    body: JSON.stringify(requestBody),
+    body: JSON.stringify({
+      studID,
+      selectedDocuments,
+    }),
   })
     .then(response => response.json())
     .then(data => {

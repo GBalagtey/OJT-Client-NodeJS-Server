@@ -657,14 +657,21 @@ router.post('/updateDocuments', requireLogin, (req, res) => {
   // Use appropriate SQL queries to update the document_sub table
   // You may need to delete existing entries and insert new ones based on the selectedDocuments array
 
+  if (selectedDocuments.length === 0) {
+    // No documents selected, nothing to delete
+    console.log('No documents selected. Skipping delete query.');
+    res.json({ success: true });
+    return;
+  }
+
   // Example:
-  // DELETE FROM document_sub WHERE studID = ? AND docID NOT IN (?);
-  // INSERT INTO document_sub (studID, docID) VALUES (?, ?), (?, ?), ...;
+  // DELETE FROM document_sub WHERE studID = ? AND docID NOT IN (?, ?, ...);
+  // INSERT IGNORE INTO document_sub (studID, docID) VALUES (?, ?), (?, ?), ...;
 
-  const deleteQuery = 'DELETE FROM document_sub WHERE studID = ? AND docID NOT IN (?)';
-  const insertQuery = 'INSERT INTO document_sub (studID, docID) VALUES ?';
+  const deleteQuery = `DELETE FROM document_sub WHERE studID = ? AND docID NOT IN (${Array(selectedDocuments.length).fill('?').join(', ')})`;
+  const insertQuery = 'INSERT IGNORE INTO document_sub (studID, docID) VALUES ?';
 
-  const valuesToDelete = [studID, selectedDocuments];
+  const valuesToDelete = [studID, ...selectedDocuments];
   const valuesToInsert = selectedDocuments.map(docID => [studID, docID]);
 
   connection.query(deleteQuery, valuesToDelete, (deleteError, deleteResults) => {
@@ -686,6 +693,10 @@ router.post('/updateDocuments', requireLogin, (req, res) => {
     });
   });
 });
+
+
+
+
 
 
 // router.get('/getSubmittedDocumentsFaculty', requireLogin, (req, res) => {

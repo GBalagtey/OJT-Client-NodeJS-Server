@@ -70,16 +70,17 @@ function openModal(record, progressPercentage) {
           <div class="updates">
             <div class="message">
               <h3 id="submittedDisplay">Submitted Documents</h3>
-              <form id="documentForm">
+              <form id="documentForm" style="display: grid">
                 <!-- Populate submitted documents here -->
               </form>
               <h3 id="pendingDisplay">Other required documents</h3>
-              <form id="pendingDocument">
+              <form id="pendingDocument" style="display: grid">
                 <!-- Populate pending documents here -->
               </form>
             </div>
           </div>
         </div>
+        <button>Update</button>
       `;
 
       const modal = document.getElementById('myModal');

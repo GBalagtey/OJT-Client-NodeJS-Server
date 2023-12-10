@@ -6,53 +6,76 @@ function formatDate(dateString) {
 function populateStudentRecords() {
   const recordsTable = document.getElementById('recordsTable');
   const modalContent = document.getElementById('modalContent'); // Added this line
+  const sortDropdown = document.getElementById('sortDropdown');
+  const sortByName = document.getElementById('sortByName');
+  const sortByCompany = document.getElementById('sortByCompany');
+  const sortByProgress = document.getElementById('sortByProgress');
 
+  let currentSortOption = sortDropdown.value;
+  
   fetch('/getStudentRecords')
     .then(response => response.json())
     .then(records => {
-      console.log('Fetched records:', records);
-      recordsTable.innerHTML = '';
-      console.log
-      records.forEach(record => {
-        const hardcodedTotalRenderedHours = record.total_time;
-        const hardcodedTotalRequiredHours = record.hours_required;
-        console.log(hardcodedTotalRenderedHours);
-        console.log(hardcodedTotalRequiredHours);
-        const progressPercentage = calculateProgress(hardcodedTotalRenderedHours, hardcodedTotalRequiredHours);
-        if (record.companyName == null) {
-          record.companyName = 'None';
-        }
-
-        const row = document.createElement('tr');
-        row.innerHTML = `
-                  <td>${record.firstName} ${record.lastName}</td>
-                  <td>${record.companyName}</td>
-                  <td>
-                  <div class="progress-container">
-                      <div class="progress-circle"></div>
-                      <div class="progress-circle2" style="background: conic-gradient(
-                        #7380ec 0% var(--progress, 0%),
-                        #7380ec ${(progressPercentage.toFixed(2)/100)*360}deg var(--progress, 0%),
-                        transparent ${(progressPercentage.toFixed(2)/100)*360}deg 360deg">
-                        <div class="percentage"">${progressPercentage.toFixed(0)}%</div>
-                      </div>
-                    </div>
-                  </td>
-                  <td>${progressPercentage.toFixed(2)}</td>
-                  <td><a href="#" class="more-link">More</a></td>
-              `;
-
-        row.addEventListener('click', () => {
-          // Call a function to populate modal content based on the clicked row
-          openModal(record, progressPercentage);
+      records.sort((a, b) => (a.firstName + a.lastName).localeCompare(b.firstName + b.lastName));
+      populate(records);
+        sortDropdown.addEventListener('change', function () {
+          currentSortOption = sortDropdown.value;
+          if (currentSortOption === 'name') {
+            records.sort((a, b) => (a.firstName + a.lastName).localeCompare(b.firstName + b.lastName));
+            populate(records);
+          } else if (currentSortOption === 'company') {
+              records.sort((a, b) => (a.companyName || 'None').localeCompare(b.companyName || 'None'));
+              populate(records);
+          } else if (currentSortOption === 'progress') {
+              records.sort((a, b) => calculateProgress(b.total_time, b.hours_required) - calculateProgress(a.total_time, a.hours_required));
+              populate(records);
+          }
         });
-
-        recordsTable.appendChild(row);
-      });
     })
     .catch(error => {
       console.error('Error fetching student records:', error);
     });
+}
+
+function populate(records){
+  recordsTable.innerHTML = '';
+  records.forEach(record => {
+    const hardcodedTotalRenderedHours = record.total_time;
+    const hardcodedTotalRequiredHours = record.hours_required;
+    console.log(hardcodedTotalRenderedHours);
+    console.log(hardcodedTotalRequiredHours);
+    const progressPercentage = calculateProgress(hardcodedTotalRenderedHours, hardcodedTotalRequiredHours);
+    if (record.companyName == null) {
+      record.companyName = 'None';
+    }
+
+    const row = document.createElement('tr');
+    row.innerHTML = `
+              <td>${record.firstName} ${record.lastName}</td>
+              <td>${record.companyName}</td>
+              <td>
+              <div class="progress-container">
+                  <div class="progress-circle"></div>
+                  <div class="progress-circle2" style="background: conic-gradient(
+                    #7380ec 0% var(--progress, 0%),
+                    #7380ec ${(progressPercentage.toFixed(2)/100)*360}deg var(--progress, 0%),
+                    transparent ${(progressPercentage.toFixed(2)/100)*360}deg 360deg">
+                    <div class="percentage"">${progressPercentage.toFixed(0)}%</div>
+                  </div>
+                </div>
+              </td>
+              
+              <td>${record.courseNumber}: ${record.courseCode}</td>
+              <td>${record.studEmail}</td>
+          `;
+
+    row.addEventListener('click', () => {
+      // Call a function to populate modal content based on the clicked row
+      openModal(record, progressPercentage);
+    });
+
+    recordsTable.appendChild(row);
+  });
 }
 
 function openModal(record, progressPercentage) {

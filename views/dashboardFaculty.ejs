@@ -108,9 +108,9 @@
                 <label for="sortDropdown">Sort by:  </label>  
                 <select id="sortDropdown">
                 <% if (userData.totalStudents > 0) { %>
-                  <option value="name">Name</option>
-                  <option value="company">Company</option>
-                  <option value="progress">Progress</option>
+                  <option value="name" id="sortByName">Name</option>
+                  <option value="company" id ="sortByCompany">Company</option>
+                  <option value="progress" id = "sortByProgress">Progress</option>
                 <% } else { %>
                     <option value="name">Name</option>
                     <option value="company">Company</option>
@@ -125,8 +125,8 @@
                                 <th>Student's Name</th>
                                 <th>Company</th>
                                 <th>Progress Bar</th>
-                                <th>Progress Details</th>
-                                <th>Others</th>
+                                <th>Subject</th>
+                                <th>Email</th>
                             </tr>
                         </thead>
                     <tbody id="recordsTable">

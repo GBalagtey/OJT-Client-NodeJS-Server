@@ -412,25 +412,30 @@ router.get('/getStudentRecords', requireLogin, (req, res) => {
   // Adjust the query to retrieve the relevant records for the specific student
   const query = `
   SELECT
-    student.firstName,
-    student.lastName,
-    student.companyID,
-    student.studID,
-    company.companyName,
-    COALESCE(SEC_TO_TIME(SUM(TIME_TO_SEC(ojt_records.renderedHours))), '00:00:00') AS total_time,
-    SEC_TO_TIME(TIME_TO_SEC(student.demerit) + TIME_TO_SEC(ojt_requirements.requiredHours)) AS hours_required
-  FROM  
-    student
-  LEFT JOIN
-    ojt_records ON student.studID = ojt_records.studID
-  LEFT JOIN
-    company ON student.companyID = company.companyID
-  LEFT JOIN
-    ojt_requirements ON student.requirementID = ojt_requirements.requirementID
-  WHERE
-    student.teacherID = ?
-  GROUP BY
-    student.studID;
+  student.studEmail,
+  student.firstName,
+  student.lastName,
+  student.companyID,
+  student.studID,
+  course.courseNumber, 
+  course.courseCode,
+  company.companyName,
+  COALESCE(SEC_TO_TIME(SUM(TIME_TO_SEC(ojt_records.renderedHours))), '00:00:00') AS total_time,
+  SEC_TO_TIME(TIME_TO_SEC(student.demerit) + TIME_TO_SEC(ojt_requirements.requiredHours)) AS hours_required
+FROM  
+  student
+LEFT JOIN
+  ojt_records ON student.studID = ojt_records.studID
+LEFT JOIN
+  company ON student.companyID = company.companyID
+LEFT JOIN
+  ojt_requirements ON student.requirementID = ojt_requirements.requirementID
+JOIN 
+  course ON course.courseCode = student.courseID
+WHERE
+  student.teacherID = ?
+GROUP BY
+  student.studID;
   `;
 
   connection.query(query, [teacherID], (error, results) => {

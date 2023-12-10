@@ -73,7 +73,19 @@ function populate(records){
       // Call a function to populate modal content based on the clicked row
       openModal(record, progressPercentage);
     });
-
+    
+    // Add hover effect in JavaScript
+    row.addEventListener('mouseenter', () => {
+      // Apply hover effect when the mouse enters the row
+      row.style.backgroundColor = '#f0f0f0'; // Change the background color as needed
+      row.style.cursor = 'pointer'; // Change the cursor style as needed
+    });
+    
+    row.addEventListener('mouseleave', () => {
+      // Remove hover effect when the mouse leaves the row
+      row.style.backgroundColor = ''; // Reset to default or remove this line if not needed
+      row.style.cursor = ''; // Reset to default or remove this line if not needed
+    });
     recordsTable.appendChild(row);
   });
 }

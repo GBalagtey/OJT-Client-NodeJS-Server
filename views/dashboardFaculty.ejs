@@ -71,6 +71,16 @@
                 <div class="about">
                     <h3> PERSONAL DETAILS</h3>
                     <hr><br>
+                    <h5>Full Name</h5>
+                    <% if (userData.prefix !== null) { %>
+                        <p><%= userData.prefix %>. <%= userData.firstName %> 
+                            <% if (userData.middleInitial !== null) { %> <%= userData.middleInitial %>. <% }%> 
+                            <%= userData.lastName %> <%= userData.suffix %></p>
+                    <% } else { %>
+                        <p><%= userData.firstName %> 
+                            <% if (userData.middleInitial !== null) { %> <%= userData.middleInitial %>. <% }%> 
+                            <%= userData.lastName %> <%= userData.suffix %></p>
+                    <% } %>
                     <h5>Birth Date</h5>
                     <p><%= userData.birthDate %></p>
                     <% if (!userData.phoneNumber == 0) { %>

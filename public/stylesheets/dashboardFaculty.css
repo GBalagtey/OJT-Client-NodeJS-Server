@@ -209,33 +209,6 @@ main{
     margin-top: 1.4rem;
 }
 
-/* dashboard-Progress Bar */
-main .progress-bar {
-    margin-top: 2rem;
-    width: 100%;
-    height: 20px;
-    background-color: #eee;
-    border-radius: 4px;
-    position: relative;
-    margin-bottom: 75px;
-}
-
-main .progress {
-    width: var(--progress-width);
-    height: 100%;
-    background-color: #7380ec;
-    border-radius: 4px;
-    transition: width 0.5s ease-in-out;
-}
-
-main .progress {
-    width: var(--progress-width);
-    height: 100%;
-    background-color: #7380ec;
-    border-radius: 4px;
-    transition: width 0.5s ease-in-out;
-}
-
 #modalBtn {
     background: none;
     border: none;
@@ -344,8 +317,6 @@ main .sorting select{
     width: 16%;
     font-family: 'Poppins', sans-serif;
 }
-
-/* dashboard-Progress Bar */
 
 main .timetable{
     position: absolute;
@@ -510,19 +481,35 @@ main .timetable.active .closeBtn{
     overflow: hidden;
 }
 .right .leaves .teacher:hover{box-shadow: none;}
-.progress-circle {
+
+.progress-container {
+    position: relative;
     width: 100px;
-    height: 100px;
-    background: conic-gradient(
-      #e0e0e0 var(--progress),
-      transparent var(--progress)
-    );
-    border-radius: 50%;
+    height: 30px;
   }
 
+  .progress-circle {
+    position: absolute;
+    height: 50px;
+    clip: rect(0, 100px, 100px, 50px);
+    border-radius: 50%;
+    z-index: 20;
+    background: conic-gradient(
+      #3498db 0% var(--progress, 0%),
+      blue var(--progress, 0%) 100%
+    );
+  }
 
-
-
+  .progress-circle {
+    position: absolute;
+    height: 50px;
+    clip: rect(0, 50px, 100px, 50px);
+    border-radius: 50%;
+    background: conic-gradient(
+      pink 0% var(--progress, 0%),
+      pink var(--progress, 40%) 40%
+    );
+  }
 
 
 /* MEDIA QUERIES  */

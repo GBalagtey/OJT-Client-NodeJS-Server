@@ -68,8 +68,11 @@ router.get('/getStudentList', requireLogin, (req, res) => {
 function getTeacherData(email, callback){
   // Fetch all data from the teacher table based on the email
   const query = `
-  SELECT teacher.*, COUNT(student.studID) AS totalStudents
+  SELECT teacher.*, COUNT(student.studID) AS totalStudents, department.departmentName, department.departmentAcronym
   FROM teacher
+  JOIN course ON course.courseCode = teacher.courseID
+  JOIN program ON program.programID = course.programID
+  JOIN department ON department.departmentID = program.departmentID
   LEFT JOIN student ON teacher.teacherID = student.teacherID
   WHERE teacher.teacherEmail = ?
   `;

@@ -65,21 +65,25 @@
                     </button>
                     <div class="info">
                         <p><b><%= userData.lastName %>, <%= userData.firstName %> <%= userData.middleInitial %></b> </p>
-                        <small class="text-muted"><%= userData.teacherID %></small>
+                        <small class="text-muted"><%= userData.departmentAcronym %></small>
                     </div>
                 </div>
                 <div class="about">
                     <h3> PERSONAL DETAILS</h3>
                     <hr><br>
-                    <h5>Course</h5>
-                    <p><%= userData.courseID %></p>
-                    <h5>DOB</h5>
+                    <h5>Birth Date</h5>
                     <p><%= userData.birthDate %></p>
-                    <h5>Contact</h5>
-                    <p>0<%= userData.phoneNumber %></p>
+                    <% if (!userData.phoneNumber == 0) { %>
+                        <h5>Contact</h5>
+                        <p>0<%= userData.phoneNumber %></p>
+                    <% } %>
                     <h5>Email</h5>
                     <p><%= userData.teacherEmail %></p>
                     <br>
+                    <h3> OTHER DETAILS</h3>
+                    <hr><br>
+                    <h5>Department</h5>
+                    <p><%= userData.departmentName %></p>
                 </div>
             </div>
         </aside>
@@ -95,9 +99,14 @@
                     <div class= "sorting">
                         <label for="sortDropdown">Sort by:  </label>  
                         <select id="sortDropdown">
+                        <% if (userData.totalStudents > 0) { %>
                           <option value="name">Name</option>
                           <option value="company">Company</option>
                           <option value="progress">Progress</option>
+                        <% } else { %>
+                            <option value="name">Name</option>
+                            <option value="company">Company</option>
+                        <% } %>
                         </select>
                       </div>
                       <br>

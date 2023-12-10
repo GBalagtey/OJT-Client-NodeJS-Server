@@ -579,7 +579,7 @@ router.get('/getSubmittedDocuments', requireLogin, (req, res) => {
   const query = `SELECT document.docName FROM document
   JOIN document_sub ON document_sub.docID = document.docID
   JOIN student ON student.studID = document_sub.studID
-  WHERE document_sub.hasBeenSubmitted AND student.studID = ?
+  WHERE student.studID = ?
   ORDER BY document.docName;`;
 
   connection.query(query, [studID], (error, results) => {
@@ -604,7 +604,6 @@ router.get('/getPendingDocuments', requireLogin, (req, res) => {
       JOIN student ON student.studID = document_sub.studID
       WHERE document_sub.docID = document.docID
         AND student.studID = ?
-        AND document_sub.hasBeenSubmitted
     );`;
 
   connection.query(query, [0, studID], (error, results) => {

@@ -617,6 +617,77 @@ router.get('/getPendingDocuments', requireLogin, (req, res) => {
   });
 });
 
+router.get('/getDocuments', requireLogin, (req, res) => {
+  const studID =req.session.studID;
+
+  const query = `SELECT * FROM document;
+    `;
+
+  connection.query(query, [0, studID], (error, results) => {
+    if(error) {
+      console.error('Error fetching pending documents:', error);
+      res.status(500).send('Internal Server Error');
+      return;
+    }
+  res.json(results);
+  });
+});
+
+router.get('/getStudentDocumentsFaculty', requireLogin, (req, res) => {
+  const studID =req.query.studID;
+  console.log(studID);
+
+  const query = `SELECT docID, studID FROM document_sub WHERE studID = ?;
+    `;
+
+  connection.query(query, [studID], (error, results) => {
+    if(error) {
+      console.error('Error fetching pending documents:', error);
+      res.status(500).send('Internal Server Error');
+      return;
+    }
+    console.log(results);
+  res.json(results);
+  });
+});
+
+router.post('/updateDocuments', requireLogin, (req, res) => {
+  const { studID, selectedDocuments } = req.body;
+
+  // Use appropriate SQL queries to update the document_sub table
+  // You may need to delete existing entries and insert new ones based on the selectedDocuments array
+
+  // Example:
+  // DELETE FROM document_sub WHERE studID = ? AND docID NOT IN (?);
+  // INSERT INTO document_sub (studID, docID) VALUES (?, ?), (?, ?), ...;
+
+  const deleteQuery = 'DELETE FROM document_sub WHERE studID = ? AND docID NOT IN (?)';
+  const insertQuery = 'INSERT INTO document_sub (studID, docID) VALUES ?';
+
+  const valuesToDelete = [studID, selectedDocuments];
+  const valuesToInsert = selectedDocuments.map(docID => [studID, docID]);
+
+  connection.query(deleteQuery, valuesToDelete, (deleteError, deleteResults) => {
+    if (deleteError) {
+      console.error('Error deleting documents:', deleteError);
+      res.status(500).send('Internal Server Error');
+      return;
+    }
+
+    connection.query(insertQuery, [valuesToInsert], (insertError, insertResults) => {
+      if (insertError) {
+        console.error('Error inserting documents:', insertError);
+        res.status(500).send('Internal Server Error');
+        return;
+      }
+
+      console.log('Documents updated successfully');
+      res.json({ success: true });
+    });
+  });
+});
+
+
 // router.get('/getSubmittedDocumentsFaculty', requireLogin, (req, res) => {
 //   const studID = req.query.studID;
 
@@ -667,25 +738,6 @@ router.get('/getPendingDocuments', requireLogin, (req, res) => {
 //   res.json(results);
 //   });
 // });
-
-router.post('/updateData', (req, res) => {
-  const data = req.body;
-  
-  // Sample logic: Update data in memory
-  const recordToUpdate = records.find(record => record.studID === data.studID);
-
-  if (recordToUpdate) {
-    // Update submitted documents
-    recordToUpdate.submittedDocuments = data.submittedDocuments;
-
-    // Update pending documents
-    recordToUpdate.pendingDocuments = data.pendingDocuments;
-
-    res.json({ message: 'Data updated successfully' });
-  } else {
-    res.status(404).json({ error: 'Record not found' });
-  }
-});
 
 
 // router.post('/updateSubmittedDocuments', requireLogin, (req, res) => {

@@ -51,23 +51,79 @@ function openModal(record, progressPercentage) {
   const modalContent = document.getElementById('modalContent');
   console.log(record.studID);
 
-  // Fetch additional data based on the clicked row
-  fetch(`/getAdditionalData?studID=${record.studID}`) // Adjust the URL and parameters as needed
+  // Fetch all documents
+  fetch('/getDocuments') // Adjust the URL if needed
     .then(response => response.json())
-    .then(additionalData => {
-      // Example: Populate modal content with the data from the clicked row and additional data
-      modalContent.innerHTML = `
-        <span class="close" onclick="closeModal()">&times;</span>
-        <h2 class="title-modal">Add Work Details</h2>
-        <div class="progress-bar" style="position: relative; width: 100%; background-color: #e0e0e0; border-radius: 5px;">
-          <div style="position: absolute; top: 0; left: 0; width: ${progressPercentage}%; height: 100%; background-color: #7380ec; border-radius: 5px;"></div>
-        </div>
-        <p>Student: ${record.firstName} ${record.lastName}</p>
-        <p>Company: ${record.companyName}</p>`
+    .then(documents => {
+      // Fetch student documents from the new route
+      fetch(`/getStudentDocumentsFaculty?studID=${record.studID}`) // Adjust the URL if needed
+        .then(response => response.json())
+        .then(studentDocuments => {
+          console.log('record.studID', record.studID );
+          console.log('All Documents:', documents);
+          console.log('Student Documents:', studentDocuments);
+          // Example: Populate modal content with documents as checkboxes
+          modalContent.innerHTML = `
+            <span class="close" onclick="closeModal()">&times;</span>
+            <h2 class="title-modal">Documents</h2>
+            <div class="progress-bar" style="position: relative; width: 100%; background-color: #e0e0e0; border-radius: 5px;">
+              <div style="position: absolute; top: 0; left: 0; width: ${progressPercentage}%; height: 100%; background-color: #7380ec; border-radius: 5px;"></div>
+            </div>
+            <p>Student: ${record.firstName} ${record.lastName}</p>
+            <p>Company: ${record.companyName}</p>
+            <h3>All Documents:</h3>
+            <form id="documentForm">
+              ${documents.map(doc => {
+                const isChecked = studentDocuments.some(studentDoc => studentDoc.docID === doc.docID);
+                return `<label><input type="checkbox" name="documents" value="${doc.docID}" ${isChecked ? 'checked' : ''}>${doc.docName}</label><br>`;
+              }).join('')}
+            </form>
+            <button id="updateDocumentsButton">Update Documents</button>
+            `;
+
+          const modal = document.getElementById('myModal');
+          modal.style.display = 'block';
+          document.getElementById('updateDocumentsButton').addEventListener('click', () => {
+            console.log('Button clicked');
+            updateDocuments(record.studID);
+          });
+        })
+        .catch(error => {
+          console.error('Error fetching student documents:', error);
+        });
+    })
+    .catch(error => {
+      console.error('Error fetching documents:', error);
     });
-    const modal = document.getElementById('myModal');
-    modal.style.display = 'block';
 }
+
+function updateDocuments(studID) {
+  const documentForm = document.getElementById('documentForm');
+  const checkboxes = documentForm.querySelectorAll('[name="documents"]');
+  const selectedDocuments = Array.from(checkboxes).filter(checkbox => checkbox.checked).map(checkbox => checkbox.value);
+
+  const requestBody = {
+    studID,
+    selectedDocuments: selectedDocuments || [], // Ensure it's an empty array if no checkboxes are checked
+  };
+
+  fetch('/updateDocuments', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(requestBody),
+  })
+    .then(response => response.json())
+    .then(data => {
+      console.log('Documents updated successfully:', data);
+      closeModal(); // Close the modal after updating
+    })
+    .catch(error => {
+      console.error('Error updating documents:', error);
+    });
+}
+
 
 // function openModal(record, progressPercentage) {
 //   const modalContent = document.getElementById('modalContent');

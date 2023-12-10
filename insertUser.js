@@ -40,9 +40,9 @@ class User {
   
 
 // Example usage
-const userEmail = 'mitski@slu.edu.ph';
-const userPassword = 'samplepass2';
-const userType = 'teacher';
+const userEmail = 'clairo@slu.edu.ph';
+const userPassword = 'clairo';
+const userType = 'student';
 
 // Call the insertUser method
 User.insertUser(userEmail, userPassword, userType);

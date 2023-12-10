@@ -332,10 +332,27 @@ main .progress {
     font-size: 24px;
     cursor: pointer;
 }
+
+main .sorting {
+    font-size: 15px;
+}
+
+main .sorting select{
+    font-size: 14px;
+    margin-left: 20px;
+    margin-top: 20px;
+    width: 16%;
+    font-family: 'Poppins', sans-serif;
+}
+
 /* dashboard-Progress Bar */
 
 main .timetable{
+    position: absolute;
     margin-top: 2rem;
+    height: 212%;
+    width: 100%;
+    overflow: auto;
 }
 main .timetable h2{
     margin-bottom: .8rem;
@@ -408,18 +425,6 @@ main .timetable.active .closeBtn{
     position: absolute;
     top: 45%;
     left: 45%;
-}
-
-main .timetable .sorting {
-    font-size: 15px;
-}
-
-main .timetable .sorting select{
-    font-size: 14px;
-    margin-left: 20px;
-    width: 16%;
-    font-family: 'Poppins', sans-serif;
-    transform: translateX(-445px);
 }
 
 /* Search Bar */ 

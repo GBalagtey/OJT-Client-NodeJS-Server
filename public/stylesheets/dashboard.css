@@ -208,26 +208,6 @@ main{
     position: relative;
     margin-top: 1.4rem;
 }
-/*
-#modalBtn {
-    background: none;
-    border: none;
-    border: 2px solid var(--color-primary) !important;
-    border-radius: var(--border-radius-1);
-    padding: .5rem 1rem;
-    color: var(--color-white);
-    background-color: var(--color-primary);
-    cursor: pointer;
-    margin: 1rem 1.5rem 1rem 0;
-    margin-top: 1.5rem;
-}
-
-#modalBtn:hover {
-    color: var(--color-primary);
-    background-color: transparent;
-}
-*/
-
 
 /* dashboard-Progress Bar */
 
@@ -268,7 +248,7 @@ main .progress {
     cursor: pointer;
     margin: 1rem 1.5rem 1rem 0;
     margin-top: 25px;
-    margin-left: 89.9%;
+    /*margin-left: 89.9%;*/
     width: 118px;
     height: 35px;
     font-size: 14px;
@@ -533,17 +513,30 @@ main .timetable.active .closeBtn{
     header .navbar h3{display: none;}
     header .navbar a{width: 4.5rem; padding: 0 1rem;}
 
-    main .subjects{
-        grid-template-columns: repeat(2, 1fr);
-        gap: 1;
-    }
     main .timetable{
-        width: 150%;
-        position: absolute;
+        width: 100%;
+        position: relative;
         padding: 4rem 0 0 0;
     }
 }
 
+@media screen and (max-width: 1024px) {
+    html{font-size: 12px;}
+    .container{
+        grid-template-columns: 13rem auto 20rem;
+    }
+    header{position: fixed;}
+    .container{padding-top: 4rem;}
+    header .logo h2{display: none;}
+    header .navbar h3{display: none;}
+    header .navbar a{width: 4.5rem; padding: 0 1rem;}
+
+    main .timetable{
+        width: 100%;
+        position: relative;
+        padding: 4rem 0 0 0;
+    }
+}
 
 @media screen and (max-width: 768px){
     html{font-size: 10px;}

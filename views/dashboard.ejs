@@ -93,8 +93,10 @@
                     <% } %>
                     <h5>Email</h5>
                     <p><%= userData.studEmail %></p>
+                    <% if (userData.address !== null) { %>
                     <h5>Address</h5>
                     <p><%= userData.address %></p>
+                    <% } %>
                     <br>
                     
                     <% if (userData.companyName !== null) { %>
@@ -107,8 +109,10 @@
                           <p><%= userData.companyLocation %></p>
                           <h5>Description</h5>
                           <p><%= userData.companyDescription %></p>
+                          <% if (userData.supervisor !== null) { %>
                           <h5>Supervisor</h5>
                           <p><%= userData.supervisor %></p>
+                          <% } %>
                         </div>
                       <% } %>
                 </div>

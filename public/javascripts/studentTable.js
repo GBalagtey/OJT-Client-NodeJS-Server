@@ -1,5 +1,5 @@
 function populateStudentRecords() {
-    const recordsTable = document.getElementById('timeTable');
+    const recordsTable = document.getElementById('studentTable');
   
     fetch('/getAllStudentRecords')
         .then(response => {

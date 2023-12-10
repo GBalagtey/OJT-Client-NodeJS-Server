@@ -54,11 +54,6 @@ router.get('/getChangePassword', requireLogin, (req, res) => {
   res.render('changePassword'); // Render the 'changePassword.ejs' file
 });
 
-// GET change password page
-router.get('/getChangePasswordFaculty', requireLogin, (req, res) => {
-  res.render('changePasswordFaculty'); // Render the 'changePasswordFaculty.ejs' file
-});
-
 // GET history page
 router.get('/getHistory', requireLogin, (req, res) => {
   res.render('history'); // Render the 'history.ejs' file
@@ -69,18 +64,16 @@ router.get('/getStudentList', requireLogin, (req, res) => {
   res.render('studentList'); // Render the 'studentList.ejs' file
 });
 
-// GET faculty dashboard page
-router.get('/getDashboardFaculty', requireLogin, (req, res) => {
-  const email = req.session.email;
 
-  if (!email) {
-    res.redirect('/');
-    return;
-  }
-  // Fetch all data from the student table based on the email
+function getTeacherData(email, callback){
+  // Fetch all data from the teacher table based on the email
   const query = `
-  SELECT teacher.*
+  SELECT teacher.*, COUNT(student.studID) AS totalStudents, department.departmentName, department.departmentAcronym
   FROM teacher
+  JOIN course ON course.courseCode = teacher.courseID
+  JOIN program ON program.programID = course.programID
+  JOIN department ON department.departmentID = program.departmentID
+  LEFT JOIN student ON teacher.teacherID = student.teacherID
   WHERE teacher.teacherEmail = ?
   `;
 
@@ -92,33 +85,58 @@ router.get('/getDashboardFaculty', requireLogin, (req, res) => {
     }
 
     if (results.length > 0) {
-      // If user is found, pass all data to the view
       const userData = results[0];
-      // const studID = results[0].studID;
-      const teacherID = results[0].teacherID;
-      // const companyID = results[0].companyID;
-      const userType = results[0].userType;
-      req.session.email = email;
-      req.session.teacherID = teacherID;
-      req.session.currentDate = getCurrentDate();
-      console.log('Teacher ID stored in session:', teacherID);
-      // req.session.studID = studID;
-      // req.session.teacherID = teacherID;
-      // req.session.companyID = companyID;
-      userData.dob = userData.birthDate.toLocaleDateString();
-      userData.currentDate = req.session.currentDate;
-
-      if(userData.photo != null){
-      // Convert the Buffer data to a base64 string
-      const base64Image = Buffer.from(userData.photo).toString('base64');
-      userData.photo = `data:image/jpeg;base64,${base64Image}`;
-      }
-      res.render('dashboardFaculty', { userData });
+      callback(null, userData);
     } else {
       console.log('User not found');
       res.send('User not found');
     }
   });
+}
+// GET faculty dashboard page
+router.get('/getDashboardFaculty', requireLogin, (req, res) => {
+  const email = req.session.email;
+  getTeacherData(email, (error, userData) => {
+    if (error){
+      res.status(500).send('Internal Server Error');
+      return;
+    }
+    req.session.teacherID = userData.teacherID;
+    req.session.userType = userData.userType;
+    req.session.currentDate = getCurrentDate;
+    console.log(userData.birthDate);
+    req.session.dob = userData.birthDate.toLocaleDateString();
+    userData.birthDate = req.session.dob;
+    const teacherID = req.session.teacherID;
+    console.log('Teacher ID stored in session:', teacherID);
+    if(userData.photo != null){
+    const base64Image = Buffer.from(userData.photo).toString('base64');
+    userData.photo = `data:image/jpeg;base64,${base64Image}`;
+    }
+
+    if (!email) {
+      res.redirect('/');
+      return;
+    }
+    res.render('dashboardFaculty', { userData });
+  })
+});
+
+// GET change password faculty page
+router.get('/getPasswordFaculty', requireLogin, (req, res) => {
+  const email = req.session.email;
+
+  getTeacherData(email, (error, userData) => {
+    if (error){
+      res.status(500).send('Internal Server Error');
+      return;
+    }
+    if (!email) {
+      res.redirect('/');
+      return;
+    }
+    res.render('changePasswordFaculty', { userData });
+  })
 });
 
 // GET dashboard page
@@ -226,20 +244,13 @@ router.post('/login', async (req, res) => {
         const enteredPassword = password.trim();
         console.log('Entered Password:', enteredPassword);
         console.log('Hashed Password:', hashedPassword);
-
-        // Assign values to variables
-        // const studID = results[0].studID;
-        // const teacherID = results[0].teacherID;
-        // const companyID = results[0].companyID;
         const userType = results[0].userType;
 
         comparePassword(enteredPassword, hashedPassword)
           .then((match) => {
             if (match) {
               req.session.email = email;
-              // req.session.studID = studID;
-              // req.session.teacherID = teacherID;
-              // req.session.companyID = companyID;
+              req.session.userType = userType;
               console.log('User credentials are valid');
               if(userType == 'student'){
                 res.redirect('/dashboard');
@@ -438,27 +449,53 @@ router.get('/getStudentRecords', requireLogin, (req, res) => {
 const storage = multer.memoryStorage();
 const upload = multer({ storage: storage });
 router.post('/upload', upload.single('file'), (req, res) => {
-  const file = req.file;
-  const studID = req.session.studID;
+  console.log(req.session.userType);
+  if(req.session.userType === "student"){
+      const file = req.file;
+      const studID = req.session.studID;
 
-  if (!file) {
-      return res.status(400).json({ error: 'No file provided' });
-  }
-  console.log('Received file:', file.originalname, 'with size:', file.size);
-
-  const blob = Buffer.from(file.buffer, 'binary');
-  const query = 'UPDATE student SET photo = ? WHERE studID = ?';
-
-  connection.query(query, [blob, studID], (error, results) => {
-      if (error) {
-          console.error('Error updating photo:', error);
-          res.status(500).json({ error: 'Internal Server Error' });
-      } else {
-          console.log('Photo updated successfully');
-          res.json({ success: true });
+      if (!file) {
+          return res.status(400).json({ error: 'No file provided' });
       }
-    });
-  });
+      
+      console.log('Received file:', file.originalname, 'with size:', file.size);
+
+      const blob = Buffer.from(file.buffer, 'binary');
+      const query = 'UPDATE student SET photo = ? WHERE studID = ?';
+
+      connection.query(query, [blob, studID], (error, results) => {
+          if (error) {
+              console.error('Error updating photo:', error);
+              res.status(500).json({ error: 'Internal Server Error' });
+          } else {
+              console.log('Photo updated successfully');
+              res.json({ success: true });
+          }
+        });
+  }else {
+      const file = req.file;
+      const teacherID = req.session.teacherID;
+  
+      if (!file) {
+          return res.status(400).json({ error: 'No file provided' });
+      }
+      console.log('Received file:', file.originalname, 'with size:', file.size);
+  
+      const blob = Buffer.from(file.buffer, 'binary');
+      const query = 'UPDATE teacher SET photo = ? WHERE teacherID = ?';
+  
+      connection.query(query, [blob, teacherID], (error, results) => {
+          if (error) {
+              console.error('Error updating photo:', error);
+              res.status(500).json({ error: 'Internal Server Error' });
+          } else {
+              console.log('Photo updated successfully');
+              res.json({ success: true });
+          }
+        });
+  }
+});
+  
 
 router.get('/getAllStudentRecords', requireLogin, (req, res) => {
   const studId = req.session.studID;

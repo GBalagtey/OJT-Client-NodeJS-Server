@@ -7,9 +7,6 @@ function populateStudentRecords() {
   const recordsTable = document.getElementById('recordsTable');
   const modalContent = document.getElementById('modalContent'); // Added this line
   const sortDropdown = document.getElementById('sortDropdown');
-  const sortByName = document.getElementById('sortByName');
-  const sortByCompany = document.getElementById('sortByCompany');
-  const sortByProgress = document.getElementById('sortByProgress');
 
   let currentSortOption = sortDropdown.value;
   
@@ -52,7 +49,7 @@ function populate(records){
     const row = document.createElement('tr');
     row.innerHTML = `
               <td>${record.firstName} ${record.lastName}</td>
-              <td>${record.companyName}</td>
+              <td style="${record.companyName !== 'None' ? '' : 'color: rgb(165, 42, 42);'}">${record.companyName !== 'None' ? record.companyName : 'None'}</td>
               <td>
               <div class="progress-container">
                   <div class="progress-circle"></div>
@@ -60,7 +57,9 @@ function populate(records){
                     #7380ec 0% var(--progress, 0%),
                     #7380ec ${(progressPercentage.toFixed(2)/100)*360}deg var(--progress, 0%),
                     transparent ${(progressPercentage.toFixed(2)/100)*360}deg 360deg">
-                    <div class="percentage"">${progressPercentage.toFixed(0)}%</div>
+                    <div class="percentage" style="color: ${progressPercentage === 0 ? 'rgb(165, 42, 42)' : 'inherit'}">
+                    ${progressPercentage.toFixed(0)}%
+                </div>
                   </div>
                 </div>
               </td>
@@ -70,23 +69,63 @@ function populate(records){
           `;
 
     row.addEventListener('click', () => {
-      // Call a function to populate modal content based on the clicked row
       openModal(record, progressPercentage);
     });
     
     // Add hover effect in JavaScript
     row.addEventListener('mouseenter', () => {
-      // Apply hover effect when the mouse enters the row
-      row.style.backgroundColor = '#f0f0f0'; // Change the background color as needed
-      row.style.cursor = 'pointer'; // Change the cursor style as needed
+      row.style.backgroundColor = '#f0f0f0';
+      row.style.cursor = 'pointer';
     });
     
     row.addEventListener('mouseleave', () => {
-      // Remove hover effect when the mouse leaves the row
-      row.style.backgroundColor = ''; // Reset to default or remove this line if not needed
-      row.style.cursor = ''; // Reset to default or remove this line if not needed
+      row.style.backgroundColor = ''; 
+      row.style.cursor = '';
     });
     recordsTable.appendChild(row);
+  });
+}
+
+function populateStudentRecords2() {
+  const studentTable = document.getElementById('studentTable');
+  const sortDropdown = document.getElementById('sortDropdown');
+  fetch('/getAllStudentRecords')
+      .then(response => {
+          return response.json();
+      })
+      .then(records => {
+        records.sort((a, b) => (a.firstName + a.lastName).localeCompare(b.firstName + b.lastName));
+        populate2(records);
+          sortDropdown.addEventListener('change', function () {
+            currentSortOption = sortDropdown.value;
+            if (currentSortOption === 'name') {
+              records.sort((a, b) => (a.firstName + a.lastName).localeCompare(b.firstName + b.lastName));
+              populate2(records);
+            } else if (currentSortOption === 'company') {
+                records.sort((a, b) => (a.companyName || 'None').localeCompare(b.companyName || 'None'));
+                populate2(records);
+            }
+          });
+      })
+      .catch(error => {
+          console.error('Error fetching student records:', error);
+      });
+}
+
+function populate2(records) {
+  studentTable.innerHTML = '';
+  records.forEach(record => {
+
+      const row = document.createElement('tr');
+      row.innerHTML = `
+          <td>${record.firstName} ${record.lastName}</td>
+          <td style="${record.companyName !== null ? '' : 'color: rgb(165, 42, 42);'}">${record.companyName !== null ? record.companyName : 'None'}</td>
+          <td>${record.studEmail}</td>
+          <td>${record.teacherName}</td>
+          <td style="${record.supervisor !== null ? '' : 'color: rgb(165, 42, 42);'}">${record.supervisor !== null ? record.supervisor : 'None'}</td>
+      `;
+
+      studentTable.appendChild(row);
   });
 }
 
@@ -318,6 +357,7 @@ function parseTime(timeString) {
 }
 
 populateStudentRecords();
+populateStudentRecords2();
 
 // Function for Filter (you got this Gregg)
 // Get the table rows

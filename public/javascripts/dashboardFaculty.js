@@ -27,7 +27,7 @@ function populateStudentRecords() {
                   <td>${record.companyName}</td>
                   <td>
                   <div class="progress-bar" style="position: relative; width: 100%; background-color: #e0e0e0; border-radius: 5px;">
-                    <div style="position: absolute; top: 0; left: 0; width: ${progressPercentage}%; height: 100%; background-color: #7380ec; border-radius: 5px;"></div>
+                  <div class="progress-circle" style="--progress: ${progressPercentage};"></div>
                   </div>
                   </td>
                   <td>${progressPercentage.toFixed(2)}</td>
@@ -218,4 +218,38 @@ document.getElementById('sortByName').addEventListener('click', sortByName);
 document.getElementById('sortByCompany').addEventListener('click', sortByCompany);
 document.getElementById('sortByProgress').addEventListener('click', sortByProgress);
 
+  //UPLOAD PHOTO
+  function handleFileSelect(event) {
+    const fileInput = event.target;
+    const file = fileInput.files[0];
 
+    if (file) {
+        const reader = new FileReader();
+
+        reader.onload = function (e) {
+            const profilePhotoImg = document.getElementById('profile-photo-img');
+            profilePhotoImg.src = e.target.result;
+
+            uploadFile(file);
+        };
+
+        reader.readAsDataURL(file);
+    }
+}
+
+function uploadFile(file) {
+    const formData = new FormData();
+    formData.append('file', file);
+
+    fetch('/upload', {
+        method: 'POST',
+        body: formData,
+    })
+    .then(response => response.json())
+    .then(data => {
+        console.log('File uploaded successfully:', data);
+    })
+    .catch(error => {
+        console.error('Error uploading file:', error);
+    });
+}

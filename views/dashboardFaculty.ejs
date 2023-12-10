@@ -7,7 +7,7 @@
     <title>Teacher Dashboard</title>
     <link rel="shortcut icon" href="./images/EduSynctask.png">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Sharp" rel="stylesheet">
-    <link rel="stylesheet" href="/stylesheets/dashboard.css">
+    <link rel="stylesheet" href="/stylesheets/dashboardFaculty.css">
 </head>
 <body>
 
@@ -22,11 +22,13 @@
                 <span class="material-icons-sharp">home</span>
                 <h3>Home</h3>
             </a>
-            <a href="/getStudentList">
-                <span class="material-icons-sharp">today</span>
-                <h3>Students</h3>
-            </a> 
-            <a href="/getChangePasswordFaculty">
+            <% if (userData.totalStudents > 0) { %>
+                <a href="/getStudentList">
+                    <span class="material-icons-sharp">today</span>
+                    <h3>Students</h3>
+                </a> 
+            <% } %>
+            <a href="/getPasswordFaculty">
                 <span class="material-icons-sharp">password</span>
                 <h3>Change Password</h3>
             </a>
@@ -49,11 +51,20 @@
         <aside>
             <div class="profile">
                 <div class="top">
-                    <div class="profile-photo">
-                        <img id="profile-photo-img" src="<%= userData.photo %>" alt="">
-                    </div>
+                    <button id="uploadPhoto">
+                        <label for="fileInput">
+                            <div class="profile-photo">
+                                <% if (userData.photo === null) { %>
+                                    <img id="profile-photo-img" src="./images/uploadPhoto.png" alt="">
+                                <% } else { %>
+                                    <img id="profile-photo-img" src="<%= userData.photo %>" alt="">
+                                <% } %>
+                            </div>
+                        </label>
+                        <input type="file" id="fileInput" style="display: none;" accept="image/*" onchange="handleFileSelect(event)">
+                    </button>
                     <div class="info">
-                        <p>Hey, <b><%= userData.firstName %></b> </p>
+                        <p><b><%= userData.lastName %>, <%= userData.firstName %> <%= userData.middleInitial %></b> </p>
                         <small class="text-muted"><%= userData.teacherID %></small>
                     </div>
                 </div>
@@ -63,7 +74,7 @@
                     <h5>Course</h5>
                     <p><%= userData.courseID %></p>
                     <h5>DOB</h5>
-                    <p><%= userData.dob %></p>
+                    <p><%= userData.birthDate %></p>
                     <h5>Contact</h5>
                     <p>0<%= userData.phoneNumber %></p>
                     <h5>Email</h5>
@@ -79,34 +90,47 @@
             <!-- Search Bar -->
             <input class="search__input" type="text" placeholder="Search">
             <!--Search Bar-->
-
             <div class="timetable" id="timetable">
                 <table>
-                    <button id="sortByName">Sort by Name</button>
-                    <button id="sortByCompany">Sort by Company</button>
-                    <button id="sortByProgress">Sort by Progress</button>
-
-                    <thead>
-                        <tr>
-                            <th>Student's Name</th>
-                            <th>Company</th>
-                            <th>Progress Bar</th>
-                            <th>Progress Details</th>
-                            <th>Others</th>
-                        </tr>
-                    </thead>
+                    <div class= "sorting">
+                        <label for="sortDropdown">Sort by:  </label>  
+                        <select id="sortDropdown">
+                          <option value="name">Name</option>
+                          <option value="company">Company</option>
+                          <option value="progress">Progress</option>
+                        </select>
+                      </div>
+                      <br>
+                    <% if (userData.totalStudents > 0) { %>
+                        <thead>
+                            <tr>
+                                <th>Student's Name</th>
+                                <th>Company</th>
+                                <th>Progress Bar</th>
+                                <th>Progress Details</th>
+                                <th>Others</th>
+                            </tr>
+                        </thead>
                     <tbody id="recordsTable">
                         <!-- Records will be populated here -->
                     </tbody>
+                    <% } else { %>
+                        <thead>
+                            <tr>
+                                <th>Student Name</th>
+                                <th>Company</th>
+                                <th>Contact Information</th>
+                                <th>Adviser</th>
+                                <th>Supervisor</th>
+                            </tr>
+                        </thead>
+                        <tbody id="studentTable"></tbody>
+                    <% } %>
                 </table>
             </div>
-
-            <!-- Progress Modal -->
+                        <!-- Progress Modal -->
             <div id="myModal" class="modal">
                 <div class="modal-content" id="modalContent">
-                    
-                    <!-- Additional modal content goes here -->
-                </div>
             </div>
             <!-- End of Progress Modal -->
             
@@ -136,6 +160,7 @@
     <script src ="/javascripts/document.js"></script>
     <script src="/javascripts/app.js"></script>
     <script src="/javascripts/dashboardFaculty.js"></script>
+    <script src="/javascripts/studentTable.js"></script>
     <!-- <script src="/javascripts/modal.js"></script> -->
 </body>
 </html>

@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1:3306
--- Generation Time: Dec 10, 2023 at 03:53 PM
+-- Generation Time: Dec 10, 2023 at 05:03 PM
 -- Server version: 8.2.0
 -- PHP Version: 8.2.13
 
@@ -49,7 +49,7 @@ CREATE TABLE IF NOT EXISTS `company` (
   `companyLocation` varchar(35) NOT NULL,
   `companyDescription` text NOT NULL,
   PRIMARY KEY (`companyID`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 --
 -- Dumping data for table `company`
@@ -100,7 +100,7 @@ CREATE TABLE IF NOT EXISTS `department` (
   `departmentName` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
   `departmentAcronym` varchar(20) NOT NULL,
   PRIMARY KEY (`departmentID`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 --
 -- Dumping data for table `department`
@@ -124,7 +124,7 @@ CREATE TABLE IF NOT EXISTS `document` (
   `docName` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
   `isOptional` tinyint(1) NOT NULL,
   PRIMARY KEY (`docID`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 --
 -- Dumping data for table `document`
@@ -145,24 +145,20 @@ INSERT INTO `document` (`docID`, `docName`, `isOptional`) VALUES
 
 DROP TABLE IF EXISTS `document_sub`;
 CREATE TABLE IF NOT EXISTS `document_sub` (
-  `submissionID` int NOT NULL AUTO_INCREMENT,
   `docID` int NOT NULL,
   `studID` int NOT NULL,
-  `hasBeenSubmitted` tinyint(1) NOT NULL,
-  PRIMARY KEY (`submissionID`),
-  KEY `docID` (`docID`,`studID`),
-  KEY `studID` (`studID`)
+  PRIMARY KEY (`docID`,`studID`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 --
 -- Dumping data for table `document_sub`
 --
 
-INSERT INTO `document_sub` (`submissionID`, `docID`, `studID`, `hasBeenSubmitted`) VALUES
-(1, 1, 2222613, 1),
-(2, 2, 2222613, 1),
-(3, 3, 2222613, 1),
-(4, 4, 2222613, 1);
+INSERT INTO `document_sub` (`docID`, `studID`) VALUES
+(1, 2222613),
+(2, 2222613),
+(3, 2222613),
+(4, 2222613);
 
 -- --------------------------------------------------------
 
@@ -175,7 +171,7 @@ CREATE TABLE IF NOT EXISTS `gender` (
   `genderID` int NOT NULL AUTO_INCREMENT,
   `genderDescription` varchar(50) NOT NULL,
   PRIMARY KEY (`genderID`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 --
 -- Dumping data for table `gender`
@@ -240,7 +236,7 @@ CREATE TABLE IF NOT EXISTS `ojt_requirements` (
   `requirementID` int NOT NULL AUTO_INCREMENT,
   `requiredHours` time NOT NULL,
   PRIMARY KEY (`requirementID`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 --
 -- Dumping data for table `ojt_requirements`
@@ -263,7 +259,7 @@ CREATE TABLE IF NOT EXISTS `program` (
   `programDescription` varchar(100) NOT NULL,
   PRIMARY KEY (`programID`),
   KEY `departmentID` (`departmentID`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 --
 -- Dumping data for table `program`
@@ -361,7 +357,7 @@ CREATE TABLE IF NOT EXISTS `teacher` (
   KEY `teacherEmail` (`teacherEmail`,`genderID`,`courseID`),
   KEY `genderID` (`genderID`),
   KEY `courseID` (`courseID`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 --
 -- Dumping data for table `teacher`

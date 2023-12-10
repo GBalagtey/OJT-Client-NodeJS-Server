@@ -83,6 +83,8 @@
                 <div class="about">
                     <h3> PERSONAL DETAILS</h3>
                     <hr><br>
+                    <h5>Full Name</h5>
+                    <p><%= userData.firstName %> <% if (userData.middleInitial !== null) { %> <%= userData.middleInitial %>. <% }%> <%= userData.lastName %></p>
                     <h5>Course</h5>
                     <p><%= userData.programDescription %></p>
                     <h5>Birth Date</h5>

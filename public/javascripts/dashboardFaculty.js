@@ -26,9 +26,10 @@ function populateStudentRecords() {
                   <td>${record.firstName} ${record.lastName}</td>
                   <td>${record.companyName}</td>
                   <td>
-                  <div class="progress-bar" style="position: relative; width: 100%; background-color: #e0e0e0; border-radius: 5px;">
-                  <div class="progress-circle" style="--progress: ${progressPercentage};"></div>
-                  </div>
+                    <div class="progress-container">
+                    <div class="progress-circle"></div>
+                    <div class="percentage">75%</div>
+                    </div>
                   </td>
                   <td>${progressPercentage.toFixed(2)}</td>
                   <td><a href="#" class="more-link">More</a></td>

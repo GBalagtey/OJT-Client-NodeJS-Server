@@ -8,21 +8,21 @@ function populateStudentRecords() {
   const modalContent = document.getElementById('modalContent'); // Added this line
 
   fetch('/getStudentRecords')
-      .then(response => response.json())
-      .then(records => {
-          console.log('Fetched records:', records);
-          recordsTable.innerHTML = '';
+    .then(response => response.json())
+    .then(records => {
+      console.log('Fetched records:', records);
+      recordsTable.innerHTML = '';
 
-          records.forEach(record => {
-              const hardcodedTotalRenderedHours = record.totalRenderedHoursOjt;
-              const hardcodedTotalRequiredHours = record.requiredHours;
-              const progressPercentage = calculateProgress(hardcodedTotalRenderedHours, hardcodedTotalRequiredHours);
-              if(record.companyName == null){
-                record.companyName = 'None';
-              }   
+      records.forEach(record => {
+        const hardcodedTotalRenderedHours = record.totalRenderedHoursOjt;
+        const hardcodedTotalRequiredHours = record.requiredHours;
+        const progressPercentage = calculateProgress(hardcodedTotalRenderedHours, hardcodedTotalRequiredHours);
+        if (record.companyName == null) {
+          record.companyName = 'None';
+        }
 
-              const row = document.createElement('tr');
-              row.innerHTML = `
+        const row = document.createElement('tr');
+        row.innerHTML = `
                   <td>${record.firstName} ${record.lastName}</td>
                   <td>${record.companyName}</td>
                   <td>
@@ -35,23 +35,23 @@ function populateStudentRecords() {
                   <td><a href="#" class="more-link">More</a></td>
               `;
 
-              row.addEventListener('click', () => {
-                  // Call a function to populate modal content based on the clicked row
-                  openModal(record, progressPercentage);
-              });
+        row.addEventListener('click', () => {
+          // Call a function to populate modal content based on the clicked row
+          openModal(record, progressPercentage);
+        });
 
-              recordsTable.appendChild(row);
-          });
-      })
-      .catch(error => {
-          console.error('Error fetching student records:', error);
+        recordsTable.appendChild(row);
       });
+    })
+    .catch(error => {
+      console.error('Error fetching student records:', error);
+    });
 }
 
 function openModal(record, progressPercentage) {
   const modalContent = document.getElementById('modalContent');
   console.log(record.studID);
-  
+
   // Fetch additional data based on the clicked row
   fetch(`/getAdditionalData?studID=${record.studID}`) // Adjust the URL and parameters as needed
     .then(response => response.json())
@@ -64,75 +64,136 @@ function openModal(record, progressPercentage) {
           <div style="position: absolute; top: 0; left: 0; width: ${progressPercentage}%; height: 100%; background-color: #7380ec; border-radius: 5px;"></div>
         </div>
         <p>Student: ${record.firstName} ${record.lastName}</p>
-        <p>Company: ${record.companyName}</p>
-        
-        <div class="announcements">
-          <h2>Requirements</h2>
-          <div class="updates">
-            <div class="message">
-              <h3 id="submittedDisplay">Submitted Documents</h3>
-              <form id="documentForm" style="display: grid">
-                <!-- Populate submitted documents here -->
-              </form>
-              <h3 id="pendingDisplay">Other required documents</h3>
-              <form id="pendingDocument" style="display: grid">
-                <!-- Populate pending documents here -->
-              </form>
-            </div>
-          </div>
-        </div>
-        <button>Update</button>
-      `;
-
-      const modal = document.getElementById('myModal');
-      modal.style.display = 'block';
-      console.log("LOOK AT ME ",  record.studID);
-      // Populate submitted documents
-      const documentForm = document.getElementById('documentForm');
-      fetch(`/getSubmittedDocumentsFaculty?studID=${record.studID}`, )
-        .then(response => response.json())
-        .then(submittedDocuments => {
-          submittedDocuments.forEach(doc => {
-            const checkbox = document.createElement('input');    
-            checkbox.checked = true;  
-            checkbox.type = 'checkbox';
-            checkbox.name = 'submittedDocument';
-            checkbox.value = doc.docName;
-            const label = document.createElement('label');
-            label.appendChild(checkbox);
-            label.appendChild(document.createTextNode(doc.docName));
-            documentForm.appendChild(label);
-          });
-          
-        })
-        .catch(error => {
-          console.error('Error fetching submitted documents:', error);
-        });
-
-      // Populate pending documents
-      const pendingDocumentForm = document.getElementById('pendingDocument');
-      fetch(`/getPendingDocumentsFaculty?studID=${record.studID}`)
-        .then(response => response.json())
-        .then(pendingDocuments => {
-          pendingDocuments.forEach(doc => {
-            const checkbox = document.createElement('input');
-            checkbox.type = 'checkbox';
-            checkbox.name = 'pendingDocument';
-            checkbox.value = doc.docName;
-            const label = document.createElement('label');
-            label.appendChild(checkbox);
-            label.appendChild(document.createTextNode(doc.docName));
-            pendingDocumentForm.appendChild(label);
-          });
-        })
-        .catch(error => {
-          console.error('Error fetching pending documents:', error);
-        });
-    })
-    .catch(error => {
-      console.error('Error fetching additional data:', error);
+        <p>Company: ${record.companyName}</p>`
     });
+    const modal = document.getElementById('myModal');
+    modal.style.display = 'block';
 }
+
+// function openModal(record, progressPercentage) {
+//   const modalContent = document.getElementById('modalContent');
+//   console.log(record.studID);
+
+//   // Fetch additional data based on the clicked row
+//   fetch(`/getAdditionalData?studID=${record.studID}`) // Adjust the URL and parameters as needed
+//     .then(response => response.json())
+//     .then(additionalData => {
+//       // Example: Populate modal content with the data from the clicked row and additional data
+//       modalContent.innerHTML = `
+//         <span class="close" onclick="closeModal()">&times;</span>
+//         <h2 class="title-modal">Add Work Details</h2>
+//         <div class="progress-bar" style="position: relative; width: 100%; background-color: #e0e0e0; border-radius: 5px;">
+//           <div style="position: absolute; top: 0; left: 0; width: ${progressPercentage}%; height: 100%; background-color: #7380ec; border-radius: 5px;"></div>
+//         </div>
+//         <p>Student: ${record.firstName} ${record.lastName}</p>
+//         <p>Company: ${record.companyName}</p>
+
+//         <div class="announcements">
+//           <h2>Requirements</h2>
+//           <div class="updates">
+//             <div class="message">
+//               <h3 id="submittedDisplay">Submitted Documents</h3>
+//               <form id="documentForm" style="display: grid">
+//                 <!-- Populate submitted documents here -->
+//               </form>
+//               <h3 id="pendingDisplay">Other required documents</h3>
+//               <form id="pendingDocument" style="display: grid">
+//                 <!-- Populate pending documents here -->
+//               </form>
+//             </div>
+//           </div>
+//         </div>
+//         <button id="updateButton">Update</button>
+//       `;
+
+//       const modal = document.getElementById('myModal');
+//       modal.style.display = 'block';
+
+//       document.getElementById('updateButton').addEventListener('click', () => {
+//         updateData(record.studID);
+//       });
+
+//       console.log("LOOK AT ME ",  record.studID);
+//       // Populate submitted documents
+//       const documentForm = document.getElementById('documentForm');
+//       fetch(`/getSubmittedDocumentsFaculty?studID=${record.studID}`, )
+//         .then(response => response.json())
+//         .then(submittedDocuments => {
+//           submittedDocuments.forEach(doc => {
+//             const checkbox = document.createElement('input');    
+//             checkbox.checked = true;  
+//             checkbox.type = 'checkbox';
+//             checkbox.name = 'submittedDocument';
+//             checkbox.value = doc.docName;
+//             const label = document.createElement('label');
+//             label.appendChild(checkbox);
+//             label.appendChild(document.createTextNode(doc.docName));
+//             documentForm.appendChild(label);
+//           });
+
+//         })
+//         .catch(error => {
+//           console.error('Error fetching submitted documents:', error);
+//         });
+
+//       // Populate pending documents
+//       const pendingDocumentForm = document.getElementById('pendingDocument');
+//       fetch(`/getPendingDocumentsFaculty?studID=${record.studID}`)
+//         .then(response => response.json())
+//         .then(pendingDocuments => {
+//           pendingDocuments.forEach(doc => {
+//             const checkbox = document.createElement('input');
+//             checkbox.type = 'checkbox';
+//             checkbox.name = 'pendingDocument';
+//             checkbox.value = doc.docName;
+//             const label = document.createElement('label');
+//             label.appendChild(checkbox);
+//             label.appendChild(document.createTextNode(doc.docName));
+//             pendingDocumentForm.appendChild(label);
+//           });
+//         })
+//         .catch(error => {
+//           console.error('Error fetching pending documents:', error);
+//         });
+//     })
+//     .catch(error => {
+//       console.error('Error fetching additional data:', error);
+//     });
+// }
+
+// function updateData(studID){
+//   console.log("update", studID);
+
+
+//   const documentForm = document.getElementById('documentForm');
+//   const pendingDocumentForm = document.getElementById('pendingDocument');
+
+//   const submittedDocuments = getFormData(documentForm, 'submittedDocument');
+//   const pendingDocuments = getFormData(pendingDocumentForm, 'pendingDocument');
+
+//   console.log('Submitted Documents:', submittedDocuments);
+//   console.log('Pending Documents:', pendingDocuments);
+// }
+
+// function getFormData(form, checkboxName) {
+//   const checkboxes = form.querySelectorAll(`[name="${checkboxName}"]:checked`);
+//   const formData = [];
+
+//   checkboxes.forEach(checkbox => {
+//     formData.push({
+//       docID: checkbox.value, // Assuming 'value' is the docID
+//       studID: form.getAttribute('data-studID'), // Add a data-studID attribute to the form
+//       isChecked: true, // You can customize this based on your requirements
+//     });
+
+//     // Log the values
+//     console.log('studID:', form.getAttribute('data-studID'));
+//     console.log('docID:', checkbox.value);
+//     console.log('isChecked:', true); // Change this based on your logic
+//   });
+
+//   return formData;
+// }
 
 
 
@@ -146,10 +207,10 @@ function calculateProgress(totalRenderedHours, totalRequiredHours) {
   const renderedHours = totalRenderedHours;
   const requiredHours = parseTime(totalRequiredHours);
   const percentage = (renderedHours / requiredHours) * 100;
-  
+
   // Ensure the percentage does not exceed 100%
   const cappedPercentage = Math.min(percentage, 100);
-  
+
   console.log(`Percentage: ${cappedPercentage}%`);
   return cappedPercentage;
 }
@@ -220,38 +281,38 @@ document.getElementById('sortByName').addEventListener('click', sortByName);
 document.getElementById('sortByCompany').addEventListener('click', sortByCompany);
 document.getElementById('sortByProgress').addEventListener('click', sortByProgress);
 
-  //UPLOAD PHOTO
-  function handleFileSelect(event) {
-    const fileInput = event.target;
-    const file = fileInput.files[0];
+//UPLOAD PHOTO
+function handleFileSelect(event) {
+  const fileInput = event.target;
+  const file = fileInput.files[0];
 
-    if (file) {
-        const reader = new FileReader();
+  if (file) {
+    const reader = new FileReader();
 
-        reader.onload = function (e) {
-            const profilePhotoImg = document.getElementById('profile-photo-img');
-            profilePhotoImg.src = e.target.result;
+    reader.onload = function (e) {
+      const profilePhotoImg = document.getElementById('profile-photo-img');
+      profilePhotoImg.src = e.target.result;
 
-            uploadFile(file);
-        };
+      uploadFile(file);
+    };
 
-        reader.readAsDataURL(file);
-    }
+    reader.readAsDataURL(file);
+  }
 }
 
 function uploadFile(file) {
-    const formData = new FormData();
-    formData.append('file', file);
+  const formData = new FormData();
+  formData.append('file', file);
 
-    fetch('/upload', {
-        method: 'POST',
-        body: formData,
-    })
+  fetch('/upload', {
+    method: 'POST',
+    body: formData,
+  })
     .then(response => response.json())
     .then(data => {
-        console.log('File uploaded successfully:', data);
+      console.log('File uploaded successfully:', data);
     })
     .catch(error => {
-        console.error('Error uploading file:', error);
+      console.error('Error uploading file:', error);
     });
 }

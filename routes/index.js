@@ -617,56 +617,76 @@ router.get('/getPendingDocuments', requireLogin, (req, res) => {
   });
 });
 
-router.get('/getSubmittedDocumentsFaculty', requireLogin, (req, res) => {
-  const studID = req.query.studID;
+// router.get('/getSubmittedDocumentsFaculty', requireLogin, (req, res) => {
+//   const studID = req.query.studID;
 
-  const query = `
-    SELECT document.docName
-    FROM document
-    JOIN document_sub ON document_sub.docID = document.docID
-    JOIN student ON student.studID = document_sub.studID
-    WHERE (document_sub.hasBeenSubmitted = 1 OR document_sub.hasBeenSubmitted IS NULL)
-      AND student.studID = ?
-    ORDER BY document.docName;`;
+//   const query = `
+//     SELECT document.docName
+//     FROM document
+//     JOIN document_sub ON document_sub.docID = document.docID
+//     JOIN student ON student.studID = document_sub.studID
+//     WHERE (document_sub.hasBeenSubmitted = 1 OR document_sub.hasBeenSubmitted IS NULL)
+//       AND student.studID = ?
+//     ORDER BY document.docName;`;
 
-  connection.query(query, [studID], (error, results) => {
-    if (error) {
-      console.error('Error fetching submitted documents:', error);
-      res.status(500).send('Internal Server Error');
-      return;
-    }
-    res.json(results);
-  });
+//   connection.query(query, [studID], (error, results) => {
+//     if (error) {
+//       console.error('Error fetching submitted documents:', error);
+//       res.status(500).send('Internal Server Error');
+//       return;
+//     }
+//     res.json(results);
+//   });
+// });
+
+
+// router.get('/getPendingDocumentsFaculty', requireLogin, (req, res) => {
+//   const studID =req.query.studID;
+
+//   const query = `SELECT document.docID, document.docName 
+//   FROM document
+//   WHERE document.isOptional = ?
+//     AND NOT EXISTS (
+//       SELECT 1
+//       FROM document_sub
+//       JOIN student ON student.studID = document_sub.studID
+//       WHERE document_sub.docID = document.docID
+//         AND student.studID = ?
+//         AND document_sub.hasBeenSubmitted
+//     );`;
+
+//   connection.query(query, [0, studID], (error, results) => {
+//     if(error) {
+//       console.error('Error fetching pending documents:', error);
+//       res.status(500).send('Internal Server Error');
+//       return;
+//     }
+//     console.log('studID: ', studID);
+//     console.log('Submitted Documents:', results);
+//     console.log(results);
+//   res.json(results);
+//   });
+// });
+
+router.post('/updateData', (req, res) => {
+  const data = req.body;
+  
+  // Sample logic: Update data in memory
+  const recordToUpdate = records.find(record => record.studID === data.studID);
+
+  if (recordToUpdate) {
+    // Update submitted documents
+    recordToUpdate.submittedDocuments = data.submittedDocuments;
+
+    // Update pending documents
+    recordToUpdate.pendingDocuments = data.pendingDocuments;
+
+    res.json({ message: 'Data updated successfully' });
+  } else {
+    res.status(404).json({ error: 'Record not found' });
+  }
 });
 
-
-router.get('/getPendingDocumentsFaculty', requireLogin, (req, res) => {
-  const studID =req.query.studID;
-
-  const query = `SELECT document.docID, document.docName 
-  FROM document
-  WHERE document.isOptional = ?
-    AND NOT EXISTS (
-      SELECT 1
-      FROM document_sub
-      JOIN student ON student.studID = document_sub.studID
-      WHERE document_sub.docID = document.docID
-        AND student.studID = ?
-        AND document_sub.hasBeenSubmitted
-    );`;
-
-  connection.query(query, [0, studID], (error, results) => {
-    if(error) {
-      console.error('Error fetching pending documents:', error);
-      res.status(500).send('Internal Server Error');
-      return;
-    }
-    console.log('studID: ', studID);
-    console.log('Submitted Documents:', results);
-    console.log(results);
-  res.json(results);
-  });
-});
 
 // router.post('/updateSubmittedDocuments', requireLogin, (req, res) => {
 //   try {

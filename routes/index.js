@@ -417,8 +417,8 @@ router.get('/getStudentRecords', requireLogin, (req, res) => {
     student.companyID,
     student.studID,
     company.companyName,
-    ojt_requirements.requiredHours,
-    SUM(ojt_records.renderedHours) AS totalRenderedHoursOjt
+    COALESCE(SEC_TO_TIME(SUM(TIME_TO_SEC(ojt_records.renderedHours))), '00:00:00') AS total_time,
+    SEC_TO_TIME(TIME_TO_SEC(student.demerit) + TIME_TO_SEC(ojt_requirements.requiredHours)) AS hours_required
   FROM  
     student
   LEFT JOIN

@@ -12,10 +12,12 @@ function populateStudentRecords() {
     .then(records => {
       console.log('Fetched records:', records);
       recordsTable.innerHTML = '';
-
+      console.log
       records.forEach(record => {
-        const hardcodedTotalRenderedHours = record.totalRenderedHoursOjt;
-        const hardcodedTotalRequiredHours = record.requiredHours;
+        const hardcodedTotalRenderedHours = record.total_time;
+        const hardcodedTotalRequiredHours = record.hours_required;
+        console.log(hardcodedTotalRenderedHours);
+        console.log(hardcodedTotalRequiredHours);
         const progressPercentage = calculateProgress(hardcodedTotalRenderedHours, hardcodedTotalRequiredHours);
         if (record.companyName == null) {
           record.companyName = 'None';
@@ -26,9 +28,15 @@ function populateStudentRecords() {
                   <td>${record.firstName} ${record.lastName}</td>
                   <td>${record.companyName}</td>
                   <td>
-                  <div class="progress-bar" style="position: relative; width: 100%; background-color: #e0e0e0; border-radius: 5px;">
-                  <div class="progress-circle" style="--progress: ${progressPercentage};"></div>
-                  </div>
+                  <div class="progress-container">
+                      <div class="progress-circle"></div>
+                      <div class="progress-circle2" style="background: conic-gradient(
+                        #7380ec 0% var(--progress, 0%),
+                        #7380ec ${(progressPercentage.toFixed(2)/100)*360}deg var(--progress, 0%),
+                        transparent ${(progressPercentage.toFixed(2)/100)*360}deg 360deg">
+                        <div class="percentage"">${progressPercentage.toFixed(0)}%</div>
+                      </div>
+                    </div>
                   </td>
                   <td>${progressPercentage.toFixed(2)}</td>
                   <td><a href="#" class="more-link">More</a></td>
@@ -257,7 +265,7 @@ function closeModal() {
 }
 
 function calculateProgress(totalRenderedHours, totalRequiredHours) {
-  const renderedHours = totalRenderedHours;
+  const renderedHours = parseTime(totalRenderedHours);
   const requiredHours = parseTime(totalRequiredHours);
   const percentage = (renderedHours / requiredHours) * 100;
 

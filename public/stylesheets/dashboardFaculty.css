@@ -398,6 +398,40 @@ main .timetable.active .closeBtn{
     left: 45%;
 }
 
+.progress-container {
+    position: relative;
+    width: 100px;
+    height: 15px;
+    margin-bottom: 20px;
+  }
+
+  .progress-circle {
+    position: absolute;
+    left: 70%;
+    height: 50px;
+    clip: rect(0, 100px, 100px, 50px);
+    border-radius: 50%;
+    background: conic-gradient(
+      #eee 0% var(--progress, 0%),
+      #eee 360deg var(--progress, 0%),
+      transparent 360deg 360deg
+    );
+  }
+  .progress-circle2 {
+    position: relative;
+    height: 50px;
+    left: 20%;
+    clip: rect(0, 100px, 100px, 50px);
+    border-radius: 50%;
+    z-index: 1;
+  }
+
+  .percentage {
+    font-size: 10px;
+    left: 35%;
+    z-index: 2;
+  }
+
 /* Search Bar */ 
 .search__input {
     width: 100%;
@@ -482,36 +516,6 @@ main .timetable.active .closeBtn{
 }
 .right .leaves .teacher:hover{box-shadow: none;}
 
-.progress-container {
-    position: relative;
-    width: 100px;
-    height: 30px;
-  }
-
-  .progress-circle {
-    position: absolute;
-    height: 50px;
-    clip: rect(0, 100px, 100px, 50px);
-    border-radius: 50%;
-    z-index: 20;
-    background: conic-gradient(
-      #3498db 0% var(--progress, 0%),
-      blue var(--progress, 0%) 100%
-    );
-  }
-
-  .progress-circle {
-    position: absolute;
-    height: 50px;
-    clip: rect(0, 50px, 100px, 50px);
-    border-radius: 50%;
-    background: conic-gradient(
-      pink 0% var(--progress, 0%),
-      pink var(--progress, 40%) 40%
-    );
-  }
-
-
 /* MEDIA QUERIES  */
 @media screen and (max-width: 1200px) {
     html{font-size: 12px;}
@@ -548,6 +552,7 @@ main .timetable.active .closeBtn{
         padding: 4rem 0 0 0;
     }
 }
+
 
 @media screen and (max-width: 768px){
     html{font-size: 10px;}
@@ -586,4 +591,5 @@ main .timetable.active .closeBtn{
         width: 100%;
         padding: 2rem;
     }
+    
 }

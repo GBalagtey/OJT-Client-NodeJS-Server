@@ -28,7 +28,7 @@ function formatDate(dateString) {
   
   function progressWidthFill() {
     const progressWidth = document.getElementById('progress');
-
+    const percent = document.getElementById('progPercent');
     fetch('/getProgress')
       .then(response => response.json())
       .then(data => {
@@ -39,6 +39,12 @@ function formatDate(dateString) {
           percentage = (totalRenderedHours/ totalRequiredHours) * 100;
           console.log(`Percentage: ${percentage}%`);
           progressWidth.style.width = percentage + '%';
+          if(percentage > 0){
+            percent.innerText = percentage + '%';
+            percent.style.textAlign = "center";
+            percent.style.color ="white";
+            percent.style.fontSize = "10px";
+          }
       }
       })
       .catch(error => {

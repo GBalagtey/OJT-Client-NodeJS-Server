@@ -57,5 +57,34 @@ function populatePendingDocument() {
       });
   }
 
+
+function populateAnnouncement(){
+  fetch('/getAnnouncement')
+      .then(response => response.json())
+      .then(records => {
+        if (records.length === 0) {
+            updates.style.display = 'none';
+            updates.style.display = 'none';
+          } 
+          else{
+        records.forEach(record => {
+  
+          const newLabel = document.createElement("label");
+          newLabel.textContent = record.docName;
+          newLabel.htmlFor = record.docName;
+          newLabel.style.color = '#FF8C00';
+  
+          updates.appendChild(newLabel);
+  
+          updates.appendChild(document.createElement("br"));
+        });
+    }
+      })
+      .catch(error => {
+        console.error('Error fetching latest records:', error);
+      });
+}
+
 populateDocument();
 populatePendingDocument();
+populateAnnouncement();

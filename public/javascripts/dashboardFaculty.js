@@ -179,6 +179,7 @@ function openModal(record, progressPercentage) {
     });
 }
 
+// If there is no checkbox, find a way to send an empty array
 function updateDocuments(studID) {
   const documentForm = document.getElementById('documentForm');
   const checkboxes = documentForm.querySelectorAll('[name="documents"]');
@@ -203,135 +204,6 @@ function updateDocuments(studID) {
       console.error('Error updating documents:', error);
     });
 }
-
-
-// function openModal(record, progressPercentage) {
-//   const modalContent = document.getElementById('modalContent');
-//   console.log(record.studID);
-
-//   // Fetch additional data based on the clicked row
-//   fetch(`/getAdditionalData?studID=${record.studID}`) // Adjust the URL and parameters as needed
-//     .then(response => response.json())
-//     .then(additionalData => {
-//       // Example: Populate modal content with the data from the clicked row and additional data
-//       modalContent.innerHTML = `
-//         <span class="close" onclick="closeModal()">&times;</span>
-//         <h2 class="title-modal">Add Work Details</h2>
-//         <div class="progress-bar" style="position: relative; width: 100%; background-color: #e0e0e0; border-radius: 5px;">
-//           <div style="position: absolute; top: 0; left: 0; width: ${progressPercentage}%; height: 100%; background-color: #7380ec; border-radius: 5px;"></div>
-//         </div>
-//         <p>Student: ${record.firstName} ${record.lastName}</p>
-//         <p>Company: ${record.companyName}</p>
-
-//         <div class="announcements">
-//           <h2>Requirements</h2>
-//           <div class="updates">
-//             <div class="message">
-//               <h3 id="submittedDisplay">Submitted Documents</h3>
-//               <form id="documentForm" style="display: grid">
-//                 <!-- Populate submitted documents here -->
-//               </form>
-//               <h3 id="pendingDisplay">Other required documents</h3>
-//               <form id="pendingDocument" style="display: grid">
-//                 <!-- Populate pending documents here -->
-//               </form>
-//             </div>
-//           </div>
-//         </div>
-//         <button id="updateButton">Update</button>
-//       `;
-
-//       const modal = document.getElementById('myModal');
-//       modal.style.display = 'block';
-
-//       document.getElementById('updateButton').addEventListener('click', () => {
-//         updateData(record.studID);
-//       });
-
-//       console.log("LOOK AT ME ",  record.studID);
-//       // Populate submitted documents
-//       const documentForm = document.getElementById('documentForm');
-//       fetch(`/getSubmittedDocumentsFaculty?studID=${record.studID}`, )
-//         .then(response => response.json())
-//         .then(submittedDocuments => {
-//           submittedDocuments.forEach(doc => {
-//             const checkbox = document.createElement('input');    
-//             checkbox.checked = true;  
-//             checkbox.type = 'checkbox';
-//             checkbox.name = 'submittedDocument';
-//             checkbox.value = doc.docName;
-//             const label = document.createElement('label');
-//             label.appendChild(checkbox);
-//             label.appendChild(document.createTextNode(doc.docName));
-//             documentForm.appendChild(label);
-//           });
-
-//         })
-//         .catch(error => {
-//           console.error('Error fetching submitted documents:', error);
-//         });
-
-//       // Populate pending documents
-//       const pendingDocumentForm = document.getElementById('pendingDocument');
-//       fetch(`/getPendingDocumentsFaculty?studID=${record.studID}`)
-//         .then(response => response.json())
-//         .then(pendingDocuments => {
-//           pendingDocuments.forEach(doc => {
-//             const checkbox = document.createElement('input');
-//             checkbox.type = 'checkbox';
-//             checkbox.name = 'pendingDocument';
-//             checkbox.value = doc.docName;
-//             const label = document.createElement('label');
-//             label.appendChild(checkbox);
-//             label.appendChild(document.createTextNode(doc.docName));
-//             pendingDocumentForm.appendChild(label);
-//           });
-//         })
-//         .catch(error => {
-//           console.error('Error fetching pending documents:', error);
-//         });
-//     })
-//     .catch(error => {
-//       console.error('Error fetching additional data:', error);
-//     });
-// }
-
-// function updateData(studID){
-//   console.log("update", studID);
-
-
-//   const documentForm = document.getElementById('documentForm');
-//   const pendingDocumentForm = document.getElementById('pendingDocument');
-
-//   const submittedDocuments = getFormData(documentForm, 'submittedDocument');
-//   const pendingDocuments = getFormData(pendingDocumentForm, 'pendingDocument');
-
-//   console.log('Submitted Documents:', submittedDocuments);
-//   console.log('Pending Documents:', pendingDocuments);
-// }
-
-// function getFormData(form, checkboxName) {
-//   const checkboxes = form.querySelectorAll(`[name="${checkboxName}"]:checked`);
-//   const formData = [];
-
-//   checkboxes.forEach(checkbox => {
-//     formData.push({
-//       docID: checkbox.value, // Assuming 'value' is the docID
-//       studID: form.getAttribute('data-studID'), // Add a data-studID attribute to the form
-//       isChecked: true, // You can customize this based on your requirements
-//     });
-
-//     // Log the values
-//     console.log('studID:', form.getAttribute('data-studID'));
-//     console.log('docID:', checkbox.value);
-//     console.log('isChecked:', true); // Change this based on your logic
-//   });
-
-//   return formData;
-// }
-
-
-
 
 function closeModal() {
   const modal = document.getElementById('myModal');

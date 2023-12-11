@@ -804,19 +804,20 @@ router.get('/getProgress', requireLogin, (req, res) => {
 
 router.get('/getAnnouncements', requireLogin, (req, res) => {
   const query = `
-  SELECT * FROM announcements;
+    SELECT * FROM announcement;
   `;
 
-  connection.query(query, [studId], (error, results) => {
+  connection.query(query, (error, results) => {
     if (error) {
-      console.error('Error fetching latest records:', error);
-      res.status(500).send('Internal Server Error');
+      console.error('Error fetching announcements:', error);
+      res.status(500).json({ error: 'Internal Server Error' });
       return;
     }
-
+    console.log(results);
     res.json(results);
-  }); 
+  });
 });
+
 
 const saltRounds = 10;
 async function hashPassword(password) {

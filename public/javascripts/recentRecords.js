@@ -10,16 +10,18 @@ function formatDate(dateString) {
       .then(response => response.json())
       .then(records => {
         recordsTable.innerHTML = '';
-        records.forEach(record => {
-          const row = document.createElement('tr');
-          row.innerHTML = `
-            <td>${formatDate(record.date)}</td>
-            <td>${record.workDescription}</td>
-            <td>${record.renderedHours}</td>
-          `;
+        if(records.length > 0){
+          records.forEach(record => {
+            const row = document.createElement('tr');
+            row.innerHTML = `
+              <td>${formatDate(record.date)}</td>
+              <td>${record.workDescription}</td>
+              <td>${record.renderedHours}</td>
+            `;
 
-          recordsTable.appendChild(row);
-        });
+            recordsTable.appendChild(row);
+          });
+        }
       })
       .catch(error => {
         console.error('Error fetching latest records:', error);
@@ -32,15 +34,17 @@ function formatDate(dateString) {
     fetch('/getProgress')
       .then(response => response.json())
       .then(data => {
+        let percentage = 0;  
         if(data.length > 0){
-          const totalRenderedHours = parseTime(data[0].total_time);
-          let percentage = 0;  
-          const totalRequiredHours = parseTime(data[0].hours_required);
-          percentage = (totalRenderedHours/ totalRequiredHours) * 100;
+          if(data[0].time !== '00:00:00' && data[0].hours_required !== null){
+            const totalRenderedHours = parseTime(data[0].total_time);
+            const totalRequiredHours = parseTime(data[0].hours_required);
+            percentage = (totalRenderedHours/ totalRequiredHours) * 100;
+          }
           console.log(`Percentage: ${percentage}%`);
           progressWidth.style.width = percentage + '%';
           if(percentage > 0){
-            percent.innerText = percentage + '%';
+            percent.innerText = percentage.toFixed(0) + '%';
             percent.style.textAlign = "center";
             percent.style.color ="white";
             percent.style.fontSize = "10px";

@@ -105,6 +105,8 @@ DROP TABLE IF EXISTS `document_sub`;
 CREATE TABLE IF NOT EXISTS `document_sub` (
   `docID` int NOT NULL,
   `studID` int NOT NULL,
+  `isOptional` tinyint(1) NOT NULL,
+  `hasBeenSubmitted` tinyint(1) NOT NULL,
   PRIMARY KEY (`docID`,`studID`),
   KEY `document_sub_ibfk_1` (`studID`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_520_ci;

@@ -8,12 +8,6 @@
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Sharp" rel="stylesheet">
     <link rel="shortcut icon" href="./img/EduSynctask.png">
     <link rel="stylesheet" href="/stylesheets/dashboard.css">
-    <style>
-        .table {
-            max-height: 800px;
-            overflow-y: auto; 
-        }
-    </style>
 </head>
 <body>
     <header>
@@ -49,12 +43,12 @@
         
     </header>
 
-    <main style="margin: 0;">
+    <main>
         <div class="timetable active" id="record">
             <div>
                 <h2>OJT Record History</h2>
             </div>
-            <table class="table">
+            <table style="max-height: 20%; overflow: auto;">
                 <thead>
                     <tr>
                         <th>Date</th>

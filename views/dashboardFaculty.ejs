@@ -65,7 +65,7 @@
                     </button>
                     <div class="info">
                         <p><b><%= userData.lastName %>, <%= userData.firstName %> <%= userData.middleInitial %></b> </p>
-                        <small class="text-muted"><%= userData.departmentAcronym %></small>
+                        <small class="text-muted"><%= userData.deptAcronym %></small>
                     </div>
                 </div>
                 <div class="about">
@@ -93,7 +93,7 @@
                     <h3> OTHER DETAILS</h3>
                     <hr><br>
                     <h5>Department</h5>
-                    <p><%= userData.departmentName %></p>
+                    <p><%= userData.deptName %></p>
                 </div>
             </div>
         </aside>
@@ -132,6 +132,90 @@
                     <tbody id="recordsTable">
                         <!-- Records will be populated here -->
                     </tbody>
+                    <script>
+                    function populateStudentRecords() {
+                        const modalContent = document.getElementById('modalContent');
+                        const sortDropdown = document.getElementById('sortDropdown');
+
+                        let currentSortOption = sortDropdown.value;
+                        
+                        fetch('/getStudentRecords')
+                            .then(response => response.json())
+                            .then(records => {
+                            records.sort((a, b) => (a.firstName + a.lastName).localeCompare(b.firstName + b.lastName));
+                            populate(records);
+                                sortDropdown.addEventListener('change', function () {
+                                currentSortOption = sortDropdown.value;
+                                if (currentSortOption === 'name') {
+                                    records.sort((a, b) => (a.firstName + a.lastName).localeCompare(b.firstName + b.lastName));
+                                    populate(records);
+                                } else if (currentSortOption === 'company') {
+                                    records.sort((a, b) => (a.companyName || 'None').localeCompare(b.companyName || 'None'));
+                                    populate(records);
+                                } else if (currentSortOption === 'progress') {
+                                    records.sort((a, b) => calculateProgress(b.total_time, b.hours_required) - calculateProgress(a.total_time, a.hours_required));
+                                    populate(records);
+                                }
+                                });
+                            })
+                            .catch(error => {
+                            console.error('Error fetching student records:', error);
+                            });
+                    }
+                    function populate(records){
+                        const recordsTable = document.getElementById('recordsTable');
+                        recordsTable.innerHTML = '';
+                        records.forEach(record => {
+                            const hardcodedTotalRenderedHours = record.total_time;
+                            const hardcodedTotalRequiredHours = record.hours_required;
+                            console.log(hardcodedTotalRenderedHours);
+                            console.log(hardcodedTotalRequiredHours);
+                            const progressPercentage = calculateProgress(hardcodedTotalRenderedHours, hardcodedTotalRequiredHours);
+                            if (record.companyName == null) {
+                            record.companyName = 'None';
+                            }
+
+                            const row = document.createElement('tr');
+                            row.innerHTML = `
+                                    <td>${record.firstName} ${record.lastName}</td>
+                                    <td style="${record.companyName !== 'None' ? '' : 'color: rgb(165, 42, 42);'}">${record.companyName !== 'None' ? record.companyName : 'None'}</td>
+                                    <td>
+                                    <div class="progress-container">
+                                        <div class="progress-circle"></div>
+                                        <div class="progress-circle2" style="background: conic-gradient(
+                                            #7380ec 0% var(--progress, 0%),
+                                            #7380ec ${(progressPercentage.toFixed(2)/100)*360}deg var(--progress, 0%),
+                                            transparent ${(progressPercentage.toFixed(2)/100)*360}deg 360deg">
+                                            <div class="percentage" style="color: ${progressPercentage === 0 ? 'rgb(165, 42, 42)' : 'inherit'}">
+                                            ${progressPercentage.toFixed(0)}%
+                                        </div>
+                                        </div>
+                                        </div>
+                                    </td>
+                                    
+                                    <td>${record.courseNumber}: ${record.courseCode}</td>
+                                    <td>${record.studEmail}</td>
+                                `;
+
+                            row.addEventListener('click', () => {
+                            openModal(record, progressPercentage);
+                            });
+                            
+                            // Add hover effect in JavaScript
+                            row.addEventListener('mouseenter', () => {
+                            row.style.backgroundColor = '#f0f0f0';
+                            row.style.cursor = 'pointer';
+                            });
+                            
+                            row.addEventListener('mouseleave', () => {
+                            row.style.backgroundColor = ''; 
+                            row.style.cursor = '';
+                            });
+                            recordsTable.appendChild(row);
+                        });
+                    }
+                    populateStudentRecords();
+                    </script>
                     <% } else { %>
                         <thead>
                             <tr>
@@ -142,7 +226,52 @@
                                 <th>Supervisor</th>
                             </tr>
                         </thead>
-                        <tbody id="studentTable"></tbody>
+                        <tbody id='studentTable'></tbody>
+                        <script>
+                            function populateStudentRecords2() {
+                            const sortDropdown = document.getElementById('sortDropdown');
+                            fetch('/getAllStudentRecords')
+                                .then(response => {
+                                    return response.json();
+                                })
+                                .then(records => {
+                                    console.log(records);
+                                    records.sort((a, b) => (a.firstName + a.lastName).localeCompare(b.firstName + b.lastName));
+                                    populate2(records);
+                                    sortDropdown.addEventListener('change', function () {
+                                        currentSortOption = sortDropdown.value;
+                                        if (currentSortOption === 'name') {
+                                        records.sort((a, b) => (a.firstName + a.lastName).localeCompare(b.firstName + b.lastName));
+                                        populate2(records);
+                                        } else if (currentSortOption === 'company') {
+                                            records.sort((a, b) => (a.companyName || 'None').localeCompare(b.companyName || 'None'));
+                                            populate2(records);
+                                        }
+                                    });
+                                })
+                                .catch(error => {
+                                    console.error('Error fetching student records:', error);
+                                });
+                            }
+
+                            function populate2(records) {
+                            const studentTable = document.getElementById('studentTable');
+                            studentTable.innerHTML = '';
+                            records.forEach(record => {
+                                const row = document.createElement('tr');
+                                row.innerHTML = `
+                                    <td>${record.firstName} ${record.lastName}</td>
+                                    <td style="${record.companyName !== null ? '' : 'color: rgb(165, 42, 42);'}">${record.companyName !== null ? record.companyName : 'None'}</td>
+                                    <td>${record.studEmail}</td>
+                                    <td>${record.teacherName}</td>
+                                    <td style="${record.supervisor !== null ? '' : 'color: rgb(165, 42, 42);'}">${record.supervisor !== null ? record.supervisor : 'None'}</td>
+                                `;
+
+                                studentTable.appendChild(row);
+                            });
+                            }
+                            populateStudentRecords2();
+                        </script>
                     <% } %>
                 </table>
             </div>
@@ -163,7 +292,7 @@
         </div>
 
     </div>
-    <script src ="/javascripts/document.js"></script>
+    <script src ="/javascripts/announcement.js"></script>
     <script src="/javascripts/app.js"></script>
     <script src="/javascripts/dashboardFaculty.js"></script>
     <!-- <script src="/javascripts/modal.js"></script> -->

@@ -3,37 +3,6 @@ function formatDate(dateString) {
   return new Date(dateString).toLocaleDateString(undefined, options);
 }
 
-function populateStudentRecords() {
-  const recordsTable = document.getElementById('recordsTable');
-  const modalContent = document.getElementById('modalContent'); // Added this line
-  const sortDropdown = document.getElementById('sortDropdown');
-
-  let currentSortOption = sortDropdown.value;
-  
-  fetch('/getStudentRecords')
-    .then(response => response.json())
-    .then(records => {
-      records.sort((a, b) => (a.firstName + a.lastName).localeCompare(b.firstName + b.lastName));
-      populate(records);
-        sortDropdown.addEventListener('change', function () {
-          currentSortOption = sortDropdown.value;
-          if (currentSortOption === 'name') {
-            records.sort((a, b) => (a.firstName + a.lastName).localeCompare(b.firstName + b.lastName));
-            populate(records);
-          } else if (currentSortOption === 'company') {
-              records.sort((a, b) => (a.companyName || 'None').localeCompare(b.companyName || 'None'));
-              populate(records);
-          } else if (currentSortOption === 'progress') {
-              records.sort((a, b) => calculateProgress(b.total_time, b.hours_required) - calculateProgress(a.total_time, a.hours_required));
-              populate(records);
-          }
-        });
-    })
-    .catch(error => {
-      console.error('Error fetching student records:', error);
-    });
-}
-
 function populateAnnouncement() {
   fetch('/getAnnouncements')
     .then(response => response.json())
@@ -66,102 +35,6 @@ function populateAnnouncement() {
       console.error('Error fetching announcements:', error);
       updates.innerHTML = '<p>Error fetching announcements</p>';
     });
-}
-
-
-function populate(records){
-  recordsTable.innerHTML = '';
-  records.forEach(record => {
-    const hardcodedTotalRenderedHours = record.total_time;
-    const hardcodedTotalRequiredHours = record.hours_required;
-    console.log(hardcodedTotalRenderedHours);
-    console.log(hardcodedTotalRequiredHours);
-    const progressPercentage = calculateProgress(hardcodedTotalRenderedHours, hardcodedTotalRequiredHours);
-    if (record.companyName == null) {
-      record.companyName = 'None';
-    }
-
-    const row = document.createElement('tr');
-    row.innerHTML = `
-              <td>${record.firstName} ${record.lastName}</td>
-              <td style="${record.companyName !== 'None' ? '' : 'color: rgb(165, 42, 42);'}">${record.companyName !== 'None' ? record.companyName : 'None'}</td>
-              <td>
-              <div class="progress-container">
-                  <div class="progress-circle"></div>
-                  <div class="progress-circle2" style="background: conic-gradient(
-                    #7380ec 0% var(--progress, 0%),
-                    #7380ec ${(progressPercentage.toFixed(2)/100)*360}deg var(--progress, 0%),
-                    transparent ${(progressPercentage.toFixed(2)/100)*360}deg 360deg">
-                    <div class="percentage" style="color: ${progressPercentage === 0 ? 'rgb(165, 42, 42)' : 'inherit'}">
-                    ${progressPercentage.toFixed(0)}%
-                </div>
-                  </div>
-                </div>
-              </td>
-              
-              <td>${record.courseNumber}: ${record.courseCode}</td>
-              <td>${record.studEmail}</td>
-          `;
-
-    row.addEventListener('click', () => {
-      openModal(record, progressPercentage);
-    });
-    
-    // Add hover effect in JavaScript
-    row.addEventListener('mouseenter', () => {
-      row.style.backgroundColor = '#f0f0f0';
-      row.style.cursor = 'pointer';
-    });
-    
-    row.addEventListener('mouseleave', () => {
-      row.style.backgroundColor = ''; 
-      row.style.cursor = '';
-    });
-    recordsTable.appendChild(row);
-  });
-}
-
-function populateStudentRecords2() {
-  const studentTable = document.getElementById('studentTable');
-  const sortDropdown = document.getElementById('sortDropdown');
-  fetch('/getAllStudentRecords')
-      .then(response => {
-          return response.json();
-      })
-      .then(records => {
-        records.sort((a, b) => (a.firstName + a.lastName).localeCompare(b.firstName + b.lastName));
-        populate2(records);
-          sortDropdown.addEventListener('change', function () {
-            currentSortOption = sortDropdown.value;
-            if (currentSortOption === 'name') {
-              records.sort((a, b) => (a.firstName + a.lastName).localeCompare(b.firstName + b.lastName));
-              populate2(records);
-            } else if (currentSortOption === 'company') {
-                records.sort((a, b) => (a.companyName || 'None').localeCompare(b.companyName || 'None'));
-                populate2(records);
-            }
-          });
-      })
-      .catch(error => {
-          console.error('Error fetching student records:', error);
-      });
-}
-
-function populate2(records) {
-  studentTable.innerHTML = '';
-  records.forEach(record => {
-
-      const row = document.createElement('tr');
-      row.innerHTML = `
-          <td>${record.firstName} ${record.lastName}</td>
-          <td style="${record.companyName !== null ? '' : 'color: rgb(165, 42, 42);'}">${record.companyName !== null ? record.companyName : 'None'}</td>
-          <td>${record.studEmail}</td>
-          <td>${record.teacherName}</td>
-          <td style="${record.supervisor !== null ? '' : 'color: rgb(165, 42, 42);'}">${record.supervisor !== null ? record.supervisor : 'None'}</td>
-      `;
-
-      studentTable.appendChild(row);
-  });
 }
 
 function openModal(record, progressPercentage) {
@@ -263,67 +136,8 @@ function parseTime(timeString) {
   return hours * 3600 + minutes * 60 + seconds;
 }
 
-
-populateStudentRecords();
-populateStudentRecords2();
-
 // Function for Filter (you got this Gregg)
 // Get the table rows
-const table = document.getElementById('recordsTable');
-const rows = table.getElementsByTagName('tr');
-
-// Function to sort by student's name
-function sortByName() {
-  const sortedRows = Array.from(rows).slice(1); // Ignore the header row
-
-  sortedRows.sort((a, b) => {
-    const nameA = a.cells[0].textContent.toUpperCase();
-    const nameB = b.cells[0].textContent.toUpperCase();
-
-    if (nameA < nameB) return -1;
-    if (nameA > nameB) return 1;
-    return 0;
-  });
-
-  table.innerHTML = '';
-  table.appendChild(rows[0]); // Add the header row
-
-  sortedRows.forEach(row => {
-    table.appendChild(row);
-  });
-}
-
-// Function to sort by company name
-function sortByCompany() {
-  const sortedRows = Array.from(rows).slice(1); // Ignore the header row
-
-  sortedRows.sort((a, b) => {
-    const companyA = a.cells[1].textContent.toUpperCase();
-    const companyB = b.cells[1].textContent.toUpperCase();
-
-    if (companyA < companyB) return -1;
-    if (companyA > companyB) return 1;
-    return 0;
-  });
-
-  table.innerHTML = '';
-  table.appendChild(rows[0]); // Add the header row
-
-  sortedRows.forEach(row => {
-    table.appendChild(row);
-  });
-}
-
-// Function to sort by progress
-function sortByProgress() {
-  // Your logic for sorting by progress goes here
-  // Assuming you have the progress as a numerical value in cells[2]
-}
-
-// Attach event listeners for sorting
-document.getElementById('sortByName').addEventListener('click', sortByName);
-document.getElementById('sortByCompany').addEventListener('click', sortByCompany);
-document.getElementById('sortByProgress').addEventListener('click', sortByProgress);
 
 //UPLOAD PHOTO
 function handleFileSelect(event) {

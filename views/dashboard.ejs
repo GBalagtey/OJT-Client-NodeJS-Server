@@ -81,12 +81,10 @@
                         </div>  
                     </div>
                 <div class="about">
-                    <h3> PERSONAL DETAILS</h3>
+                    <h3> ABOUT YOU</h3>
                     <hr><br>
                     <h5>Full Name</h5>
                     <p><%= userData.firstName %> <% if (userData.middleInitial !== null) { %> <%= userData.middleInitial %>. <% }%> <%= userData.lastName %></p>
-                    <h5>Course</h5>
-                    <p><%= userData.programDescription %></p>
                     <h5>Birth Date</h5>
                     <p><%= userData.dob %></p>
                     <% if (!userData.phoneNumber == 0) { %>
@@ -94,15 +92,21 @@
                         <p>0<%= userData.phoneNumber %></p>
                     <% } %>
                     <h5>Email</h5>
-                    <p><%= userData.studEmail %></p>
+                    <p><%= userData.email %></p>
                     <% if (userData.address !== null) { %>
                     <h5>Address</h5>
                     <p><%= userData.address %></p>
                     <% } %>
+                    <h5>Department</h5>
+                    <p><%= userData.deptName %></p>
+                    <h5>Program</h5>
+                    <p><%= userData.programDescription %></p>
+                    <h5>Course</h5>
+                    <p><%= userData.courseNumber %>: <%= userData.courseCode %></p>
                     <br>
                     
                     <% if (userData.companyName !== null) { %>
-                        <h3> COMPANY DETAILS</h3>
+                        <h3> COMPANY</h3>
                         <hr><br>
                         <div class="company">
                           <h5>Company</h5>
@@ -139,7 +143,7 @@
                     <h2 class="title-modal">Add Work Details</h2>
                     <form id="workForm" action="/submitDailyReport" method="post" autocomplete="off">
                         <label for="renderedHours">Date</label>
-                        <p id="currentDate"><%= userData.date %></p>
+                        <p id="currentDate" name="currentDate"><%= userData.currentDate %></p>
                         <br>
                         <label for="renderedHours">Rendered Hours</label><br>
                         <input type="text" id="renderedHours" name="renderedHours" required placeholder="HH:MM:SS"><br>
@@ -197,6 +201,7 @@
         </div>
 
     </div>
+    <script src ="/javascripts/announcement.js"></script>
     <script src ="/javascripts/document.js"></script>
     <script src="/javascripts/app.js"></script>
     <script src="/javascripts/modal.js"></script>

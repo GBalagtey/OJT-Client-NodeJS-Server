@@ -2,6 +2,7 @@ const modal = document.getElementById('myModal');
 const modalBtn = document.getElementById('modalBtn');
 const closeBtn = document.getElementsByClassName('close')[0];
 const workForm = document.getElementById('workForm');
+const currentDate = document.getElementById('currentDate');
 
 modalBtn.onclick = function() {
     modal.style.display = 'block';
@@ -16,6 +17,23 @@ window.onclick = function(event) {
         modal.style.display = 'none';
     }
 }
+
+function interpretDate(dateString) {
+    const [year, month, day] = dateString.split('-');
+    const interpretedDate = new Date(year, month - 1, day);
+
+    return interpretedDate;
+}
+const interpretedDate = interpretDate(currentDate.innerText);
+
+const formattedDate = interpretedDate.toLocaleDateString('en-US', {
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric',
+});
+
+currentDate.innerText = formattedDate + ' (' + interpretedDate.toLocaleDateString('en-US', { weekday: 'short' }) + ')';
+
 
 // workForm.addEventListener('submit', function(e) {
 //     e.preventDefault();

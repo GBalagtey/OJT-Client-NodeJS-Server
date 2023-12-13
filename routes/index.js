@@ -68,11 +68,10 @@ router.get('/getStudentList', requireLogin, (req, res) => {
 function getTeacherData(email, callback){
   // Fetch all data from the teacher table based on the email
   const query = `
-  SELECT teacher.*, COUNT(student.studID) AS totalStudents, department.departmentName, department.departmentAcronym
-  FROM teacher
-  JOIN course ON course.courseCode = teacher.courseID
-  JOIN program ON program.programID = course.programID
-  JOIN department ON department.departmentID = program.departmentID
+  SELECT users.*, teacher.*, COUNT(student.studID) AS totalStudents, department.deptName, department.deptAcronym
+  FROM users
+  LEFT JOIN teacher ON users.email = teacher.teacherEmail
+  LEFT JOIN department ON department.departmentID = teacher.departmentID
   LEFT JOIN student ON teacher.teacherID = student.teacherID
   WHERE teacher.teacherEmail = ?
   `;
@@ -150,12 +149,14 @@ router.get('/dashboard', requireLogin, (req, res) => {
 
   // Fetch all data from the student table based on the email
   const query = `
-    SELECT student.*, course.*, program.programDescription, company.*
-    FROM student
-    JOIN course ON student.courseID = course.courseCode
-    JOIN program ON course.programID = program.programID
+    SELECT users.*, student.*, course.*, program.programDescription, program.programName, company.*, department.deptAcronym, department.deptName
+    FROM users
+    LEFT JOIN student ON users.email = student.studEmail
+    LEFT JOIN course ON student.courseID = course.courseCode
+    LEFT JOIN program ON course.programID = program.programID
+    LEFT JOIN department ON department.departmentID = program.departmentID
     LEFT JOIN company ON company.companyID = student.companyID
-    WHERE student.studEmail = ?
+    WHERE users.email = ?
   `;
   connection.query(query, [email], (error, results) => {
     if (error) {
@@ -177,6 +178,7 @@ router.get('/dashboard', requireLogin, (req, res) => {
       req.session.companyID = companyID;
       req.session.currentDate = getCurrentDate();
       userData.dob = userData.birthDate.toLocaleDateString();
+      userData.currentDate = getCurrentDate();
 
       if(userData.photo != null){
       // Convert the Buffer data to a base64 string
@@ -352,17 +354,16 @@ router.post('/submitDailyReport', async (req, res) => {
   try{
     const renderedHours = req.body.renderedHours;
     const description = req.body.description;
-    const teacher = req.session.teacherID;
     const studId = req.session.studID;
-    const date = getCurrentDate();
+    const date = req.session.currentDate;
     const company = req.session.companyID;
 
     const query = `
-    INSERT INTO ojt_records (studID, teacherID, companyID, renderedHours, date, workDescription)
-    VALUES (?, ?, ?, ?, ?, ?);
+    INSERT INTO ojt_records (studID, companyID, renderedHours, date, workDescription)
+    VALUES (?, ?, ?, ?, ?);
     `;
 
-    const values = [studId, teacher, company, renderedHours, date, description];
+    const values = [studId, company, renderedHours, date, description];
     console.log(values);
 
     connection.query(query, values, (error, results) => {
@@ -411,31 +412,29 @@ router.get('/getStudentRecords', requireLogin, (req, res) => {
 
   // Adjust the query to retrieve the relevant records for the specific student
   const query = `
-  SELECT
-  student.studEmail,
-  student.firstName,
-  student.lastName,
-  student.companyID,
-  student.studID,
-  course.courseNumber, 
-  course.courseCode,
-  company.companyName,
-  COALESCE(SEC_TO_TIME(SUM(TIME_TO_SEC(ojt_records.renderedHours))), '00:00:00') AS total_time,
-  SEC_TO_TIME(TIME_TO_SEC(student.demerit) + TIME_TO_SEC(ojt_requirements.requiredHours)) AS hours_required
-FROM  
-  student
-LEFT JOIN
-  ojt_records ON student.studID = ojt_records.studID
-LEFT JOIN
-  company ON student.companyID = company.companyID
-LEFT JOIN
-  ojt_requirements ON student.requirementID = ojt_requirements.requirementID
-JOIN 
-  course ON course.courseCode = student.courseID
-WHERE
-  student.teacherID = ?
-GROUP BY
-  student.studID;
+      SELECT 
+      users.*,
+      student.*,
+      course.*,
+      company.*,
+      COALESCE(SEC_TO_TIME(SUM(TIME_TO_SEC(ojt_records.renderedHours))), '00:00:00') AS total_time,
+      SEC_TO_TIME(TIME_TO_SEC(student.demerit) + TIME_TO_SEC(ojt_requirements.requiredHours)) AS hours_required
+    FROM  
+      users
+    LEFT JOIN 
+      student ON student.studEmail = users.email
+    LEFT JOIN
+      ojt_records ON student.studID = ojt_records.studID
+    LEFT JOIN
+      company ON student.companyID = company.companyID
+    LEFT JOIN
+      ojt_requirements ON student.requirementID = ojt_requirements.requirementID
+    JOIN 
+      course ON course.courseCode = student.courseID
+    WHERE
+      student.teacherID = ?
+    GROUP BY
+      student.studID;
   `;
 
   connection.query(query, [teacherID], (error, results) => {
@@ -454,11 +453,8 @@ GROUP BY
 const storage = multer.memoryStorage();
 const upload = multer({ storage: storage });
 router.post('/upload', upload.single('file'), (req, res) => {
-  console.log(req.session.userType);
-  if(req.session.userType === "student"){
       const file = req.file;
-      const studID = req.session.studID;
-
+      const email = req.session.email;
       if (!file) {
           return res.status(400).json({ error: 'No file provided' });
       }
@@ -466,9 +462,9 @@ router.post('/upload', upload.single('file'), (req, res) => {
       console.log('Received file:', file.originalname, 'with size:', file.size);
 
       const blob = Buffer.from(file.buffer, 'binary');
-      const query = 'UPDATE student SET photo = ? WHERE studID = ?';
+      const query = 'UPDATE users SET photo = ? WHERE email = ?';
 
-      connection.query(query, [blob, studID], (error, results) => {
+      connection.query(query, [blob, email], (error, results) => {
           if (error) {
               console.error('Error updating photo:', error);
               res.status(500).json({ error: 'Internal Server Error' });
@@ -477,54 +473,32 @@ router.post('/upload', upload.single('file'), (req, res) => {
               res.json({ success: true });
           }
         });
-  }else {
-      const file = req.file;
-      const teacherID = req.session.teacherID;
-  
-      if (!file) {
-          return res.status(400).json({ error: 'No file provided' });
-      }
-      console.log('Received file:', file.originalname, 'with size:', file.size);
-  
-      const blob = Buffer.from(file.buffer, 'binary');
-      const query = 'UPDATE teacher SET photo = ? WHERE teacherID = ?';
-  
-      connection.query(query, [blob, teacherID], (error, results) => {
-          if (error) {
-              console.error('Error updating photo:', error);
-              res.status(500).json({ error: 'Internal Server Error' });
-          } else {
-              console.log('Photo updated successfully');
-              res.json({ success: true });
-          }
-        });
-  }
 });
   
 
 router.get('/getAllStudentRecords', requireLogin, (req, res) => {
-  const studId = req.session.studID;
   const teacherID = req.session.teacherID; // Log this line
   console.log('Teacher ID in getStudentRecords:', teacherID);
 
   // Adjust the query to retrieve the relevant records for the specific student
   const query = `
-  SELECT
-    student.firstName,
-    student.lastName,
-    student.studEmail, 
-    student.supervisor,
+  SELECT 
+	users.firstName,
+    users.lastName,
     company.companyName,
-    CONCAT(teacher.firstName, ' ', teacher.lastName) AS teacherName
-  FROM
-    student
-  LEFT JOIN
-    company ON student.companyID = company.companyID
-LEFT JOIN
-	teacher ON student.teacherID = teacher.teacherID
+    users.email,
+    student.supervisor,
+    CONCAT(
+    teacherUsers.firstName,' ',
+    teacherUsers.lastName) AS teacherName
+    FROM users 
+    JOIN student ON student.studEmail = users.email
+    JOIN company ON company.companyID = student.companyID
+    JOIN teacher ON teacher.teacherID = student.teacherID
+    JOIN users AS teacherUsers ON teacherUsers.email = teacher.teacherEmail;
   `;
 
-  connection.query(query, [teacherID], (error, results) => {
+  connection.query(query, (error, results) => {
     if (error) {
       console.error('Error fetching latest records:', error);
       res.status(500).send('Internal Server Error');
@@ -584,8 +558,8 @@ router.get('/getSubmittedDocuments', requireLogin, (req, res) => {
   const query = `SELECT document.docName FROM document
   JOIN document_sub ON document_sub.docID = document.docID
   JOIN student ON student.studID = document_sub.studID
-  WHERE student.studID = ?
-  ORDER BY document.docName;`;
+  WHERE student.studID = ? AND document_sub.hasBeenSubmitted
+  ORDER BY document.docName`;
 
   connection.query(query, [studID], (error, results) => {
     if(error) {
@@ -600,16 +574,13 @@ router.get('/getSubmittedDocuments', requireLogin, (req, res) => {
 router.get('/getPendingDocuments', requireLogin, (req, res) => {
   const studID =req.session.studID;
 
-  const query = `SELECT document.docID, document.docName 
-  FROM document
-  WHERE document.isOptional = ?
-    AND NOT EXISTS (
-      SELECT 1
-      FROM document_sub
-      JOIN student ON student.studID = document_sub.studID
-      WHERE document_sub.docID = document.docID
-        AND student.studID = ?
-    );`;
+  const query = `SELECT d.docName
+  FROM document d
+  JOIN document_sub ds ON d.docID = ds.docID
+  WHERE ds.studID = 2222613
+    AND ds.isOptional = 0
+    AND ds.hasBeenSubmitted = 0;
+    `;
 
   connection.query(query, [0, studID], (error, results) => {
     if(error) {

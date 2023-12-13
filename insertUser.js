@@ -21,8 +21,8 @@ class User {
         console.log('Generated Hashed Password (insertUser):', hashedPassword);
   
         // SQL query to insert user into the users table
-        const query = 'INSERT INTO users (email, hashedPassword, userType, genderID, firstName, lastName) VALUES (?, ?, ?, ?, ?, ?)';
-        const values = [email, hashedPassword, userType, genderID, firstName, lastName];
+        const query = 'INSERT INTO users (email, hashedPassword, userType, genderID, firstName, lastName, birthDate) VALUES (?, ?, ?, ?, ?, ?, ?)';
+        const values = [email, hashedPassword, userType, genderID, firstName, lastName, birthDate];
   
         // Execute the query
         mysqlConnection.query(query, values, (error, results) => {
@@ -40,12 +40,13 @@ class User {
   
 
 // Example usage
-const userEmail = '2214027@slu.edu.ph';
-const userPassword = 'gregg';
-const userType = 'student';
-const genderID = 1;
-const firstName = "Gregg";
-const lastName = "Balagtey";
+const userEmail = 'mitski@slu.edu.ph';
+const userPassword = 'mitski';
+const userType = 'teacher';
+const genderID = 2;
+const firstName = "Mitski";
+const lastName = "Miyawaki";
+const birthDate = '1990-09-27';
 
 // Call the insertUser method
 User.insertUser(userEmail, userPassword, userType);

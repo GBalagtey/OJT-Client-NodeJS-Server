@@ -650,8 +650,19 @@ router.post('/updateDocuments', (req, res) => {
     });
 });
 
+router.get('/getOptionalDocuments', requireLogin, (req, res) => {
+  const query = `SELECT * FROM document WHERE document.isOptional = ?;
+    `;
 
-
+  connection.query(query, [1], (error, results) => {
+    if(error) {
+      console.error('Error fetching pending documents:', error);
+      res.status(500).send('Internal Server Error');
+      return;
+    }
+  res.json(results);
+  });
+})
 
 router.get('/getProgress', requireLogin, (req, res) => {
   const studId = req.session.studID;
@@ -676,6 +687,20 @@ router.get('/getProgress', requireLogin, (req, res) => {
 
     res.json(results);
   }); 
+});
+
+router.get('/getClasses', requireLogin, (req,res) => {
+  const query = `
+  SELECT courseID FROM student GROUP BY courseID;
+  `;
+  connection.query(query, (error, results) => {
+    if(error) {
+      console.error('Error fetching announcements:', error);
+      res.status(500).json({ error: 'Internal Server Error' });
+      return;
+    }
+    res.json(results);
+  });
 });
 
 router.get('/getAnnouncements', requireLogin, (req, res) => {

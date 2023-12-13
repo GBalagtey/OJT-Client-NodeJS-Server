@@ -37,7 +37,7 @@ function populateAnnouncement() {
     });
 }
 
-function openModal(record, progressPercentage) {
+function openModal(record) {
   const modalContent = document.getElementById('modalBody');
   console.log(record.studID);
 
@@ -73,21 +73,16 @@ function openModal(record, progressPercentage) {
               <button id="updateDocumentsButton" class = "update-stud-sub">Update Documents</button>
             </div>
             <!-- Document Checklist Modal -->
-            <div id="documentChecklistModal" class="modal2">
-                <!-- Modal content -->
-                <div class="modal-content2">
-                    <span class="close2" onclick="closeDocChecklistModal()">&times;</span>
-                    <h2>Document Checklist</h2>
-                    <form id="documentChecklistForm">
-                        <!-- Example documents, replace with actual data from your server -->
-                        <label><input type="checkbox" name="documents" value="1">Document 1</label><br>
-                        <label><input type="checkbox" name="documents" value="2">Document 2</label><br>
-                        <label><input type="checkbox" name="documents" value="3">Document 3</label><br>
-                        <!-- Add more checkboxes as needed -->
-                    </form>
-                    <button onclick="submitDocumentChecklist()">Submit Checklist</button>
+            <div id="documentChecklistModal" class="modal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2 style="color: #fff;">Add Required Documents</h2>
+                    <span class="close" onclick="closeDocChecklistModal()" style="color: #fff; cursor: pointer;" onmouseover="this.style.color='rgb(168, 18, 18)'" onmouseout="this.style.color='#fff'">&times;</span>
+                </div>
+                <div class="modal-body" id="modalBody2" style="background-color: #fff; padding: 20px;">
                 </div>
             </div>
+        </div>
             `;
 
           const modal = document.getElementById('myModal');
@@ -105,6 +100,7 @@ function openModal(record, progressPercentage) {
       console.error('Error fetching documents:', error);
     });
 }
+
 
 // If there is no checkbox, find a way to send an empty array
 function updateDocuments(studID) {
@@ -201,8 +197,31 @@ function uploadFile(file) {
 //CHECKLIST FOR DOCUMENTS TO SELECT REQUIRED DOCUMENTS FOR EACH STUDENTS
     // Open the modal
     function openDocChecklistModal() {
+      const modalContent = document.getElementById('modalBody2');
       const modal = document.getElementById('documentChecklistModal');
       modal.style.display = 'block';
+
+    fetch('/getOptionalDocuments')
+    .then(response => response.json())
+    .then(records => {
+      if(records > 0){
+        modalContent.innerHTML = `
+        <h3>Select Document Requirements that you want to add:</h3>
+        <form id="documentChecklistForm" style="margin-top: 2%; height: 57%; overflow: auto;">
+        //TODO create a checklist of initial optional documents that will be set required for the student by the teacher
+        </form>
+        <div class="update-doc-container">
+          <button id="updateDocumentsButton" class = "update-stud-sub">Add Document Requirements</button>
+        </div>
+        `;
+      }else{
+        modalContent.innerHTML = "Nothing to see here";
+      }
+    })
+    .catch(error => {
+      console.error('Error fetching announcements:', error);
+      updates.innerHTML = '<p>Error fetching announcements</p>';
+    });
   }
 
   // Close the modal
@@ -226,3 +245,18 @@ function uploadFile(file) {
       // Close the modal
       closeModal();
   }
+
+  function populateClassList() {
+    const classListElement = document.getElementById('filterDropdown');
+
+    fetch('/getClasses')
+        .then(response => response.json())
+        .then(classes => {
+            classes.forEach(course => {
+              classListElement.innerHTML = `<option value="${course}" id="${course}">${course}</option>`;
+            });
+        })
+        .catch(error => {
+            console.error('Error fetching classes:', error);
+        });
+}

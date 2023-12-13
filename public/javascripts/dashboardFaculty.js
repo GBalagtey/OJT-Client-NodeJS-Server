@@ -38,7 +38,7 @@ function populateAnnouncement() {
 }
 
 function openModal(record, progressPercentage) {
-  const modalContent = document.getElementById('modalContent');
+  const modalContent = document.getElementById('modalBody');
   console.log(record.studID);
 
   // Fetch all documents
@@ -54,22 +54,40 @@ function openModal(record, progressPercentage) {
           console.log('All Documents:', documents);
           console.log('Student Documents:', studentDocuments);
           // Example: Populate modal content with documents as checkboxes
-          modalContent.innerHTML = `
-            <span class="close" onclick="closeModal()">&times;</span>
-            <h2 class="title-modal">Documents</h2>
-            <div class="progress-bar" style="position: relative; width: 100%; background-color: #e0e0e0; border-radius: 5px;">
-              <div style="position: absolute; top: 0; left: 0; width: ${progressPercentage}%; height: 100%; background-color: #7380ec; border-radius: 5px;"></div>
+
+            modalContent.innerHTML = `
+            <p>Student:   <span style="color: black; font-weight: bold;"> ${record.firstName} ${record.lastName}</span></p>
+            <p>Company: <span style="color: black;">${record.companyName}</span></p><br>
+            <div class="set-doc-container">
+              <button onclick="openDocChecklistModal()" class="set-req-docs">Add Required Documents</button>
             </div>
-            <p>Student: ${record.firstName} ${record.lastName}</p>
-            <p>Company: ${record.companyName}</p>
-            <h3>All Documents:</h3>
-            <form id="documentForm">
+            <hr>
+            <h3>Required Documents for <span style="color: black; font-weight: bold;"> ${record.firstName}</span>:</h3>
+            <form id="documentForm" style="margin-top: 2%; height: 57%; overflow: auto;">
               ${documents.map(doc => {
                 const isChecked = studentDocuments.some(studentDoc => studentDoc.docID === doc.docID);
-                return `<label><input type="checkbox" name="documents" value="${doc.docID}" ${isChecked ? 'checked' : ''}>${doc.docName}</label><br>`;
+                return `<label><input type="checkbox" name="documents" value="${doc.docID}" ${isChecked ? 'checked' : ''}> ${doc.docName}</label><br>`;
               }).join('')}
             </form>
-            <button id="updateDocumentsButton">Update Documents</button>
+            <div class="update-doc-container">
+              <button id="updateDocumentsButton" class = "update-stud-sub">Update Documents</button>
+            </div>
+            <!-- Document Checklist Modal -->
+            <div id="documentChecklistModal" class="modal2">
+                <!-- Modal content -->
+                <div class="modal-content2">
+                    <span class="close2" onclick="closeDocChecklistModal()">&times;</span>
+                    <h2>Document Checklist</h2>
+                    <form id="documentChecklistForm">
+                        <!-- Example documents, replace with actual data from your server -->
+                        <label><input type="checkbox" name="documents" value="1">Document 1</label><br>
+                        <label><input type="checkbox" name="documents" value="2">Document 2</label><br>
+                        <label><input type="checkbox" name="documents" value="3">Document 3</label><br>
+                        <!-- Add more checkboxes as needed -->
+                    </form>
+                    <button onclick="submitDocumentChecklist()">Submit Checklist</button>
+                </div>
+            </div>
             `;
 
           const modal = document.getElementById('myModal');
@@ -179,3 +197,32 @@ function uploadFile(file) {
       console.error('Error uploading file:', error);
     });
 }
+
+//CHECKLIST FOR DOCUMENTS TO SELECT REQUIRED DOCUMENTS FOR EACH STUDENTS
+    // Open the modal
+    function openDocChecklistModal() {
+      const modal = document.getElementById('documentChecklistModal');
+      modal.style.display = 'block';
+  }
+
+  // Close the modal
+  function closeDocChecklistModal() {
+      const modal = document.getElementById('documentChecklistModal');
+      modal.style.display = 'none';
+  }
+
+  // Handle checklist submission
+  function submitDocumentChecklist() {
+      const form = document.getElementById('documentChecklistForm');
+      const checkboxes = form.querySelectorAll('[name="documents"]');
+
+      const selectedDocuments = Array.from(checkboxes)
+          .filter(checkbox => checkbox.checked)
+          .map(checkbox => checkbox.value);
+
+      // Perform actions with selectedDocuments (e.g., send to server)
+      console.log('Selected Documents:', selectedDocuments);
+
+      // Close the modal
+      closeModal();
+  }

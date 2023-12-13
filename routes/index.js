@@ -577,12 +577,12 @@ router.get('/getPendingDocuments', requireLogin, (req, res) => {
   const query = `SELECT d.docName
   FROM document d
   JOIN document_sub ds ON d.docID = ds.docID
-  WHERE ds.studID = 2222613
+  WHERE ds.studID = ?
     AND ds.isOptional = 0
     AND ds.hasBeenSubmitted = 0;
     `;
 
-  connection.query(query, [0, studID], (error, results) => {
+  connection.query(query, [studID], (error, results) => {
     if(error) {
       console.error('Error fetching pending documents:', error);
       res.status(500).send('Internal Server Error');
@@ -593,9 +593,12 @@ router.get('/getPendingDocuments', requireLogin, (req, res) => {
 });
 
 router.get('/getDocuments', requireLogin, (req, res) => {
-  const studID =req.session.studID;
-
-  const query = `SELECT * FROM document;
+  const studID =req.query.studID;
+  console.log("HIIII   "+studID);
+  const query = `SELECT * FROM document
+   JOIN document_sub  ON document.docID = document_sub.docID 
+   JOIN student ON document_sub.studID = student.studID 
+   WHERE document_sub.isOptional = ? AND student.studID = ?
     `;
 
   connection.query(query, [0, studID], (error, results) => {
@@ -604,6 +607,7 @@ router.get('/getDocuments', requireLogin, (req, res) => {
       res.status(500).send('Internal Server Error');
       return;
     }
+  console.log(results);
   res.json(results);
   });
 });
@@ -612,7 +616,7 @@ router.get('/getStudentDocumentsFaculty', requireLogin, (req, res) => {
   const studID =req.query.studID;
   console.log(studID);
 
-  const query = `SELECT docID, studID FROM document_sub WHERE studID = ?;
+  const query = `SELECT docID, studID FROM document_sub WHERE studID = ? AND document_sub.hasBeenSubmitted;
     `;
 
   connection.query(query, [studID], (error, results) => {
@@ -626,127 +630,28 @@ router.get('/getStudentDocumentsFaculty', requireLogin, (req, res) => {
   });
 });
 
-router.post('/updateDocuments', requireLogin, (req, res) => {
+router.post('/updateDocuments', (req, res) => {
   const { studID, selectedDocuments } = req.body;
 
-  // Use appropriate SQL queries to update the document_sub table
-  // You may need to delete existing entries and insert new ones based on the selectedDocuments array
-
-  if (selectedDocuments.length === 0) {
-    // No documents selected, nothing to delete
-    console.log('No documents selected. Skipping delete query.');
-    res.json({ success: true });
-    return;
-  }
-
-  // Example:
-  // DELETE FROM document_sub WHERE studID = ? AND docID NOT IN (?, ?, ...);
-  // INSERT IGNORE INTO document_sub (studID, docID) VALUES (?, ?), (?, ?), ...;
-
-  const deleteQuery = `DELETE FROM document_sub WHERE studID = ? AND docID NOT IN (${Array(selectedDocuments.length).fill('?').join(', ')})`;
-  const insertQuery = 'INSERT IGNORE INTO document_sub (studID, docID) VALUES ?';
-
-  const valuesToDelete = [studID, ...selectedDocuments];
-  const valuesToInsert = selectedDocuments.map(docID => [studID, docID]);
-
-  connection.query(deleteQuery, valuesToDelete, (deleteError, deleteResults) => {
-    if (deleteError) {
-      console.error('Error deleting documents:', deleteError);
-      res.status(500).send('Internal Server Error');
-      return;
-    }
-
-    connection.query(insertQuery, [valuesToInsert], (insertError, insertResults) => {
-      if (insertError) {
-        console.error('Error inserting documents:', insertError);
-        res.status(500).send('Internal Server Error');
-        return;
-      }
-
-      console.log('Documents updated successfully');
-      res.json({ success: true });
-    });
+  const updatePromises = selectedDocuments.map(({ docID, checked }) => {
+    return connection.query(
+      'UPDATE document_sub SET hasBeenSubmitted = ? WHERE studID = ? AND docID = ?',
+      [checked, studID, docID]
+    );
   });
+
+  Promise.all(updatePromises)
+    .then(() => {
+      res.json({ message: 'Documents updated successfully' });
+    })
+    .catch(error => {
+      console.error('Error updating documents:', error);
+      res.status(500).json({ error: 'Internal Server Error' });
+    });
 });
 
 
 
-
-
-
-// router.get('/getSubmittedDocumentsFaculty', requireLogin, (req, res) => {
-//   const studID = req.query.studID;
-
-//   const query = `
-//     SELECT document.docName
-//     FROM document
-//     JOIN document_sub ON document_sub.docID = document.docID
-//     JOIN student ON student.studID = document_sub.studID
-//     WHERE (document_sub.hasBeenSubmitted = 1 OR document_sub.hasBeenSubmitted IS NULL)
-//       AND student.studID = ?
-//     ORDER BY document.docName;`;
-
-//   connection.query(query, [studID], (error, results) => {
-//     if (error) {
-//       console.error('Error fetching submitted documents:', error);
-//       res.status(500).send('Internal Server Error');
-//       return;
-//     }
-//     res.json(results);
-//   });
-// });
-
-
-// router.get('/getPendingDocumentsFaculty', requireLogin, (req, res) => {
-//   const studID =req.query.studID;
-
-//   const query = `SELECT document.docID, document.docName 
-//   FROM document
-//   WHERE document.isOptional = ?
-//     AND NOT EXISTS (
-//       SELECT 1
-//       FROM document_sub
-//       JOIN student ON student.studID = document_sub.studID
-//       WHERE document_sub.docID = document.docID
-//         AND student.studID = ?
-//         AND document_sub.hasBeenSubmitted
-//     );`;
-
-//   connection.query(query, [0, studID], (error, results) => {
-//     if(error) {
-//       console.error('Error fetching pending documents:', error);
-//       res.status(500).send('Internal Server Error');
-//       return;
-//     }
-//     console.log('studID: ', studID);
-//     console.log('Submitted Documents:', results);
-//     console.log(results);
-//   res.json(results);
-//   });
-// });
-
-
-// router.post('/updateSubmittedDocuments', requireLogin, (req, res) => {
-//   try {
-//     const studID = req.query.studID;
-//   const docID = req.query.docID;   
-//   const isChecked = req.query.isChecked;
-
-//   if (!studID || !docID) {
-//     res.status(400).send('Bad Request: Missing studID or docID');
-//     return;
-//   }
-
-//   const query = `
-//     DELETE FROM document_sub
-//     WHERE studID = ? AND docID = ?;
-//   `
-//   } catch (error) {
-    
-//   }
-  
-
-// });
 
 router.get('/getProgress', requireLogin, (req, res) => {
   const studId = req.session.studID;

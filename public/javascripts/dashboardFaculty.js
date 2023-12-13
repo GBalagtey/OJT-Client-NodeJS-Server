@@ -42,9 +42,10 @@ function openModal(record, progressPercentage) {
   console.log(record.studID);
 
   // Fetch all documents
-  fetch('/getDocuments') // Adjust the URL if needed
+  fetch(`/getDocuments?studID=${record.studID}`) // Adjust the URL if needed
     .then(response => response.json())
     .then(documents => {
+      console.log("BRUHH DOCUMENTS: ", documents);
       // Fetch student documents from the new route
       fetch(`/getStudentDocumentsFaculty?studID=${record.studID}`) // Adjust the URL if needed
         .then(response => response.json())
@@ -91,7 +92,10 @@ function openModal(record, progressPercentage) {
 function updateDocuments(studID) {
   const documentForm = document.getElementById('documentForm');
   const checkboxes = documentForm.querySelectorAll('[name="documents"]');
-  const selectedDocuments = Array.from(checkboxes).filter(checkbox => checkbox.checked).map(checkbox => checkbox.value);
+  const selectedDocuments = Array.from(checkboxes).map(checkbox => ({
+    docID: checkbox.value,
+    checked: checkbox.checked,
+  }));
 
   fetch('/updateDocuments', {
     method: 'POST',
@@ -112,6 +116,7 @@ function updateDocuments(studID) {
       console.error('Error updating documents:', error);
     });
 }
+
 
 function closeModal() {
   const modal = document.getElementById('myModal');

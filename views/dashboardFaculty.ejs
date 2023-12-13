@@ -69,7 +69,7 @@
                     </div>
                 </div>
                 <div class="about">
-                    <h3> PERSONAL DETAILS</h3>
+                    <h3>ABOUT YOU</h3>
                     <hr><br>
                     <h5>Full Name</h5>
                     <% if (userData.prefix !== null) { %>
@@ -89,9 +89,6 @@
                     <% } %>
                     <h5>Email</h5>
                     <p><%= userData.teacherEmail %></p>
-                    <br>
-                    <h3> OTHER DETAILS</h3>
-                    <hr><br>
                     <h5>Department</h5>
                     <p><%= userData.deptName %></p>
                 </div>
@@ -194,7 +191,7 @@
                                     </td>
                                     
                                     <td>${record.courseNumber}: ${record.courseCode}</td>
-                                    <td>${record.studEmail}</td>
+                                    <td>${record.email}</td>
                                 `;
 
                             row.addEventListener('click', () => {
@@ -206,7 +203,7 @@
                             row.style.backgroundColor = '#f0f0f0';
                             row.style.cursor = 'pointer';
                             });
-                            
+                        
                             row.addEventListener('mouseleave', () => {
                             row.style.backgroundColor = ''; 
                             row.style.cursor = '';
@@ -262,7 +259,7 @@
                                 row.innerHTML = `
                                     <td>${record.firstName} ${record.lastName}</td>
                                     <td style="${record.companyName !== null ? '' : 'color: rgb(165, 42, 42);'}">${record.companyName !== null ? record.companyName : 'None'}</td>
-                                    <td>${record.studEmail}</td>
+                                    <td>${record.email}</td>
                                     <td>${record.teacherName}</td>
                                     <td style="${record.supervisor !== null ? '' : 'color: rgb(165, 42, 42);'}">${record.supervisor !== null ? record.supervisor : 'None'}</td>
                                 `;

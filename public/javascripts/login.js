@@ -3,6 +3,7 @@ const toggle_btn = document.querySelectorAll(".toggle");
 const main = document.querySelector("main");
 const bullets = document.querySelectorAll(".bullets span");
 const images = document.querySelectorAll(".image");
+let currentIndex = 1;
 
 inputs.forEach((inp) => {
   inp.addEventListener("focus", () => {
@@ -20,24 +21,33 @@ toggle_btn.forEach((btn) => {
   });
 });
 
-function moveSlider() {
-  let index = this.dataset.value;
+function moveSlider(index) {
+  currentIndex = index;
 
-  let currentImage = document.querySelector(`.img-${index}`);
+  let currentImage = document.querySelector(`.img-${currentIndex}`);
   images.forEach((img) => img.classList.remove("show"));
   currentImage.classList.add("show");
 
   const textSlider = document.querySelector(".text-group");
-  textSlider.style.transform = `translateY(${-(index - 1) * 2.2}rem)`;
+  textSlider.style.transform = `translateY(${-(currentIndex - 1) * 2.2}rem)`;
 
   bullets.forEach((bull) => bull.classList.remove("active"));
-  this.classList.add("active");
+  bullets[currentIndex - 1].classList.add("active");
 }
 
-bullets.forEach((bullet) => {
-  bullet.addEventListener("click", moveSlider);
-});
+function autoSlide() {
+  currentIndex = (currentIndex % images.length) + 1;
+  moveSlider(currentIndex);
+}
 
+const slideInterval = setInterval(autoSlide, 2000);
+
+bullets.forEach((bullet) => {
+  bullet.addEventListener("click", function () {
+    clearInterval(slideInterval);
+    moveSlider(this.dataset.value);
+  });
+});
 
 
 // function handleLoginFormSubmit(event) {

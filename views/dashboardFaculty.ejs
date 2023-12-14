@@ -96,24 +96,28 @@
         <main>
             <h1>Student Interns</h1>
             <!-- Search Bar -->
-            <input class="search__input" id = "searchInput" type="text" placeholder="Search Name">
+            <input class="search__input" id = "searchInput" type="text" placeholder="Search Name or Company">
             <!--Search Bar-->
             <div class= "sorting">
+                <% if (userData.totalStudents > 0) { %>
                 <label for="filterDropdown">Filter by class:  </label>  
                 <select id="filterDropdown">
                     <option value="All" selected>All</option>
                 </select>
                 <label for="sortDropdown"  style="margin-left: 3%;">Sort by:  </label>  
                 <select id="sortDropdown">
-                <% if (userData.totalStudents > 0) { %>
                   <option value="name" selected>Name</option>
                   <option value="company" >Company</option>
                   <option value="progress">Progress</option>
-                <% } else { %>
-                    <option value="name" selected>Name</option>
-                    <option value="company">Company</option>
-                <% } %>
                 </select>
+                <% } else { %>
+                    <label for="sortDropdown">Sort by:  </label>  
+                    <select id="sortDropdown">
+                      <option value="name" selected>Name</option>
+                      <option value="company" >Company</option>
+                    </select>
+                <% } %>
+
                 <script src ="/javascripts/sortAndFilter.js"></script>
             </div>
             <script> 

@@ -406,7 +406,6 @@ router.get('/getLatestRecords', requireLogin, (req, res) => {
 });
 
 router.get('/getStudentRecords', requireLogin, (req, res) => {
-  const studId = req.session.studID;
   const teacherID = req.session.teacherID; // Log this line
   console.log('Teacher ID in getStudentRecords:', teacherID);
 
@@ -434,7 +433,9 @@ router.get('/getStudentRecords', requireLogin, (req, res) => {
     WHERE
       student.teacherID = ?
     GROUP BY
-      student.studID;
+      student.studID
+    ORDER BY 
+      users.firstName, users.lastName;
   `;
 
   connection.query(query, [teacherID], (error, results) => {
@@ -448,6 +449,47 @@ router.get('/getStudentRecords', requireLogin, (req, res) => {
   });
 });
 
+router.get('/getClassRecords', requireLogin, (req, res) => {
+  const teacherID = req.session.teacherID;
+  const filter = req.query.filter;
+  const query = `
+  SELECT 
+      users.*,
+      student.*,
+      course.*,
+      company.*,
+      COALESCE(SEC_TO_TIME(SUM(TIME_TO_SEC(ojt_records.renderedHours))), '00:00:00') AS total_time,
+      SEC_TO_TIME(TIME_TO_SEC(student.demerit) + TIME_TO_SEC(ojt_requirements.requiredHours)) AS hours_required
+    FROM  
+      users
+    LEFT JOIN 
+      student ON student.studEmail = users.email
+    LEFT JOIN
+      ojt_records ON student.studID = ojt_records.studID
+    LEFT JOIN
+      company ON student.companyID = company.companyID
+    LEFT JOIN
+      ojt_requirements ON student.requirementID = ojt_requirements.requirementID
+    JOIN 
+      course ON course.courseCode = student.courseID
+    WHERE
+      student.teacherID = ? AND student.courseID = ?
+    GROUP BY
+      student.studID
+    ORDER BY 
+      users.firstName, users.lastName;
+  `;
+  
+  connection.query(query, [teacherID, filter], (error, results) => {
+    if (error) {
+      console.error('Error fetching latest records:', error);
+      res.status(500).send('Internal Server Error');
+      return;
+    }
+
+    res.json(results);
+  });
+});
 
 //UPLOAD PHOTO
 const storage = multer.memoryStorage();

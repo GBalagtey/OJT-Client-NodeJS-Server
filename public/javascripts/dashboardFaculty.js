@@ -101,7 +101,6 @@ function openModal(record) {
     });
 }
 
-
 // If there is no checkbox, find a way to send an empty array
 function updateDocuments(studID) {
   const documentForm = document.getElementById('documentForm');
@@ -245,18 +244,3 @@ function uploadFile(file) {
       // Close the modal
       closeModal();
   }
-
-  function populateClassList() {
-    const classListElement = document.getElementById('filterDropdown');
-
-    fetch('/getClasses')
-        .then(response => response.json())
-        .then(classes => {
-            classes.forEach(course => {
-              classListElement.innerHTML = `<option value="${course}" id="${course}">${course}</option>`;
-            });
-        })
-        .catch(error => {
-            console.error('Error fetching classes:', error);
-        });
-}

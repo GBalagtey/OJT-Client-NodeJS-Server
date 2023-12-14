@@ -59,7 +59,7 @@ function openModal(record) {
             <p>Student:   <span style="color: black; font-weight: bold;"> ${record.firstName} ${record.lastName}</span></p>
             <p>Company: <span style="color: black;">${record.companyName}</span></p><br>
             <div class="set-doc-container">
-              <button onclick="openDocChecklistModal()" class="set-req-docs">Add Required Documents</button>
+              <button onclick="openDocChecklistModal(${record.studID})" class="set-req-docs">Add Required Documents</button>
             </div>
             <hr>
             <h3>Required Documents for <span style="color: black; font-weight: bold;"> ${record.firstName}</span>:</h3>
@@ -195,33 +195,125 @@ function uploadFile(file) {
 
 //CHECKLIST FOR DOCUMENTS TO SELECT REQUIRED DOCUMENTS FOR EACH STUDENTS
     // Open the modal
-    function openDocChecklistModal() {
+    function openDocChecklistModal(studID) {
+      const studId = studID;
       const modalContent = document.getElementById('modalBody2');
       const modal = document.getElementById('documentChecklistModal');
+  
       modal.style.display = 'block';
-
-    fetch('/getOptionalDocuments')
-    .then(response => response.json())
-    .then(records => {
-      if(records > 0){
-        modalContent.innerHTML = `
-        <h3>Select Document Requirements that you want to add:</h3>
-        <form id="documentChecklistForm" style="margin-top: 2%; height: 57%; overflow: auto;">
-        //TODO create a checklist of initial optional documents that will be set required for the student by the teacher
-        </form>
-        <div class="update-doc-container">
-          <button id="updateDocumentsButton" class = "update-stud-sub">Add Document Requirements</button>
-        </div>
-        `;
-      }else{
-        modalContent.innerHTML = "Nothing to see here";
-      }
-    })
-    .catch(error => {
-      console.error('Error fetching announcements:', error);
-      updates.innerHTML = '<p>Error fetching announcements</p>';
-    });
+  
+      fetch('/getOptionalDocuments')
+          .then(response => response.json())
+          .then(records => {
+              if (records.length > 0) {
+                  console.log("Records", records);
+                  modalContent.innerHTML = `
+                      <h3>Select Document Requirements that you want to add:</h3>
+                      <form id="documentChecklistForm" style="margin-top: 2%; height: 57%; overflow: auto;">
+                      </form>
+                      <div class="update-doc-container">
+                          <button id="updateDocumentsButton" class="update-stud-sub">Add Document Requirements</button>
+                      </div>
+                  `;
+  
+                  const form = document.getElementById('documentChecklistForm');
+                  records.forEach(record => {
+                      const checkbox = document.createElement('input');
+                      checkbox.type = 'checkbox';
+                      checkbox.name = record.docName; // Use docName as the name attribute
+                      checkbox.value = record.docID;
+                      checkbox.id = `document_${record.docID}`;
+  
+                      const label = document.createElement('label');
+                      label.htmlFor = `document_${record.docID}`;
+                      label.appendChild(document.createTextNode(`${record.docName} (${record.isOptional ? 'Optional' : 'Required'})`));
+  
+                      form.appendChild(checkbox);
+                      form.appendChild(label);
+                      form.appendChild(document.createElement('br'));
+                  });
+  
+                  // Add event listener to the modal for event delegation
+                  modal.addEventListener('click', function (event) {
+                      console.log(form);
+                      const target = event.target;
+  
+                      if (target && target.id === 'updateDocumentsButton') {
+                          console.log('Update Documents Button clicked!');
+                          updateRequiredDocuments(studID);
+                      }
+                  });
+              } else {
+                  modalContent.innerHTML = "Nothing to see here";
+              }
+          })
+          .catch(error => {
+              console.error('Error fetching announcements:', error);
+              // Assuming you have an 'updates' element to display errors
+              updates.innerHTML = '<p>Error fetching announcements</p>';
+          });
   }
+  
+  function updateRequiredDocuments(studID) {
+    const documentForm = document.getElementById('documentChecklistForm');
+    const checkboxes = documentForm.querySelectorAll('[type="checkbox"]');
+    const selectedDocuments = Array.from(checkboxes).map(checkbox => ({
+        docID: checkbox.value,
+        docName: checkbox.name, // Use name attribute as docName
+        checked: checkbox.checked,
+    }));
+
+    console.log(selectedDocuments);
+
+    fetch('/updateIndividualDocuments', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            studID,
+            selectedDocuments,
+        }),
+    })
+        .then(response => response.json())
+        .then(data => {
+            console.log('Documents updated successfully:', data);
+            closeModal(); // Close the modal after updating
+        })
+        .catch(error => {
+            console.error('Error updating documents:', error);
+        });
+}
+  
+  
+  // function updateRequiredDocuments(studID) {
+  //   const documentForm = document.getElementById('documentChecklistForm');
+  //   const checkboxes = documentForm.querySelectorAll('[name="document"]');
+  //   const selectedDocuments = Array.from(checkboxes).map(checkbox => ({
+  //     docID: checkbox.value,
+  //     checked: checkbox.checked,
+  //   }));
+  
+  //   fetch('/updateIndividualDocuments', {
+  //     method: 'POST',
+  //     headers: {
+  //       'Content-Type': 'application/json',
+  //     },
+  //     body: JSON.stringify({
+  //       studID,
+  //       selectedDocuments,
+  //     }),
+  //   })
+  //     .then(response => response.json())
+  //     .then(data => {
+  //       console.log('Documents updated successfully:', data);
+  //       closeModal(); // Close the modal after updating
+  //     })
+  //     .catch(error => {
+  //       console.error('Error updating documents:', error);
+  //     });
+  // }
+    
 
   // Close the modal
   function closeDocChecklistModal() {

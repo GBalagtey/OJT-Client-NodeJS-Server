@@ -706,6 +706,42 @@ router.get('/getOptionalDocuments', requireLogin, (req, res) => {
   });
 })
 
+router.post('/updateIndividualDocuments', requireLogin, (req, res) => {
+  try {
+      const selectedDocuments = req.body.selectedDocuments;
+      const studID = req.body.studID;
+
+      console.log('StudID:', studID);
+
+      // Use a loop to iterate over selected documents and insert them into the database
+      selectedDocuments.forEach(async (doc) => {
+          const docID = doc.docID;
+          const docName = doc.docName;
+
+          console.log('DocID:', docID);
+          console.log('DocName:', docName);
+
+          // Perform database insertion
+          const query = 'INSERT INTO document_sub (docID, studID, isOptional, hasBeenSubmitted) VALUES (?, ?, ?, ?)';
+          const values = [docID, studID, 0, 0];
+
+          connection.query(query, values, (error, result) => {
+              if (error) {
+                  console.error('Database insertion error:', error);
+              } else {
+                  console.log('Database insertion result:', result);
+              }
+          });
+      });
+
+      res.json({ success: true, message: 'Documents updated successfully' });
+  } catch (error) {
+      console.error('Error:', error);
+      res.status(500).json({ success: false, message: 'Internal server error' });
+  }
+});
+
+
 router.get('/getProgress', requireLogin, (req, res) => {
   const studId = req.session.studID;
 

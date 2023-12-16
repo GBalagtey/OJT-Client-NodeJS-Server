@@ -304,19 +304,24 @@ main .progress #progPercent {
     font-size: 15px;
 }
 
-#renderedHours {
+#companyForm{
+    font-size: 15px;
+}
+
+#firstField {
     width: 150px;
     height: 30px;
     text-align: center;
     font-family: 'Poppins', sans-serif;
   }
 
-#description {
+#lastField {
     width: 90%;
     height: 150px;
     font-size: 14px;
     border-radius: 3px;
     font-family: 'Poppins', sans-serif;
+    padding: 5px;
 }
 
 .submit-dtr {

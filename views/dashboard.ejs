@@ -107,7 +107,7 @@
                       <% } else { %>
                         <h3> COMPANY</h3>
                         <hr><br>
-                        <button class="add-company" type="submit">&plus;Add Company Details</button>
+                        <button class="add-company" onclick="addCompany()" type="submit">&plus;Add Company Details</button>
                       <% } %>
                 </div>
             </div>
@@ -128,8 +128,8 @@
             <div id="myModal" class="modal">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h2 class="title-modal" style="color: #fff;">Add Work Details</h2>
-                        <span class="close" onclick="closeModal()" style="color: #fff; cursor: pointer;" onmouseover="this.style.color='rgb(168, 18, 18)'" onmouseout="this.style.color='#fff'">&times;</span>
+                        <h2 class="title-modal" style="color: #fff;">Work Details</h2>
+                        <span class="close" id="closeWorkModal" style="color: #fff; cursor: pointer;" onmouseover="this.style.color='rgb(168, 18, 18)'" onmouseout="this.style.color='#fff'">&times;</span>
                     </div>
                     <div class="modal-body" id="modalBody" style="background-color: #fff; padding: 20px;">
                         <form id="workForm" action="/submitDailyReport" method="post" autocomplete="off">
@@ -137,11 +137,11 @@
                             <p id="currentDate" name="currentDate"><%= userData.currentDate %></p>
                             <br>
                             <label for="renderedHours">Rendered Hours</label><br>
-                            <input type="text" id="renderedHours" name="renderedHours" required placeholder="HH:MM:SS"><br>
+                            <input type="text" id="firstField" name="renderedHours" required placeholder="HH:MM:SS"><br>
                             <br>
                             <label for="description">Description</label>
                             <br>
-                            <textarea id="description" name="description" rows="4" cols="30" required placeholder="Describe your accomplishment for the day..."></textarea>
+                            <textarea id="lastField" name="description" rows="4" cols="30" required placeholder="Describe your accomplishment for the day..."></textarea>
                             <br>
                             <button class="submit-dtr" type="submit">Submit</button>
                         </form>
@@ -149,6 +149,33 @@
                 </div>
             </div>
             <!-- End of Progress Modal -->
+            
+            <!-- Add Company Modal -->
+            <div id="companyModal" class="modal">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h2 class="title-modal" style="color: #fff;">Company Details</h2>
+                        <span class="close" id ="closeCompanyModal" style="color: #fff; cursor: pointer;" onmouseover="this.style.color='rgb(168, 18, 18)'" onmouseout="this.style.color='#fff'">&times;</span>
+                    </div>
+                    <div class="modal-body" id="modalBody" style="background-color: #fff; padding: 20px;">
+                        <form id="companyForm" action="" method="post" autocomplete="off"> <!--no action -->
+                            <label for="companyName">Company Name</label><br>
+                            <input type="text" id ="firstField" name="companyName" required placeholder="Company Name" style=" width: 250px;"><br>
+                            <br>
+                            <label for="companyLocation">Company Location</label><br>
+                            <input type="text" id = "firstField" name="companyLocation" required placeholder="Address of the Company" style=" width: 250px;"><br>
+                            <br>
+                            <label for="companySupervisor">Supervisor</label><br>
+                            <input type="text" id = "firstField" name="companySupervisor" required placeholder="Full name of your supervisor" style=" width: 250px;"><br>
+                            <br>
+                            <label for="companyDescription">Description</label><br>
+                            <textarea name="companyDescription" id = "lastField" rows="4" cols="30" required placeholder="Briefly describe the company..." style=" height: 100px;"></textarea><br>
+                            <button class="submit-dtr" type="submit">Submit</button>
+                        </form>
+                        </div>
+                </div>
+            </div>
+            <!-- End of Add company modal -->
 
                 <h2>Recent Records</h2>
                 <div class="timetable" id="timetable">

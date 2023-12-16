@@ -104,6 +104,10 @@
                           <p><%= userData.supervisor %></p>
                           <% } %>
                         </div>
+                      <% } else { %>
+                        <h3> COMPANY</h3>
+                        <hr><br>
+                        <button class="add-company" type="submit">&plus;Add Company Details</button>
                       <% } %>
                 </div>
             </div>
@@ -123,27 +127,30 @@
             <!-- Progress Modal -->
             <div id="myModal" class="modal">
                 <div class="modal-content">
-                    <span class="close">&times;</span>
-                    <h2 class="title-modal">Add Work Details</h2>
-                    <form id="workForm" action="/submitDailyReport" method="post" autocomplete="off">
-                        <label for="renderedHours">Date</label>
-                        <p id="currentDate" name="currentDate"><%= userData.currentDate %></p>
-                        <br>
-                        <label for="renderedHours">Rendered Hours</label><br>
-                        <input type="text" id="renderedHours" name="renderedHours" required placeholder="HH:MM:SS"><br>
-                        <br>
-                        <label for="description">Description</label>
-                        <br>
-                        <textarea id="description" name="description" rows="4" cols="30" required placeholder="Describe your accomplishment for the day..."></textarea>
-                        <br>
-                        <button class="submit-dtr" type="submit">Submit</button>
-                    </form>
+                    <div class="modal-header">
+                        <h2 class="title-modal" style="color: #fff;">Add Work Details</h2>
+                        <span class="close" onclick="closeModal()" style="color: #fff; cursor: pointer;" onmouseover="this.style.color='rgb(168, 18, 18)'" onmouseout="this.style.color='#fff'">&times;</span>
+                    </div>
+                    <div class="modal-body" id="modalBody" style="background-color: #fff; padding: 20px;">
+                        <form id="workForm" action="/submitDailyReport" method="post" autocomplete="off">
+                            <label for="renderedHours">Date</label>
+                            <p id="currentDate" name="currentDate"><%= userData.currentDate %></p>
+                            <br>
+                            <label for="renderedHours">Rendered Hours</label><br>
+                            <input type="text" id="renderedHours" name="renderedHours" required placeholder="HH:MM:SS"><br>
+                            <br>
+                            <label for="description">Description</label>
+                            <br>
+                            <textarea id="description" name="description" rows="4" cols="30" required placeholder="Describe your accomplishment for the day..."></textarea>
+                            <br>
+                            <button class="submit-dtr" type="submit">Submit</button>
+                        </form>
+                        </div>
                 </div>
             </div>
             <!-- End of Progress Modal -->
 
-            <% if (userData.companyName !== null) { %>
-                <h2>DTR for the last 3 days</h2>
+                <h2>Recent Records</h2>
                 <div class="timetable" id="timetable">
                     <table>
                         <thead>
@@ -158,7 +165,6 @@
                         </tbody>
                     </table>
                 </div>
-              <% } %>
 
         </main>
 

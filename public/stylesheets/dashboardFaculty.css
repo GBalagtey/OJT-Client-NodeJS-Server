@@ -454,7 +454,7 @@ main .sorting select{
 main .timetable{
     position: absolute;
     margin-top: 2rem;
-    height: 212%;
+    height: 485%;
     width: 100%;
     overflow: auto;
 }

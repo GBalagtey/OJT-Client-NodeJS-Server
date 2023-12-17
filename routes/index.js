@@ -968,7 +968,7 @@ router.get('/studentProgress', requireLogin, (req,res) => {
       SEC_TO_TIME(TIME_TO_SEC(student.demerit) + TIME_TO_SEC(ojt_requirements.requiredHours)) AS hours_required
       FROM student
       JOIN users ON users.email = student.studEmail
-      JOIN ojt_records ON student.studID = ojt_records.studID
+      LEFT JOIN ojt_records ON student.studID = ojt_records.studID
       JOIN ojt_requirements ON student.requirementID = ojt_requirements.requirementID
     WHERE student.studID = ?`;
 

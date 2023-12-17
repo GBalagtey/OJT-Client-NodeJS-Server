@@ -937,3 +937,24 @@ function getCurrentDate() {
 
   return `${year}-${month}-${day}`;
 }
+
+router.get('/getStudentCompanyDetails', requireLogin, (req, res) => {
+  const studID = req.query.studID;
+  const query = `
+    SELECT company.*, users.firstName, users.lastName, student.supervisor
+    FROM company 
+    JOIN student ON company.companyID = student.companyID 
+    JOIN users ON users.email = student.studEmail 
+    WHERE student.studID = ?`;
+
+  connection.query(query, [studID], (error, results) => {
+    if (error) {
+      console.error('Error fetching student company details:', error);
+      res.status(500).json({ error: 'Internal Server Error' });
+      return;
+    } else {
+      console.log(results);
+      res.json(results);
+    }
+  });
+});

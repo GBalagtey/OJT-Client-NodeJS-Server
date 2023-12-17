@@ -59,6 +59,7 @@ function openModal(record) {
             <p>Student:   <span style="color: black; font-weight: bold;"> ${record.firstName} ${record.lastName}</span></p>
             <p>Company: <span style="color: black;">${record.companyName}</span></p><br>
             <div class="set-doc-container">
+              <button onclick="openCompanyDetails(${record.studID})" class="set-req-docs">View Company Details</button>
               <button onclick="openDocChecklistModal(${record.studID})" class="set-req-docs">Add Required Documents</button>
             </div>
             <hr>
@@ -72,17 +73,6 @@ function openModal(record) {
             <div class="update-doc-container">
               <button id="updateDocumentsButton" class = "update-stud-sub">Update Documents</button>
             </div>
-            <!-- Document Checklist Modal -->
-            <div id="documentChecklistModal" class="modal">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h2 style="color: #fff;">Add Required Documents</h2>
-                    <span class="close" onclick="closeDocChecklistModal()" style="color: #fff; cursor: pointer;" onmouseover="this.style.color='rgb(168, 18, 18)'" onmouseout="this.style.color='#fff'">&times;</span>
-                </div>
-                <div class="modal-body" id="modalBody2" style="background-color: #fff; padding: 20px;">
-                </div>
-            </div>
-        </div>
             `;
 
           const modal = document.getElementById('myModal');
@@ -284,42 +274,20 @@ function uploadFile(file) {
             console.error('Error updating documents:', error);
         });
 }
-  
-  
-  // function updateRequiredDocuments(studID) {
-  //   const documentForm = document.getElementById('documentChecklistForm');
-  //   const checkboxes = documentForm.querySelectorAll('[name="document"]');
-  //   const selectedDocuments = Array.from(checkboxes).map(checkbox => ({
-  //     docID: checkbox.value,
-  //     checked: checkbox.checked,
-  //   }));
-  
-  //   fetch('/updateIndividualDocuments', {
-  //     method: 'POST',
-  //     headers: {
-  //       'Content-Type': 'application/json',
-  //     },
-  //     body: JSON.stringify({
-  //       studID,
-  //       selectedDocuments,
-  //     }),
-  //   })
-  //     .then(response => response.json())
-  //     .then(data => {
-  //       console.log('Documents updated successfully:', data);
-  //       closeModal(); // Close the modal after updating
-  //     })
-  //     .catch(error => {
-  //       console.error('Error updating documents:', error);
-  //     });
-  // }
-    
 
   // Close the modal
   function closeDocChecklistModal() {
-      const modal = document.getElementById('documentChecklistModal');
-      modal.style.display = 'none';
+    const modal = document.getElementById('documentChecklistModal');
+  
+    modal.style.display = 'none';
   }
+
+  function closeCompanyDetailsModal() {
+    const modal = document.getElementById('companyDetailsModal');
+  
+    modal.style.display = 'none';
+  }
+
 
   // Handle checklist submission
   function submitDocumentChecklist() {
@@ -336,3 +304,31 @@ function uploadFile(file) {
       // Close the modal
       closeModal();
   }
+
+  function openCompanyDetails(studID) {
+    const modal = document.getElementById('companyDetailsModal');
+    modal.style.display = 'block';
+  
+    const modalContent = document.getElementById('modalBody3');
+    fetch(`/getStudentCompanyDetails?studID=${studID}`)
+      .then(response => response.json())
+      .then(records => {
+        // Check if there are records and if the first record has the 'companyName' field
+        if (records && records.length > 0 && records[0].companyName) {
+          modalContent.innerHTML = `
+            <p> ${records[0].firstName} ${records[0].lastName} works at <span style="font-weight: bold;">${records[0].companyName}</span></p><br>
+            <p> <span style="font-weight: bold;">${records[0].companyName}</span>: ${records[0].companyDescription}</p><br>
+            <p> Company Location: <span style="font-weight: bold;">${records[0].companyLocation}</span></p><br>
+            <p> ${records[0].firstName}'s Supervisor: <spanstyle="font-weight: bold;">${records[0].supervisor ? records[0].supervisor : 'None'}</span></p><br>
+          `;
+        } else {
+          modalContent.innerHTML = '<p>No company details available</p>';
+        }
+      })
+      .catch(error => {
+        console.error('Error fetching student company details:', error);
+        // Assuming you have an 'updates' element to display errors
+        updates.innerHTML = '<p>Error fetching student company details</p>';
+      });
+  }
+  

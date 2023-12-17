@@ -276,10 +276,12 @@ main{
 }
 
 .set-doc-container {
-    display: grid;
-    justify-items: end; 
+    display: flex;
+    justify-content: flex-end; 
     margin-bottom: 1%;
+    gap: 10px;
 }
+  
 .set-req-docs {
     font-size: 15px;
     padding: 5px 10px;

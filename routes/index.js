@@ -797,6 +797,30 @@ router.get('/getAnnouncements', requireLogin, (req, res) => {
   });
 });
 
+router.post('/addCompany', requireLogin, (req, res) => {
+  try {
+    const companyName = req.body.companyName;
+    const companyLocation = req.body.companyLocation;
+    const companyDescription = req.body.companyDescription;
+
+    const values = [companyName, companyLocation, companyDescription];
+
+    const query = 'INSERT INTO company (companyName, companyLocation, companyDescription) VALUES (?, ?, ?, ?)';
+
+    connection.query(query, values, (error, results) => {
+      if(error) {
+        console.error('Error inserting daily report:', error);
+        res.status(500).send('Internal Server Error');
+      } else {
+        console.log(values);
+      }
+    })
+  } catch (error) {
+    console.error(error);
+    res.status(500).send('Internal Server Error');
+  }
+});
+
 
 const saltRounds = 10;
 async function hashPassword(password) {

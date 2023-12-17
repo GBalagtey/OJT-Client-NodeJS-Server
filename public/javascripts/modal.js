@@ -46,19 +46,3 @@ function selectCompany(){
 function addCompany() {
     modalCompany.style.display= "block";
 }
-
-function filterCompanies(searchTerm) {
-    const select = document.getElementById('companySelect');
-    const options = select.getElementsByTagName('option');
-
-    for (const option of options) {
-        const company = option.textContent.toLowerCase();
-        const searchTermLower = searchTerm.toLowerCase();
-
-        if (company.includes(searchTermLower)) {
-            option.style.display = '';
-        } else {
-            option.style.display = 'none';
-        }
-    }
-}

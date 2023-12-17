@@ -3,7 +3,7 @@ const mysql = require('mysql');
 
 const connection = mysql.createConnection({
     host: 'localhost',
-    database: 'ojt_portaldb',
+    database: 'greggorio-final',
     user: 'root',
     password: ''
 });

@@ -59,6 +59,7 @@ function openModal(record) {
             <p>Student:   <span style="color: black; font-weight: bold;"> ${record.firstName} ${record.lastName}</span></p>
             <p>Company: <span style="color: black;">${record.companyName}</span></p><br>
             <div class="set-doc-container">
+              <button onclick="openDemerit(${record.studID})" class="set-req-docs-demerit">Give Demerit</button>
               <button onclick="openCompanyDetails(${record.studID})" class="set-req-docs">View Company Details</button>
               <button onclick="openDocChecklistModal(${record.studID})" class="set-req-docs">Add Required Documents</button>
             </div>
@@ -332,3 +333,15 @@ function uploadFile(file) {
       });
   }
   
+    // Close the modal
+    function openDemerit(studID) {
+      const modal = document.getElementById('addDemeritModal');
+    
+      modal.style.display = 'block';
+    }
+  
+    function closeDemeritModal() {
+      const modal = document.getElementById('addDemeritModal');
+    
+      modal.style.display = 'none';
+    }

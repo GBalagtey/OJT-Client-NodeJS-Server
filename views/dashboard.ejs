@@ -166,7 +166,8 @@
                             </select><br>
                             <br>
                             <label for="companySupervisor">Supervisor</label><br>
-                            <input type="text" id = "firstField" name="companySupervisor" required placeholder="Full name of your supervisor" style=" width: 250px;"><br><br><br>
+                            <input type="text" id = "companySupervisor" name="supervisor" required placeholder="Full name of your supervisor" style=" width: 250px;"><br><br><br>
+                            <button onclick="handleUpdateButtonClick('<%= userData.studID %>')" id="updateCompanyButton">Update</button>
                             <p style="font-size: 12px;">Did not find your company? <a href="#" onclick="addCompany()" onmouseover="this.style.textDecoration = 'underline'; this.style.color='#7380ec'" onmouseout="this.style.textDecoration = 'none'; this.style.color='var(--color-dark-varient)'">Add company details</a></p>
                         </form>
                         </div>
@@ -243,6 +244,20 @@
         </div>
 
     </div>
+    <script>
+        window.onload = function () {
+        populateCompanies();
+
+        // Attach the event listener to the "Update" button using the ID
+        var updateButton = document.getElementById("updateCompanyButton");
+        if (updateButton) {
+            updateButton.addEventListener("click", function(event) {
+            // Pass userData.studID to the function
+            handleUpdateButtonOnClick('<%= userData.studID %>', event);
+        });
+    }
+};
+      </script>
     <script src ="/javascripts/announcement.js"></script>
     <script src ="/javascripts/document.js"></script>
     <script src="/javascripts/app.js"></script>

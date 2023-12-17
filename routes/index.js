@@ -821,6 +821,50 @@ router.post('/addCompany', requireLogin, (req, res) => {
   }
 });
 
+router.get('/getAllCompanies', requireLogin, (req, res) => {
+  const query = 'SELECT * FROM company';
+
+  connection.query(query, (error, results) => {
+    if (error) {
+      console.error('Error fetching announcements:', error);
+      res.status(500).json({ error: 'Internal Server Error' });
+      return;
+    } else {
+      console.log(results);
+      res.json(results);
+    }
+  });
+});
+
+// NOT WORKING
+router.post('/updateStudentCompany', requireLogin, (req, res) => {
+  try {
+    const companyID = req.body.companyID;
+    const studentID = req.body.studentID;
+    const supervisor = req.body.supervisorName;
+    
+    const values = [companyID, supervisor, studentID];
+    console.log(values);
+
+    const query = 'UPDATE student SET companyID = ?, supervisor = ? WHERE studID = ?';
+
+    connection.query(query, values, (error, results) => {
+      if (error) {
+        console.error('Error updating student company:', error);
+        res.status(500).json({ error: 'Internal Server Error' });
+        return;
+      } else {
+        console.log('Student Company and Supervisor updated successfully');
+      }
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).send('Internal Server Error');
+  }
+});
+
+
+
 
 const saltRounds = 10;
 async function hashPassword(password) {

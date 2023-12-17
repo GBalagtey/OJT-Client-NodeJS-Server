@@ -294,13 +294,25 @@ main{
     background-color: #e9e6e6;
     box-shadow: inset 0 0 2px rgba(0, 0, 0, 0.8);
 }
+.demerit-container-btn{
+    display: flex;
+    justify-content: center;
+}
+.demerit-input{
+    display: flex;
+    flex-direction: column;
+    align-items: center
+}
+.demerit-input label {
+    margin-bottom: 5px;
+}
 
 .set-req-docs-demerit {
     font-size: 15px;
     padding: 5px 10px;
     border-radius: 10px;
     color: black;
-    border: 1px solid rgb(241, 110, 110);
+    border: 1px solid #aaa;
     background-color: rgb(241, 110, 110);
 }
 

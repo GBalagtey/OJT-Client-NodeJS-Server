@@ -328,16 +328,31 @@ function uploadFile(file) {
       })
       .catch(error => {
         console.error('Error fetching student company details:', error);
-        // Assuming you have an 'updates' element to display errors
-        updates.innerHTML = '<p>Error fetching student company details</p>';
       });
   }
   
-    // Close the modal
     function openDemerit(studID) {
       const modal = document.getElementById('addDemeritModal');
-    
       modal.style.display = 'block';
+       
+    const modalContent = document.getElementById('modalBody4');
+    fetch(`/studentProgress?studID=${studID}`)
+      .then(response => response.json())
+      .then(records => {
+          modalContent.innerHTML = `
+          <p> Student: <span style="font-weight: bold;">${records[0].firstName} ${records[0].lastName}</span></p>
+            <p> Total Rendered Hours: <span style="font-weight: bold;">${records[0].total_time}</span></p>
+            <p> Hours Required for ${records[0].firstName}: <span style="font-weight: bold;">${records[0].hours_required}</span></p><br>
+            <div class="demerit-input">
+            <label for="timeInput">Enter Time Demerit (in hours): </label>
+            <input type="number" id="timeInput" name="timeInput" min="0" step="0.5" required style = " height: 30px; font-size: 15px"><br><br></div>
+            <div class= "demerit-container-btn">
+            <button class = "set-req-docs-demerit" onclick="convertAndSendTime(${studID})">Add Demerit</button></div>
+          `;
+      })
+      .catch(error => {
+        console.error('Error fetching student total rendered hours and required hours:', error);
+      });
     }
   
     function closeDemeritModal() {
@@ -345,3 +360,39 @@ function uploadFile(file) {
     
       modal.style.display = 'none';
     }
+  
+  function convertHoursToHHMMSS(hours) {
+      const totalSeconds = hours * 3600;
+      const hh = Math.floor(totalSeconds / 3600);
+      const mm = Math.floor((totalSeconds % 3600) / 60);
+      const ss = Math.floor(totalSeconds % 60);
+  
+      return `${String(hh).padStart(2, '0')}:${String(mm).padStart(2, '0')}:${String(ss).padStart(2, '0')}`;
+  }
+
+  
+function convertAndSendTime(studID) {
+  const timeInput = document.getElementById('timeInput').value;
+  const convertedTime = convertHoursToHHMMSS(timeInput);
+
+  // Assuming you have an endpoint on the server to handle the data
+  fetch('/addDemerit', {
+      method: 'POST',
+      headers: {
+          'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+          studID: studID,
+          demeritTime: convertedTime,
+      }),
+  })
+  .then(response => response.json())
+  .then(data => {
+      console.log('Success:', data);
+      // Optionally, close the modal or perform other actions
+      closeDemeritModal();
+  })
+  .catch((error) => {
+      console.error('Error:', error);
+  });
+}

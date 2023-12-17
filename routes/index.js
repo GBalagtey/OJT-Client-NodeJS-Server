@@ -958,3 +958,50 @@ router.get('/getStudentCompanyDetails', requireLogin, (req, res) => {
     }
   });
 });
+
+router.get('/studentProgress', requireLogin, (req,res) => {
+  const studID = req.query.studID;
+  const query = `
+  SELECT 
+      users.firstName, users.lastName,
+      COALESCE(SEC_TO_TIME(SUM(TIME_TO_SEC(ojt_records.renderedHours))), '00:00:00') AS total_time,
+      SEC_TO_TIME(TIME_TO_SEC(student.demerit) + TIME_TO_SEC(ojt_requirements.requiredHours)) AS hours_required
+      FROM student
+      JOIN users ON users.email = student.studEmail
+      JOIN ojt_records ON student.studID = ojt_records.studID
+      JOIN ojt_requirements ON student.requirementID = ojt_requirements.requirementID
+    WHERE student.studID = ?`;
+
+    connection.query(query, [studID], (error, results) => {
+      if (error) {
+        console.error('Error fetching student company details:', error);
+        res.status(500).json({ error: 'Internal Server Error' });
+        return;
+      } else {
+        console.log(results);
+        res.json(results);
+      }
+    });
+})
+
+router.post('/addDemerit', (req, res) => {
+  const { studID, demeritTime } = req.body;
+  const query =`
+  UPDATE student
+  SET demerit = ADDTIME(demerit, ?)
+  WHERE studID = ?`;
+
+  connection.query(query, [demeritTime, studID], (error, results) => {
+    if (error) {
+      console.error('Error updating student demerit time:', error);
+      res.status(500).json({ error: 'Internal Server Error' });
+      return;
+    }
+    
+    console.log('SQL Query:', query, 'with values:', [demeritTime, studID]);
+
+
+    res.json({ success: true });
+  })
+
+});

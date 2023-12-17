@@ -802,24 +802,73 @@ router.post('/addCompany', requireLogin, (req, res) => {
     const companyName = req.body.companyName;
     const companyLocation = req.body.companyLocation;
     const companyDescription = req.body.companyDescription;
+    const supervisor = req.body.supervisorName;
+    const studentID = req.body.studentID;
 
-    const values = [companyName, companyLocation, companyDescription];
+    const insertValues = [companyName, companyLocation, companyDescription];
+    const insertQuery = 'INSERT INTO company (companyName, companyLocation, companyDescription) VALUES (?, ?, ?);';
 
-    const query = 'INSERT INTO company (companyName, companyLocation, companyDescription) VALUES (?, ?, ?, ?)';
-
-    connection.query(query, values, (error, results) => {
-      if(error) {
-        console.error('Error inserting daily report:', error);
-        res.status(500).send('Internal Server Error');
+    connection.query(insertQuery, insertValues, (error, insertResults) => {
+      if (error) {
+        console.error('Error inserting company:', error);
+        res.status(500).json({ error: 'Internal Server Error' });
       } else {
-        console.log(values);
+        console.log('Company inserted successfully:', insertResults);
+
+        // Get the companyID of the recently inserted company
+        const companyId = insertResults.insertId;
+
+        // Use the companyID in the second query
+        const updateValues = [companyId, supervisor, studentID];
+        const updateQuery = 'UPDATE student SET companyID = ?, supervisor = ? WHERE studID = ?;';
+
+        connection.query(updateQuery, updateValues, (updateError, updateResults) => {
+          if (updateError) {
+            console.error('Error updating student:', updateError);
+            res.status(500).json({ error: 'Internal Server Error' });
+          } else {
+            console.log('Data updated in student:', updateResults);
+
+            // Send a success response once both operations are completed
+            res.json({ success: true, companyId });
+          }
+        });
       }
-    })
+    });
   } catch (error) {
-    console.error(error);
-    res.status(500).send('Internal Server Error');
+    console.error('Error processing request:', error);
+    res.status(500).json({ error: 'Internal Server Error' });
   }
 });
+
+
+router.post('/updateStudentCompanyNew', requireLogin, (req, res) => {
+  try {
+    const companyId = req.body.companyId;
+    const supervisor = req.body.supervisorName;
+    const studentID = req.body.studentID;
+
+    // Use the companyID in the second query
+    const updateValues = [companyId, supervisor, studentID];
+    const updateQuery = 'UPDATE student SET companyID = ?, supervisor = ? WHERE studentID = ?;';
+
+    connection.query(updateQuery, updateValues, (updateError, updateResults) => {
+      if (updateError) {
+        console.error('Error updating student:', updateError);
+        res.status(500).json({ error: 'Internal Server Error' });
+      } else {
+        console.log('Data updated in student:', updateResults);
+        res.json({ success: true });
+      }
+    });
+  } catch (error) {
+    console.error('Error processing request:', error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
+
+
+
 
 router.get('/getAllCompanies', requireLogin, (req, res) => {
   const query = 'SELECT * FROM company';

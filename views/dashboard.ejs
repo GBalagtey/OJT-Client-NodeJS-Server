@@ -183,19 +183,19 @@
                         <span class="close" id ="closeCompanyModal" style="color: #fff; cursor: pointer;" onmouseover="this.style.color='rgb(168, 18, 18)'" onmouseout="this.style.color='#fff'">&times;</span>
                     </div>
                     <div class="modal-body" id="modalBody" style="background-color: #fff; padding: 20px;">
-                        <form id="companyForm" autocomplete="off"> 
+                        <form id="companyForm" autocomplete="off" onsubmit="submitForm(event)"> 
                             <label for="companyName">Company Name</label><br>
-                            <input type="text" id ="firstField" name="companyName" required placeholder="Company Name" style=" width: 250px;"><br>
+                            <input type="text" id ="companyName" name="companyName" required placeholder="Company Name" style=" width: 250px;"><br>
                             <br>
                             <label for="companyLocation">Company Location</label><br>
-                            <input type="text" id = "firstField" name="companyLocation" required placeholder="Address of the Company" style=" width: 250px;"><br>
+                            <input type="text" id = "companyLocation" name="companyLocation" required placeholder="Address of the Company" style=" width: 250px;"><br>
                             <br>
                             <label for="companySupervisor">Supervisor</label><br>
-                            <input type="text" id = "firstField" name="companySupervisor" required placeholder="Full name of your supervisor" style=" width: 250px;"><br>
+                            <input type="text" id = "companySupervisor" name="companySupervisor" required placeholder="Full name of your supervisor" style=" width: 250px;"><br>
                             <br>
                             <label for="companyDescription">Description</label><br>
-                            <textarea name="companyDescription" id = "lastField" rows="4" cols="30" required placeholder="Briefly describe the company..." style=" height: 100px;"></textarea><br>
-                            <button class="submit-dtr" type="submit">Submit</button>
+                            <textarea name="companyDescription" id = "companyDescription" rows="4" cols="30" required placeholder="Briefly describe the company..." style=" height: 100px;"></textarea><br>
+                            <button class="submit-dtr" type="submit" onclick="handleUpdateCompanyButtonOnClick('<%= userData.studID %>')">Submit</button>
                         </form>
                         </div>
                 </div>

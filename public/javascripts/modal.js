@@ -87,8 +87,6 @@ function populateCompanies() {
 
 function handleUpdateButtonOnClick(studentID) {
     // Prevent the default form submission behavior
-
-    console.log("UPDATE BUTTON IS CLICKED");
     var selectedCompanyId = document.getElementById("companySelect").value;
     var supervisorName = document.getElementById("companySupervisor").value;
 
@@ -131,3 +129,69 @@ function handleUpdateButtonOnClick(studentID) {
 //     });
 // }
 
+
+// function submitForm(event) {
+//     event.preventDefault(); // Prevent the default form submission
+  
+//     const form = document.getElementById('companyForm');
+//     const formData = new FormData(form);
+  
+//     // Make an AJAX request to the server
+//     fetch('/addCompany', {
+//       method: 'POST',
+//       body: formData,
+//     })
+//     .then(response => {
+//       if (!response.ok) {
+//         throw new Error('Network response was not ok');
+//       }
+//       return response.json();
+//     })
+//     .then(data => {
+//       console.log(data); // Log the response from the server
+//       // You can perform additional actions based on the server response if needed
+//     })
+//     .catch(error => {
+//       console.error('Error submitting form:', error);
+//       // Handle the error, display an error message, etc.
+//     });
+//   }
+
+function handleUpdateCompanyButtonOnClick(studentID){
+    var companyName = document.getElementById("companyName").value;
+    var companyLocation = document.getElementById("companyLocation").value;
+    var supervisor = document.getElementById("companySupervisor").value;
+    var description = document.getElementById("companyDescription").value;
+    
+    var data = {
+        companyName: companyName,
+        companyLocation: companyLocation,
+        supervisor: supervisor,
+        companyDescription: description,
+        studentID: studentID
+    };
+
+    console.log(companyName);
+    console.log(companyLocation);
+    console.log(supervisor);
+    console.log(description);
+    console.log("Add company BUTTON IS CLICKED");
+
+    // Make a POST request to the server
+    fetch('/addCompany', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(data),
+    })
+    .then(response => response.json())
+    .then(result => {
+        // Handle the response from the server if needed
+        console.log("Server response:", result);
+    })
+    .catch(error => {
+        console.error("Error:", error);
+    });
+}
+  
